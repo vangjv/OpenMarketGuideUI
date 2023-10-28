@@ -1,0 +1,72 @@
+
+<div class="min-h-screen flex flex-column surface-ground">
+  <div class="surface-section px-6 flex justify-content-between relative lg:static" style="min-height:70px" *ngIf="isMapView() == false">
+      <div class="mr-0 lg:mr-6 align-self-center mt-4">
+        <svg height="25" viewBox="0 0 341.8539466943926 24.965931774881785" preserveAspectRatio="xMidYMid meet" class="css-1y5supu" id="hfdhddbg"><defs id="SvgjsDefs1001"></defs><g id="SvgjsG1007" featurekey="nameLeftFeature-0" transform="matrix(1.733745193251724,0,0,1.733745193251724,1.4396299874447531,-10.055722451545652)" fill="#235784"><path d="M8.16 5.800000000000001 c3.9 0 7.26 2.94 7.26 7.2 s-3.36 7.2 -7.26 7.2 s-7.26 -2.94 -7.26 -7.2 s3.36 -7.2 7.26 -7.2 z M8.16 17.46 c2.36 0 4.22 -1.86 4.22 -4.46 s-1.86 -4.46 -4.22 -4.46 s-4.22 1.86 -4.22 4.46 s1.86 4.46 4.22 4.46 z M22.42 6 c3.14 0 5.18 1.9 5.18 4.76 c0 2.82 -2.04 4.58 -5.18 4.58 l-1.98 0 l0 4.66 l-2.92 0 l0 -14 l4.9 0 z M22.240000000000002 12.82 c1.44 0 2.44 -0.56 2.44 -2.06 c0 -1.48 -1 -2.08 -2.44 -2.08 l-1.8 0 l0 4.14 l1.8 0 z M32.42 17.32 l5.92 0 l0 2.68 l-6.32 0 l-2.52 0 l0 -14 l2.92 0 l5.74 0 l0 2.68 l-5.74 0 l0 2.96 l4.34 0 l0 2.64 l-4.34 0 l0 3.04 z M49.6 6 l2.92 0 l0 14 l-2.22 0 l-6.94 -8.68 l0 8.68 l-2.92 0 l0 -14 l2.26 0 l6.9 8.7 l0 -8.7 z M69.92 6 l0 14 l-3 0 l0 -7.44 l-3.26 7.44 l-2.52 0 l-3.22 -7.4 l0 7.4 l-3 0 l0 -14 l2.88 0 l4.62 10.1 l4.62 -10.1 l2.88 0 z"></path></g><g id="SvgjsG1008" featurekey="inlineSymbolFeature-0" transform="matrix(0.09131651470004545,0,0,0.09131651470004545,117.87365910920569,-10.346161394191038)" fill="#235784"><path xmlns="http://www.w3.org/2000/svg" d="M417.6,359.6L263.4,120.2c-5.9-9.2-21.1-9.2-27.1,0L80.6,361.9c-3.2,5-3.4,11.3-0.6,16.4c2.8,5.2,8.2,8.4,14.1,8.4h311.5  c0.1,0,0.3,0,0.3,0c8.9,0,16.1-7.2,16.1-16.1C422,366.3,420.3,362.4,417.6,359.6z M249.8,158.7l30.6,47.4l-96.2,148.4h-60.6  L249.8,158.7z M296,354.5l-36.6-56.8l40.1-61.9L376,354.5H296z"></path></g><g id="SvgjsG1009" featurekey="nameRightFeature-0" transform="matrix(1.7217886247539973,0,0,1.7217886247539973,156.93385233667473,-9.986375994003891)" fill="#235784"><path d="M12.22 20 l-3.1 0 l-2.98 -4.66 l-0.04 0 l-1.98 0 l0 4.66 l-2.92 0 l0 -14 l4.9 0 c3.14 0 5.18 1.9 5.18 4.76 c0 1.9 -0.92 3.32 -2.48 4.04 z M4.12 8.68 l0 4.14 l1.8 0 c1.44 0 2.44 -0.56 2.44 -2.06 c0 -1.48 -1 -2.08 -2.44 -2.08 l-1.8 0 z M23.08 20 l-4.34 -6 l-1.72 1.96 l0 4.04 l-3 0 l0 -14 l3 0 l0 6.1 l5.18 -6.1 l3.6 0 l-5.26 5.96 l5.9 8.04 l-3.36 0 z M31.060000000000002 17.32 l5.92 0 l0 2.68 l-6.32 0 l-2.52 0 l0 -14 l2.92 0 l5.74 0 l0 2.68 l-5.74 0 l0 2.96 l4.34 0 l0 2.64 l-4.34 0 l0 3.04 z M48.58 6 l0 2.68 l-3.48 0 l0 11.32 l-2.92 0 l0 -11.32 l-3.5 0 l0 -2.68 l9.9 0 z M63.760000000000005 12.559999999999999 c0.62 4.7 -2.44 7.64 -6.22 7.64 c-3.98 0 -7.26 -2.94 -7.26 -7.2 s3.36 -7.2 7.26 -7.2 c1.86 0 3.5 0.6 4.7 1.66 l-1.76 1.98 c-0.74 -0.52 -1.74 -0.9 -2.76 -0.9 c-2.54 0 -4.4 1.86 -4.4 4.46 s1.8 4.46 4.22 4.46 c1.84 0 3.12 -0.66 3.52 -2.42 l-3.3 0 l0 -2.48 l6 0 z M73.82 6 l2.92 0 l0 8.92 c0 3.4 -2.46 5.38 -5.4 5.38 s-5.42 -1.98 -5.42 -5.38 l0 -8.92 l2.92 0 l0 8.94 c0 2.04 1.34 2.62 2.5 2.62 c1.14 0 2.48 -0.58 2.48 -2.62 l0 -8.94 z M82.06 6 l0 14 l-2.92 0 l0 -14 l2.92 0 z M89.46 6 c3.98 0 7.1 3.12 7.1 6.92 c0 3.96 -3.12 7.08 -7.1 7.08 l-5 0 l0 -14 l5 0 z M89.44 17.240000000000002 c2.68 0 4.12 -1.94 4.12 -4.32 c0 -2.22 -1.44 -4.16 -4.12 -4.16 l-2.06 0 l0 8.48 l2.06 0 z M101.47999999999999 17.32 l5.92 0 l0 2.68 l-6.32 0 l-2.52 0 l0 -14 l2.92 0 l5.74 0 l0 2.68 l-5.74 0 l0 2.96 l4.34 0 l0 2.64 l-4.34 0 l0 3.04 z"></path></g></svg>
+      </div>
+      <a pRipple class="cursor-pointer block lg:hidden align-self-center text-700" pStyleClass="@next"
+          enterClass="hidden" leaveToClass="hidden" [hideOnOutsideClick]="true">
+          <i class="pi pi-bars text-4xl"></i>
+      </a>
+      <div class="flex-grow-1 justify-content-between hidden lg:flex absolute lg:static w-full left-0 top-100 z-1 shadow-2 lg:shadow-none surface-overlay">
+          <ul class="list-none p-0 m-0 flex select-none flex-column lg:flex-row gap-2">
+              <li class="lg:flex lg:align-items-end">
+                  <a pRipple class="border-round-top flex align-items-center px-6 py-3 lg:px-3 lg:py-3 font-medium cursor-pointer transition-colors transition-duration-150"
+                      [ngClass]="{'surface-ground text-900': activeTab === 0, 'hover:surface-hover': activeTab !== 0}" (click)="navigateToTab(0)">
+                      <span>Home</span>
+                      <!-- <i class="pi pi-home ml-2"></i> -->
+                  </a>
+              </li>
+              <li class="lg:flex lg:align-items-end">
+                  <a pRipple class="border-round-top flex align-items-center px-6 py-3 lg:px-3 lg:py-3 text-900 font-medium cursor-pointer transition-colors transition-duration-150"
+                      [ngClass]="{'surface-ground text-900': activeTab === 1, 'hover:surface-hover': activeTab !== 1}" (click)="navigateToTab(1)">
+                      <span>Find a Market</span>
+                      <!-- <i class="pi pi-search ml-2"></i> -->
+                  </a>
+              </li>
+              <li class="lg:flex lg:align-items-end">
+                  <a pRipple class="border-round-top flex align-items-center px-6 py-3 lg:px-3 lg:py-3 text-900 font-medium cursor-pointer transition-colors transition-duration-150"
+                      [ngClass]="{'surface-ground text-900': activeTab === 2, 'hover:surface-hover': activeTab !== 2}" (click)="navigateToTab(2)">
+                      <span class="mr-2">Map my Market</span>
+                      <!-- <i class="pi pi-map ml-2"></i> -->
+                  </a>
+              </li>
+              <li class="lg:flex lg:align-items-end">
+                  <a pRipple class="border-round-top flex align-items-center px-6 py-3 lg:px-3 lg:py-3 text-900 font-medium cursor-pointer transition-colors transition-duration-150"
+                      [ngClass]="{'surface-ground text-900': activeTab === 3, 'hover:surface-hover': activeTab !== 3}" (click)="navigateToTab(3)">
+                      <span>About</span>
+                      <!-- <i class="pi pi-question ml-2"></i> -->
+                  </a>
+              </li>
+          </ul>
+          <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row border-top-1 surface-border lg:border-top-none">
+              <!-- <li>
+                  <a pRipple class="flex px-6 p-3 lg:px-3 lg:py-2 align-items-center text-orange-600 hover:surface-hover font-medium border-round cursor-pointer transition-colors transition-duration-150">
+                      <i class="pi pi-inbox text-base lg:text-2xl mr-2 lg:mr-0"></i>
+                      <span class="block lg:hidden font-medium">Inbox</span>
+                  </a>
+              </li>
+              <li>
+                  <a pRipple class="flex px-6 p-3 lg:px-3 lg:py-2 align-items-center text-cyan-600 hover:surface-hover font-medium border-round cursor-pointer transition-colors transition-duration-150">
+                      <i class="pi pi-bell text-base lg:text-2xl mr-2 lg:mr-0" pBadge severity="danger"></i>
+                      <span class="block lg:hidden font-medium">Notifications</span>
+                  </a>
+              </li>
+              <li class="border-top-1 surface-border lg:border-top-none">
+                  <a pRipple class="flex px-6 p-3 lg:px-3 lg:py-2 align-items-center hover:surface-hover font-medium border-round cursor-pointer transition-colors transition-duration-150">
+                      <img src="assets/images/blocks/avatars/circle/avatar-f-1.png" class="mr-3 lg:mr-0" style="width: 32px; height: 32px"/>
+                      <div class="block lg:hidden">
+                          <div class="text-900 font-medium">Josephine Lillard</div>
+                          <span class="text-600 font-medium text-sm">Marketing Specialist</span>
+                      </div>
+                  </a>
+              </li> -->
+          </ul>
+      </div>
+  </div>
+  <div class="p-5 flex flex-column flex-auto surface-ground">
+      <div class="border-2 border-dashed surface-border border-round surface-section flex-auto">
+        <router-outlet></router-outlet>
+      </div>
+  </div>
+</div>
