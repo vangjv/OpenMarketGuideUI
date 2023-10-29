@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BoundaryService } from './boundary.service';
+import { DialogsService } from './dialogs.service';
 declare let Cesium: any;
 // import * as Cesium from '../assets/js/Cesium.js';
 Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2MWZlOTZjMy1iYjhiLTRkYjktOWEyYS0xYjllYWM4NmQ3YjYiLCJpZCI6ODM1MzksImlhdCI6MTY2MTU0NTg0MX0.PBHIiiQPO0_kfthCfRxp4VVGlhFZp4BMKIeILBwYuqk";
@@ -12,7 +13,7 @@ export class CesiumService {
   private camera:any;
   private scene:any;
   public boundaryService!:BoundaryService;
-  constructor() {
+  constructor(private dialogsService:DialogsService) {
 
   }
 
@@ -24,7 +25,7 @@ export class CesiumService {
       infoBox: false,
       //terrain: Cesium.Terrain.fromWorldTerrain(),
     });
-    this.boundaryService = new BoundaryService(this.viewer);
+    this.boundaryService = new BoundaryService(this.viewer, this.dialogsService);
     this.camera = this.viewer.camera;
     this.scene = this.viewer.scene;
     if (!this.scene.pickPositionSupported) {
@@ -183,6 +184,49 @@ export class CesiumService {
     if (entity) {
       viewer.entities.remove(entity);
     }
+  }
+
+  /**
+   * Returns the top-most entity at the provided window coordinates
+   * or undefined if no entity is at that location.
+   *
+   * @param {Cartesian2} windowPosition The window coordinates.
+   * @returns {Entity} The picked entity or undefined.
+   */
+  public static pickEntity(viewer:any, windowPosition:any) {
+    const picked = viewer.scene.pick(windowPosition);
+    if (Cesium.defined(picked)) {
+      const id = Cesium.defaultValue(picked.id, picked.primitive.id);
+      if (id instanceof Cesium.Entity) {
+        return id;
+      }
+    }
+    return undefined;
+  }
+
+  /**
+   * Returns the list of entities at the provided window coordinates.
+   * The entities are sorted front to back by their visual order.
+   *
+   * @param {Cartesian2} windowPosition The window coordinates.
+   * @returns {Entity[]} The picked entities or undefined.
+   */
+  public static drillPickEntities(viewer:any, windowPosition:any) {
+    let picked, entity, i;
+    const pickedPrimitives = viewer.scene.drillPick(windowPosition);
+    const length = pickedPrimitives.length;
+    const result = [];
+    const hash:any = {};
+
+    for (i = 0; i < length; i++) {
+      picked = pickedPrimitives[i];
+      entity = Cesium.defaultValue(picked.id, picked.primitive.id);
+      if (entity instanceof Cesium.Entity && !Cesium.defined(hash[entity.id])) {
+        result.push(entity);
+        hash[entity.id] = true;
+      }
+    }
+    return result;
   }
 
 }
