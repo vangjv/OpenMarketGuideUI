@@ -39,42 +39,7 @@ export class BoundaryService {
     });
   }
 
-  add3DModelButton(){
-    //add button
-    const toolbar = document.querySelector("div.cesium-viewer-toolbar");
-    const modeButton = document.querySelector("span.cesium-sceneModePicker-wrapper");
-    const myButton = document.createElement("button");
-    myButton.classList.add("cesium-button", "cesium-toolbar-button");
-    myButton.innerHTML = "M";
-    if (toolbar) {
-      toolbar.insertBefore(myButton, modeButton);
-    }
 
-    myButton.addEventListener("click", () => {
-      const position = Cesium.Cartesian3.fromDegrees(-93.34097581368697, 44.765644457141896, 300)
-      const heading = Cesium.Math.toRadians(135);
-      const pitch = 0;
-      const roll = 0;
-      const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
-      const orientation = Cesium.Transforms.headingPitchRollQuaternion(
-        position,
-        hpr
-      );
-
-      const entity = this.viewer.entities.add({
-        name: "Hot Air Balloon",
-        position: position,
-        orientation: orientation,
-        model: {
-          uri: "./assets/3dmodels/CesiumAir.glb",
-          minimumPixelSize: 128,
-          maximumScale: 20000,
-        },
-      });
-      this.viewer.trackedEntity = entity;
-    });
-
-  }
 
 
   addDrawBoundaryFunctionality(){

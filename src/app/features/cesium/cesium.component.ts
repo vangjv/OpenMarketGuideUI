@@ -10,7 +10,7 @@ import { DialogsService } from 'src/app/services/dialogs.service';
 export class CesiumComponent implements AfterViewInit, OnInit {
   showSaveBoundaryDialog:Signal<boolean> = signal(false);
   boundaryForm: FormGroup;
-  constructor(private cesiumService:CesiumService,  private formBuilder: FormBuilder, private dialogsService:DialogsService) {
+  constructor(private cesiumService:CesiumService, private formBuilder: FormBuilder, private dialogsService:DialogsService,) {
     this.boundaryForm = this.formBuilder.group({
       name: ['', Validators.required]
     });
@@ -21,7 +21,7 @@ export class CesiumComponent implements AfterViewInit, OnInit {
     //this.cesiumService.addCoordinatesOnDoubleClick();
     this.cesiumService.setHomeLocation();
     this.cesiumService.boundaryService.addDrawBoundaryButton();
-    this.cesiumService.boundaryService.add3DModelButton();
+    this.cesiumService.threeDimensionalModelService.add3DModelButton();
     // this.cesiumService.boundaryService.addDrawPolygonFunctionality();
     //this.cesiumService.addBillboardOnClick();
   }

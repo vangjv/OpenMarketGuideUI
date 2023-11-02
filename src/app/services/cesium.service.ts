@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BoundaryService } from './boundary.service';
 import { DialogsService } from './dialogs.service';
+import { ThreeDimensionalModelService } from './three-dimensional-model.service';
 declare let Cesium: any;
 // import * as Cesium from '../assets/js/Cesium.js';
 Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2MWZlOTZjMy1iYjhiLTRkYjktOWEyYS0xYjllYWM4NmQ3YjYiLCJpZCI6ODM1MzksImlhdCI6MTY2MTU0NTg0MX0.PBHIiiQPO0_kfthCfRxp4VVGlhFZp4BMKIeILBwYuqk";
@@ -13,6 +14,7 @@ export class CesiumService {
   private camera:any;
   private scene:any;
   public boundaryService!:BoundaryService;
+  public threeDimensionalModelService!:ThreeDimensionalModelService;
   constructor(private dialogsService:DialogsService) {
 
   }
@@ -23,9 +25,10 @@ export class CesiumService {
     this.viewer = new Cesium.Viewer(div, {
       selectionIndicator: false,
       infoBox: false,
-      //terrain: Cesium.Terrain.fromWorldTerrain(),
+      terrain: Cesium.Terrain.fromWorldTerrain(),
     });
     this.boundaryService = new BoundaryService(this.viewer, this.dialogsService);
+    this.threeDimensionalModelService = new ThreeDimensionalModelService(this.viewer, this.dialogsService);
     this.camera = this.viewer.camera;
     this.scene = this.viewer.scene;
     if (!this.scene.pickPositionSupported) {
