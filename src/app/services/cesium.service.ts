@@ -26,6 +26,9 @@ export class CesiumService {
       selectionIndicator: false,
       infoBox: false,
       terrain: Cesium.Terrain.fromWorldTerrain(),
+      //globe: false,
+      timeline : false,
+      animation : false
     });
     this.boundaryService = new BoundaryService(this.viewer, this.dialogsService);
     this.threeDimensionalModelService = new ThreeDimensionalModelService(this.viewer, this.dialogsService);
@@ -38,12 +41,11 @@ export class CesiumService {
     try {
       const tileset = await Cesium.createGooglePhotorealistic3DTileset();
       this.scene.primitives.add(tileset);
+      this.viewer.scene.globe.show = false; //this conflicts with google photorealistic 3d tileset
     } catch (error) {
       console.log(`Failed to load tileset: ${error}`);
     }
-    this.hideAnimationWidget();
     this.hideCesiumIonLogo();
-    this.hideTimelineWidget();
   };
 
   setHomeLocation(){
