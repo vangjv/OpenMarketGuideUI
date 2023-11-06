@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, effect, signal } from '@angular/core';
 import { CesiumService } from './cesium.service';
 import { DialogsService } from './dialogs.service';
 declare let Cesium: any;
@@ -6,40 +6,48 @@ declare let Cesium: any;
   providedIn: 'root'
 })
 export class BoundaryService {
-  private drawing:boolean = false;
   private drawHandler:any;
   private temporaryBoundaryPoints:any[] = [];
   private temporaryBoundary:any;
-  private drawnBoundary:any;
   private temporaryPoints:any[] = [];
-  constructor(@Inject('viewer') private viewer:any, private dialogsService:DialogsService) { }
+  constructor(@Inject('viewer') private viewer:any, private dialogsService:DialogsService, private cesiumService:CesiumService) { }
 
   addDrawBoundaryButton(){
     //add button
     const toolbar = document.querySelector("div.cesium-viewer-toolbar");
     const modeButton = document.querySelector("span.cesium-sceneModePicker-wrapper");
-    const myButton = document.createElement("button");
-    myButton.classList.add("cesium-button", "cesium-toolbar-button");
-    myButton.innerHTML = "+";
+    const vendorLocationButton = document.createElement("button");
+    vendorLocationButton.id = "drawBoundaryButton";
+    vendorLocationButton.classList.add("cesium-button", "cesium-toolbar-button");
+    vendorLocationButton.innerHTML = "+";
     if (toolbar) {
-      toolbar.insertBefore(myButton, modeButton);
+      toolbar.insertBefore(vendorLocationButton, modeButton);
     }
-
-    myButton.addEventListener("click", () => {
-      if (this.drawing) {
-        this.drawing = false;
-        myButton.innerHTML = "+";
-        this.removeDrawBoundaryFunctionality();
-        this.setDefaultClickFunctionality();
+    vendorLocationButton.addEventListener("click", () => {
+      if (this.cesiumService.boundaryDrawingState() == true) {
+        this.cesiumService.boundaryDrawingState.set(false);
       } else {
-        this.drawing = true;
-        myButton.innerHTML = "-";
-        this.addDrawBoundaryFunctionality();
+        this.cesiumService.boundaryDrawingState.set(true);
       }
     });
   }
 
+  enableDrawingMode(){
+    const vendorLocationButton = document.getElementById("drawBoundaryButton");
+    if (vendorLocationButton){
+      vendorLocationButton.innerHTML = "-";
+      this.addDrawBoundaryFunctionality();
+    }
+  }
 
+  disableDrawingMode(){
+    const vendorLocationButton = document.getElementById("drawBoundaryButton");
+    if (vendorLocationButton){
+      vendorLocationButton.innerHTML = "+";
+      this.removeDrawBoundaryFunctionality();
+      this.cesiumService.setDefaultClickFunctionality();
+    }
+  }
 
 
   addDrawBoundaryFunctionality(){
@@ -62,7 +70,7 @@ export class BoundaryService {
           const dynamicPositions = new Cesium.CallbackProperty(()=> {
               return new Cesium.PolygonHierarchy(this.temporaryBoundaryPoints);
           }, false);
-          this.temporaryBoundary = this.drawBoundary(dynamicPositions);
+          this.temporaryBoundary = this.drawBoundary(dynamicPositions, "temporaryBoundary", Cesium.Color.WHITE.withAlpha(0.7));
         } else {
           this.temporaryBoundaryPoints.push(earthPosition);
           this.temporaryPoints.push(this.createPoint(earthPosition));
@@ -71,24 +79,9 @@ export class BoundaryService {
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
     this.drawHandler.setInputAction((event:any)=> {
+      event.cancel = true; // Cancel right click dialog
       this.showAddBoundaryDialog();
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
-  }
-
-  setDefaultClickFunctionality(){
-    let handler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-    handler.setInputAction((event:any)=> {
-      let earthPosition;
-      // `earthPosition` will be undefined if our mouse is not over the globe.
-      let pickedObject = this.viewer.scene.pick(event.position);
-      if (Cesium.defined(pickedObject)) {
-        const id = Cesium.defaultValue(pickedObject.id, pickedObject.primitive.id);
-        if (id instanceof Cesium.Entity) {
-          console.log("object clicked:", id);
-          return id;
-        }
-      }
-    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
   }
 
   removeDrawBoundaryFunctionality(){
@@ -101,14 +94,16 @@ export class BoundaryService {
     this.dialogsService.toggleShowAddBoundaryDialog(true);
   }
 
-  completeShape(name:string) {
-    this.drawnBoundary = this.drawBoundary(this.temporaryBoundaryPoints);
-    this.drawnBoundary.name = name;
+  completeBoundary(name:string, r:number, g:number, b:number) {
+    let color = new Cesium.Color(1, 1, 1, 0.7);
+    Cesium.Color.fromBytes(r, g, b, 200, color);
     this.removeTemporaryPoints();
+    const drawnBoundary = this.drawBoundary(this.temporaryBoundaryPoints, name, color, true);
     this.viewer.entities.remove(this.temporaryBoundary);
     this.temporaryPoints = [];
     this.temporaryBoundary = undefined;
     this.temporaryBoundaryPoints = [];
+    this.cesiumService.boundaryDrawingState.set(false);
   }
 
   createPoint(worldPosition:any, guid:string = self.crypto.randomUUID()) {
@@ -124,26 +119,67 @@ export class BoundaryService {
     return point;
   }
 
-  drawBoundary(positionData:any, guid:string = self.crypto.randomUUID()) {
+  drawBoundary(positionData:any, name:string, color:any, addLabel:boolean = false, guid:string = self.crypto.randomUUID()) {
     let polygon = this.viewer.entities.add({
-        id: guid,
-        polygon: {
-          hierarchy: positionData,
-          // material: new Cesium.ColorMaterialProperty(
-          //   Cesium.Color.WHITE.withAlpha(0.7)
-          // ),
-          material: Cesium.Color.WHITE.withAlpha(0.7),
-          outline: true,
-          outlineWidth: 1,
-          outlineColor: Cesium.Color.BLACK,
-        },
-      });
+      id: guid,
+      name:name,
+      polygon: {
+        hierarchy: positionData,
+        material: new Cesium.ColorMaterialProperty(
+          color
+        ),
+        //material: color,
+        outline: true,
+        outlineWidth: 1,
+        outlineColor: Cesium.Color.BLACK,
+      },
+    });
+    if (addLabel == true) {
+      let polygonCenter = Cesium.BoundingSphere.fromPoints(positionData).center;
+      Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(polygonCenter, polygonCenter);
+      polygon.position = polygonCenter;
+      //Set up the label.
+      let label = new Cesium.LabelGraphics();
+      label.text = new Cesium.ConstantProperty(name);
+      label.font = new Cesium.ConstantProperty("14px monospace");
+      label.showBackground = new Cesium.ConstantProperty(true);
+      label.fillColor = new Cesium.ConstantProperty(Cesium.Color.WHITE);
+      label.outlineColor = new Cesium.ConstantProperty(Cesium.Color.BLACK);
+      label.outlineWidth = new Cesium.ConstantProperty(1);
+      label.style = new Cesium.ConstantProperty(Cesium.LabelStyle.FILL_AND_OUTLINE);
+      label.disableDepthTestDistance= 1.2742018*10**7;
+      label.heightReference = Cesium.HeightReference.CLAMP_TO_GROUND;
+      // label.verticalOrigin = Cesium.VerticalOrigin.BOTTOM;
+      label.eyeOffset = new Cesium.Cartesian3(0.0, 0.0, -10.0);
+      label.horizontalOrigin = Cesium.HorizontalOrigin.CENTER;
+      label.pixelOffset = new Cesium.Cartesian2(0.0, -20.0);
+      label.pixelOffsetScaleByDistance = new Cesium.NearFarScalar(1.5e2, 3.0, 1.5e7, 0.5);
+      //label.eyeOffset = new Cesium.ConstantProperty(new Cesium.Cartesian3(0, 0, -100000));
+      polygon.label = label;
+      // console.log("polygonCenter:", polygonCenter);
+      // let labelEntity = this.viewer.entities.add({
+      //   position: polygonCenter,
+      //   label: {
+      //     text: "test",
+      //   },
+      // });
+      // labelEntity.disableDepthTestDistance= 1.2742018*10**7;
+      // labelEntity.heightReference = Cesium.HeightReference.CLAMP_TO_GROUND;
+      // let philadelphia = this.viewer.entities.add({
+      //   position: Cesium.Cartesian3.fromDegrees(-75.1641667, 39.9522222),
+      //   label: {
+      //     text: "Philadelphia",
+      //   },
+      // });
+      // console.log("labelEntity:", labelEntity);
+      // this.viewer.zoomTo(labelEntity);
+    }
     return polygon;
   }
 
   removeTemporaryPoints(){
     this.temporaryPoints.forEach((point:any) => {
-      CesiumService.removeEntityById(this.viewer, point.id)
+      this.cesiumService.removeEntityById(this.viewer, point.id)
     });
   }
 

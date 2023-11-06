@@ -1,26 +1,40 @@
 import { Inject, Injectable } from '@angular/core';
 import { DialogsService } from './dialogs.service';
+import { CesiumService } from './cesium.service';
 declare let Cesium: any;
 @Injectable({
   providedIn: 'root'
 })
 export class ThreeDimensionalModelService {
 
-  constructor(@Inject('viewer') private viewer:any, private dialogsService:DialogsService) { }
+  constructor(@Inject('viewer') private viewer:any, private dialogsService:DialogsService, private cesiumService:CesiumService) { }
+
   add3DModelButton(){
     //add button
     const toolbar = document.querySelector("div.cesium-viewer-toolbar");
     const modeButton = document.querySelector("span.cesium-sceneModePicker-wrapper");
-    const myButton = document.createElement("button");
-    const cesiumContainer = document.getElementById('cesium');
-    myButton.classList.add("cesium-button", "cesium-toolbar-button");
-    myButton.innerHTML = "M";
+    const add3DModelBtn = document.createElement("button");
+    add3DModelBtn.id = "add3DModelBtn";
+    add3DModelBtn.classList.add("cesium-button", "cesium-toolbar-button");
+    add3DModelBtn.innerHTML = "M";
     if (toolbar) {
-      toolbar.insertBefore(myButton, modeButton);
+      toolbar.insertBefore(add3DModelBtn, modeButton);
     }
 
-    myButton.addEventListener("click", () => {
-      // const position = Cesium.Cartesian3.fromDegrees(-93.34097581368697, 44.765514457141896);
+    add3DModelBtn.addEventListener("click", () => {
+      if (this.cesiumService.adding3DModelState() == true) {
+        this.cesiumService.adding3DModelState.set(false);
+      } else {
+        this.cesiumService.adding3DModelState.set(true);
+      }
+    });
+  }
+
+  enableAdding3DModel(){
+    const add3DModelBtn = document.getElementById("add3DModelBtn");
+    if (add3DModelBtn)
+    {
+      add3DModelBtn.innerHTML = "X";
       const heading = Cesium.Math.toRadians(135);
       const pitch = 0;
       const roll = 0;
@@ -31,11 +45,12 @@ export class ThreeDimensionalModelService {
       // );
 
       const mouseOverEntity = this.viewer.entities.add({
+        id: "mouseOverEntity",
         name: "Raw",
         // position: position,
         // orientation: orientation,
         model: {
-          uri: "./assets/3dmodels/CesiumMilkTruck.glb"
+          uri: "./assets/3dmodels/meatmarket.glb"
         },
         heighReference:Cesium.HeightReference.CLAMP_TO_GROUND
       });
@@ -53,44 +68,55 @@ export class ThreeDimensionalModelService {
           const objectsToExclude = [mouseOverEntity];
           //entity.position = cartesian;
           mouseOverEntity.position = this.viewer.scene.clampToHeight(cartesian, objectsToExclude);
-          let clickPlaceHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-          clickPlaceHandler.setInputAction((event:any)=> {
-            let earthPosition;
-            // `earthPosition` will be undefined if our mouse is not over the globe.
-            let pickedObject = this.viewer.scene.pick(event.position);
-            if (Cesium.defined(pickedObject)) {
-              earthPosition = this.viewer.scene.pickPosition(event.position);
-            }
-            if (Cesium.defined(earthPosition)) {
-              const heading = Cesium.Math.toRadians(135);
-              const pitch = 0;
-              const roll = 0;
-              const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
-              const orientation = Cesium.Transforms.headingPitchRollQuaternion(
-                earthPosition,
-                hpr
-              );
-
-              let newEntity = this.viewer.entities.add({
-                name: "Raw",
-                position: earthPosition,
-                orientation: orientation,
-                model: {
-                  uri: "./assets/3dmodels/CesiumMilkTruck.glb"
-                },
-                // heighReference:Cesium.HeightReference.RELATIVE_TO_GROUND
-                heighReference:Cesium.HeightReference.CLAMP_TO_GROUND
-              });
-              mouseOverModelHandler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE)
-              this.viewer.remove(mouseOverEntity)
-            }
-          }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-        } else {
         }
       }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-      // this.viewer.trackedEntity = entity;
-    });
 
+      let clickPlaceHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+      clickPlaceHandler.setInputAction((event:any)=> {
+        if (this.cesiumService.adding3DModelState() == true) {
+          let earthPosition;
+          // `earthPosition` will be undefined if our mouse is not over the globe.
+          let pickedObject = this.viewer.scene.pick(event.position);
+          if (Cesium.defined(pickedObject)) {
+            earthPosition = this.viewer.scene.pickPosition(event.position);
+          }
+          if (Cesium.defined(earthPosition)) {
+            const heading = Cesium.Math.toRadians(135);
+            const pitch = 0;
+            const roll = 0;
+            const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+            const orientation = Cesium.Transforms.headingPitchRollQuaternion(
+              earthPosition,
+              hpr
+            );
+
+            let newEntity = this.viewer.entities.add({
+              name: "Raw",
+              position: earthPosition,
+              orientation: orientation,
+              model: {
+                uri: "./assets/3dmodels/meatmarket.glb"
+              },
+              // heighReference:Cesium.HeightReference.RELATIVE_TO_GROUND
+              heighReference:Cesium.HeightReference.CLAMP_TO_GROUND
+            });
+            mouseOverModelHandler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE)
+            this.viewer.entities.remove(mouseOverEntity);
+            this.cesiumService.adding3DModelState.set(false);
+          }
+        }
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    }
+  }
+
+  disableAdding3DModel() {
+    const add3DModelBtn = document.getElementById("add3DModelBtn");
+    if (add3DModelBtn)
+    {
+      add3DModelBtn.innerHTML = "M";
+      this.cesiumService.removeEntityById(this.viewer, "mouseOverEntity");
+      this.cesiumService.setDefaultClickFunctionality();
+      this.cesiumService.setDefaultHoverFunctionality();
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { BoundaryService } from './boundary.service';
 import { DialogsService } from './dialogs.service';
 import { ThreeDimensionalModelService } from './three-dimensional-model.service';
@@ -13,13 +13,13 @@ export class CesiumService {
   private viewer: any;
   private camera:any;
   private scene:any;
+  public boundaryDrawingState = signal(false);
+  public adding3DModelState = signal(false);
   public boundaryService!:BoundaryService;
   public threeDimensionalModelService!:ThreeDimensionalModelService;
   constructor(private dialogsService:DialogsService) {
 
   }
-
-
 
   async initializeMap(div:string){
     this.viewer = new Cesium.Viewer(div, {
@@ -30,8 +30,8 @@ export class CesiumService {
       timeline : false,
       animation : false
     });
-    this.boundaryService = new BoundaryService(this.viewer, this.dialogsService);
-    this.threeDimensionalModelService = new ThreeDimensionalModelService(this.viewer, this.dialogsService);
+    this.boundaryService = new BoundaryService(this.viewer, this.dialogsService, this);
+    this.threeDimensionalModelService = new ThreeDimensionalModelService(this.viewer, this.dialogsService, this);
     this.camera = this.viewer.camera;
     this.scene = this.viewer.scene;
     if (!this.scene.pickPositionSupported) {
@@ -154,37 +154,28 @@ export class CesiumService {
     document.getElementsByClassName("cesium-credit-logoContainer")[0].remove();
   }
 
-
-
-  addBillboardOnClick(){
-    var handler = new Cesium.ScreenSpaceEventHandler(this.scene.canvas);
-    handler.setInputAction((click:any)=> {
-      var pickedObject = this.scene.pick(click.position);
+  setDefaultClickFunctionality(){
+    let handler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+    handler.setInputAction((event:any)=> {
+      let earthPosition;
+      // `earthPosition` will be undefined if our mouse is not over the globe.
+      let pickedObject = this.viewer.scene.pick(event.position);
       if (Cesium.defined(pickedObject)) {
-        var cartesian = this.scene.pickPosition(click.position);
-        if (Cesium.defined(cartesian)) {
-            this.viewer.entities.add({
-                position: cartesian,
-                label: {
-                    //image: '/assets/images/hero-13.png', // Replace with the URL to your image
-                    //width: 32, // Optional: Set width in pixels
-                    //height: 32, // Optional: Set height in pixels,
-                    // disableDepthTestDistance: 1.2742018*10**7,
-                    show:true,
-                    text: 'Hello World',
-                    font : '14px monospace',
-                    disableDepthTestDistance: 1.2742018*10**7
-                    // clampToGround: true,
-                    // verticalOrigin: Cesium.VerticalOrigin.TOP,
-                    // heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                }
-            });
+        const id = Cesium.defaultValue(pickedObject.id, pickedObject.primitive.id);
+        if (id instanceof Cesium.Entity) {
+          console.log("object clicked:", id);
+          return id;
         }
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
   }
 
-  public static removeEntityById(viewer:any, entityId:string) {
+  setDefaultHoverFunctionality(){
+    let handler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+    handler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+  }
+
+  removeEntityById(viewer:any, entityId:string) {
     const entity = viewer.entities.getById(entityId);
     if (entity) {
       viewer.entities.remove(entity);

@@ -12,8 +12,8 @@ import { GoodsListingComponent } from './features/goods-listing/goods-listing.co
 import { GoodsDetailsComponent } from './features/goods-details/goods-details.component';
 import { DialogModule } from 'primeng/dialog';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
-import { AddNewBoundaryComponent } from './Dialogs/add-new-boundary/add-new-boundary.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ColorPickerModule } from 'primeng/colorpicker';
 
 @NgModule({
   declarations: [
@@ -22,8 +22,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     HomeComponent,
     LayoutComponent,
     GoodsListingComponent,
-    GoodsDetailsComponent,
-    AddNewBoundaryComponent
+    GoodsDetailsComponent
   ],
   imports: [
     BrowserModule,
@@ -34,7 +33,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     DynamicDialogModule,
     BrowserAnimationsModule,
     NoopAnimationsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ColorPickerModule
   ],
   providers: [
     DialogService
