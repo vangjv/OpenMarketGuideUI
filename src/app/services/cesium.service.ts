@@ -13,7 +13,8 @@ export class CesiumService {
   private viewer: any;
   private camera:any;
   private scene:any;
-  public boundaryDrawingState = signal(false);
+  public vendorBoundaryDrawingState = signal(false);
+  public marketBoundaryDrawingState = signal(false);
   public adding3DModelState = signal(false);
   public boundaryService!:BoundaryService;
   public threeDimensionalModelService!:ThreeDimensionalModelService;
@@ -47,6 +48,63 @@ export class CesiumService {
     }
     this.hideCesiumIonLogo();
   };
+
+  searchAndZoom(location: string) {
+    let geoCodeService = new Cesium.IonGeocoderService();
+    geoCodeService.geocode(location).then((results:any) => {
+      console.log("results", results);
+      if (results.length > 0) {
+        if (results[0].destination.east && results[0].destination.north && results[0].destination.south && results[0].destination.west) {
+          const rectangle = new Cesium.Rectangle(
+            results[0].destination.west,
+            results[0].destination.south,
+            results[0].destination.east,
+            results[0].destination.north
+          );
+          console.log("rectangle:", rectangle);
+          let rectangleCenter:any = Cesium.Rectangle.center(rectangle);
+          //Cesium.Rectangle.center(rectangle, rectangleCenter);
+          console.log("rectangleCenter:", rectangleCenter);
+          if (rectangleCenter) {
+            const destination = Cesium.Cartesian3.fromRadians(rectangleCenter.longitude, rectangleCenter.latitude, 2500);
+            console.log("destination:", destination);
+            this.viewer.camera.flyTo({
+              destination: destination,
+            });
+          }
+
+        } else {
+          const destination = Cesium.Cartesian3.fromDegrees(
+            results[0].longitude,
+            results[0].latitude
+          );
+          this.viewer.camera.flyTo({
+            destination: destination,
+          });
+        }
+      }
+    });
+    // const geocoder = new Cesium.Geocoder({
+    //   container: 'geocoderContainer',
+    //   scene: this.viewer.scene,
+    //   autoComplete: true,
+    // });
+
+    // const searchPromise = Cesium.GeocoderService.geocode(location);
+
+    // searchPromise.then((result:any) => {
+    //   if (result.length > 0) {
+    //     const destination = Cesium.Cartesian3.fromDegrees(
+    //       result[0].longitude,
+    //       result[0].latitude,
+    //       result[0].height ? result[0].height + 1000.0 : 1000.0
+    //     );
+    //     this.viewer.camera.flyTo({
+    //       destination: destination,
+    //     });
+    //   }
+    // });
+  }
 
   setHomeLocation(){
     var homeLocation = {

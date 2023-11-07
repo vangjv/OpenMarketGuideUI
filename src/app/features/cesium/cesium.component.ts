@@ -2,25 +2,28 @@ import { AfterViewInit, Component, OnInit, Signal, computed, effect, signal } fr
 import { CesiumService } from '../../services/cesium.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogsService } from 'src/app/services/dialogs.service';
+import { MenuItem, MessageService } from 'primeng/api';
 @Component({
   selector: 'app-cesium',
   templateUrl: './cesium.component.html',
   styleUrls: ['./cesium.component.scss']
 })
 export class CesiumComponent implements AfterViewInit, OnInit {
-  boundaryDrawingState:Signal<boolean>;
+  items: MenuItem[] = [];
+  vendorBoundaryDrawingState:Signal<boolean>;
   adding3DModelState:Signal<boolean>;
   showSaveBoundaryDialog:Signal<boolean> = signal(false);
   vendorLocationForm: FormGroup;
-  constructor(private cesiumService:CesiumService, private formBuilder: FormBuilder, private dialogsService:DialogsService,) {
+  constructor(private cesiumService:CesiumService, private formBuilder: FormBuilder, private dialogsService:DialogsService,
+    private messageService:MessageService) {
     this.vendorLocationForm = this.createVendorLocationForm();
-    this.boundaryDrawingState = this.cesiumService.boundaryDrawingState;
+    this.vendorBoundaryDrawingState = this.cesiumService.vendorBoundaryDrawingState;
     this.adding3DModelState = this.cesiumService.adding3DModelState;
     effect(() => {
-      if(this.boundaryDrawingState()==true){
-        this.cesiumService.boundaryService.enableDrawingMode();
+      if(this.vendorBoundaryDrawingState()==true){
+        this.cesiumService.boundaryService.enableVendorLocationDrawingMode();
       } else {
-        this.cesiumService.boundaryService.disableDrawingMode();
+        this.cesiumService.boundaryService.disableVendorLocationDrawingMode();
       }
     });
     effect(() => {
@@ -31,6 +34,35 @@ export class CesiumComponent implements AfterViewInit, OnInit {
         this.cesiumService.threeDimensionalModelService.disableAdding3DModel();
       }
     });
+    this.items = [
+      {
+          icon: 'pi pi-pencil',
+          command: () => {
+              this.messageService.add({ severity: 'info', summary: 'Add', detail: 'Data Added' });
+          }
+      },
+      {
+          icon: 'pi pi-refresh',
+          command: () => {
+              this.messageService.add({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
+          }
+      },
+      {
+          icon: 'pi pi-trash',
+          command: () => {
+              this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
+          }
+      },
+      {
+          icon: 'pi pi-upload',
+          routerLink: ['/fileupload']
+      },
+      {
+          icon: 'pi pi-external-link',
+          target: '_blank',
+          url: 'http://angular.io'
+      }
+  ];
   }
 
   createVendorLocationForm(){
@@ -60,7 +92,7 @@ export class CesiumComponent implements AfterViewInit, OnInit {
 
   saveBoundary(){
     this.dialogsService.toggleShowAddBoundaryDialog(false);
-    this.cesiumService.boundaryService.completeBoundary(this.vendorLocationForm.value.name, this.vendorLocationForm.value.color.r, this.vendorLocationForm.value.color.g, this.vendorLocationForm.value.color.b);
+    this.cesiumService.boundaryService.completeVendorBoundary(this.vendorLocationForm.value.name, this.vendorLocationForm.value.color.r, this.vendorLocationForm.value.color.g, this.vendorLocationForm.value.color.b);
     this.vendorLocationForm = this.createVendorLocationForm()
   }
 

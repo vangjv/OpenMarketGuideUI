@@ -14,6 +14,10 @@ import { DialogModule } from 'primeng/dialog';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ColorPickerModule } from 'primeng/colorpicker';
+import { SpeedDialModule } from 'primeng/speeddial';
+import { MessageService } from 'primeng/api';
+import { MarketSetupComponent } from './features/market-setup/market-setup.component';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 @NgModule({
   declarations: [
@@ -22,7 +26,8 @@ import { ColorPickerModule } from 'primeng/colorpicker';
     HomeComponent,
     LayoutComponent,
     GoodsListingComponent,
-    GoodsDetailsComponent
+    GoodsDetailsComponent,
+    MarketSetupComponent
   ],
   imports: [
     BrowserModule,
@@ -34,10 +39,13 @@ import { ColorPickerModule } from 'primeng/colorpicker';
     BrowserAnimationsModule,
     NoopAnimationsModule,
     ReactiveFormsModule,
-    ColorPickerModule
+    ColorPickerModule,
+    SpeedDialModule,
+    OverlayPanelModule
   ],
   providers: [
-    DialogService
+    DialogService,
+    MessageService
   ],
   bootstrap: [AppComponent]
 })

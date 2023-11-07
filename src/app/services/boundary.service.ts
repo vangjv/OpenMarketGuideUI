@@ -10,6 +10,7 @@ export class BoundaryService {
   private temporaryBoundaryPoints:any[] = [];
   private temporaryBoundary:any;
   private temporaryPoints:any[] = [];
+  public marketBoundary:any;
   constructor(@Inject('viewer') private viewer:any, private dialogsService:DialogsService, private cesiumService:CesiumService) { }
 
   addDrawBoundaryButton(){
@@ -24,33 +25,33 @@ export class BoundaryService {
       toolbar.insertBefore(vendorLocationButton, modeButton);
     }
     vendorLocationButton.addEventListener("click", () => {
-      if (this.cesiumService.boundaryDrawingState() == true) {
-        this.cesiumService.boundaryDrawingState.set(false);
+      if (this.cesiumService.vendorBoundaryDrawingState() == true) {
+        this.cesiumService.vendorBoundaryDrawingState.set(false);
       } else {
-        this.cesiumService.boundaryDrawingState.set(true);
+        this.cesiumService.vendorBoundaryDrawingState.set(true);
       }
     });
   }
 
-  enableDrawingMode(){
+  enableVendorLocationDrawingMode(){
     const vendorLocationButton = document.getElementById("drawBoundaryButton");
     if (vendorLocationButton){
       vendorLocationButton.innerHTML = "-";
-      this.addDrawBoundaryFunctionality();
+      this.addDrawVendorLocationFunctionality();
     }
   }
 
-  disableDrawingMode(){
+  disableVendorLocationDrawingMode(){
     const vendorLocationButton = document.getElementById("drawBoundaryButton");
     if (vendorLocationButton){
       vendorLocationButton.innerHTML = "+";
-      this.removeDrawBoundaryFunctionality();
+      this.removeVendorDrawBoundaryFunctionality();
       this.cesiumService.setDefaultClickFunctionality();
     }
   }
 
 
-  addDrawBoundaryFunctionality(){
+  addDrawVendorLocationFunctionality(){
     this.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(
       Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
     );
@@ -80,21 +81,71 @@ export class BoundaryService {
 
     this.drawHandler.setInputAction((event:any)=> {
       event.cancel = true; // Cancel right click dialog
-      this.showAddBoundaryDialog();
+      this.showAddVendoryBoundaryDialog();
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
   }
 
-  removeDrawBoundaryFunctionality(){
+  addDrawMarketBoundaryFunctionality(){
+    this.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(
+      Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
+    );
+    this.drawHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+    this.drawHandler.setInputAction((event:any)=> {
+      let earthPosition;
+      // `earthPosition` will be undefined if our mouse is not over the globe.
+      let pickedObject = this.viewer.scene.pick(event.position);
+      if (Cesium.defined(pickedObject)) {
+        earthPosition = this.viewer.scene.pickPosition(event.position);
+      }
+      if (Cesium.defined(earthPosition)) {
+        if (this.temporaryBoundaryPoints.length === 0){
+          this.temporaryPoints.push(this.createPoint(earthPosition));
+          this.temporaryBoundaryPoints.push(earthPosition);
+          const dynamicPositions = new Cesium.CallbackProperty(()=> {
+              return new Cesium.PolygonHierarchy(this.temporaryBoundaryPoints);
+          }, false);
+          this.temporaryBoundary = this.drawBoundary(dynamicPositions, "temporaryMarketBoundary", Cesium.Color.WHITE.withAlpha(0.7));
+        } else {
+          this.temporaryBoundaryPoints.push(earthPosition);
+          this.temporaryPoints.push(this.createPoint(earthPosition));
+        }
+      }
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+    this.drawHandler.setInputAction((event:any)=> {
+      event.cancel = true; // Cancel right click dialog
+      this.marketBoundary = this.completeMarketBoundary();
+    }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+  }
+
+  removeDrawMarketBoundaryFunctionality(){
     this.drawHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
     this.drawHandler.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
   }
 
-  showAddBoundaryDialog(){
-    this.removeDrawBoundaryFunctionality();
+  removeVendorDrawBoundaryFunctionality(){
+    this.drawHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    this.drawHandler.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+  }
+
+  showAddVendoryBoundaryDialog(){
+    this.removeVendorDrawBoundaryFunctionality();
     this.dialogsService.toggleShowAddBoundaryDialog(true);
   }
 
-  completeBoundary(name:string, r:number, g:number, b:number) {
+  completeMarketBoundary() {
+    let color = new Cesium.Color(1, 1, 1, 0.7);
+    this.removeTemporaryPoints();
+    const drawnBoundary = this.drawBoundary(this.temporaryBoundaryPoints, "MarketBoundary", color, true);
+    this.viewer.entities.remove(this.temporaryBoundary);
+    this.temporaryPoints = [];
+    this.temporaryBoundary = undefined;
+    this.temporaryBoundaryPoints = [];
+    this.cesiumService.vendorBoundaryDrawingState.set(false);
+    return drawnBoundary;
+  }
+
+  completeVendorBoundary(name:string, r:number, g:number, b:number) {
     let color = new Cesium.Color(1, 1, 1, 0.7);
     Cesium.Color.fromBytes(r, g, b, 200, color);
     this.removeTemporaryPoints();
@@ -103,7 +154,8 @@ export class BoundaryService {
     this.temporaryPoints = [];
     this.temporaryBoundary = undefined;
     this.temporaryBoundaryPoints = [];
-    this.cesiumService.boundaryDrawingState.set(false);
+    this.cesiumService.vendorBoundaryDrawingState.set(false);
+    return drawnBoundary;
   }
 
   createPoint(worldPosition:any, guid:string = self.crypto.randomUUID()) {
@@ -182,6 +234,5 @@ export class BoundaryService {
       this.cesiumService.removeEntityById(this.viewer, point.id)
     });
   }
-
 
 }
