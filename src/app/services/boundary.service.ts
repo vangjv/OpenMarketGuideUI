@@ -25,10 +25,10 @@ export class BoundaryService {
       toolbar.insertBefore(vendorLocationButton, modeButton);
     }
     vendorLocationButton.addEventListener("click", () => {
-      if (this.cesiumService.vendorBoundaryDrawingState() == true) {
-        this.cesiumService.vendorBoundaryDrawingState.set(false);
+      if (this.cesiumService.vendorBoundaryDrawingState.getValue() == true) {
+        this.cesiumService.vendorBoundaryDrawingState.next(false);
       } else {
-        this.cesiumService.vendorBoundaryDrawingState.set(true);
+        this.cesiumService.vendorBoundaryDrawingState.next(true);
       }
     });
   }
@@ -58,63 +58,72 @@ export class BoundaryService {
 
     this.drawHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
     this.drawHandler.setInputAction((event:any)=> {
-      let earthPosition;
-      // `earthPosition` will be undefined if our mouse is not over the globe.
-      let pickedObject = this.viewer.scene.pick(event.position);
-      if (Cesium.defined(pickedObject)) {
-        earthPosition = this.viewer.scene.pickPosition(event.position);
-      }
-      if (Cesium.defined(earthPosition)) {
-        if (this.temporaryBoundaryPoints.length === 0){
-          this.temporaryPoints.push(this.createPoint(earthPosition));
-          this.temporaryBoundaryPoints.push(earthPosition);
-          const dynamicPositions = new Cesium.CallbackProperty(()=> {
-              return new Cesium.PolygonHierarchy(this.temporaryBoundaryPoints);
-          }, false);
-          this.temporaryBoundary = this.drawBoundary(dynamicPositions, "temporaryBoundary", Cesium.Color.WHITE.withAlpha(0.7));
-        } else {
-          this.temporaryBoundaryPoints.push(earthPosition);
-          this.temporaryPoints.push(this.createPoint(earthPosition));
+      if (this.cesiumService.vendorBoundaryDrawingState.getValue() == true) {
+        let earthPosition;
+        // `earthPosition` will be undefined if our mouse is not over the globe.
+        let pickedObject = this.viewer.scene.pick(event.position);
+        if (Cesium.defined(pickedObject)) {
+          earthPosition = this.viewer.scene.pickPosition(event.position);
+        }
+        if (Cesium.defined(earthPosition)) {
+          if (this.temporaryBoundaryPoints.length === 0){
+            this.temporaryPoints.push(this.createPoint(earthPosition));
+            this.temporaryBoundaryPoints.push(earthPosition);
+            const dynamicPositions = new Cesium.CallbackProperty(()=> {
+                return new Cesium.PolygonHierarchy(this.temporaryBoundaryPoints);
+            }, false);
+            this.temporaryBoundary = this.drawBoundary(dynamicPositions, "temporaryBoundary", Cesium.Color.WHITE.withAlpha(0.7));
+          } else {
+            this.temporaryBoundaryPoints.push(earthPosition);
+            this.temporaryPoints.push(this.createPoint(earthPosition));
+          }
         }
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
     this.drawHandler.setInputAction((event:any)=> {
-      event.cancel = true; // Cancel right click dialog
-      this.showAddVendoryBoundaryDialog();
+      if (this.cesiumService.vendorBoundaryDrawingState.getValue() == true) {
+        event.cancel = true; // Cancel right click dialog
+        this.showAddVendorBoundaryDialog();
+      }
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
   }
 
-  addDrawMarketBoundaryFunctionality(){
+  addDrawMarketBoundaryFunctionality(onComplete:Function){
     this.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(
       Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
     );
     this.drawHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
     this.drawHandler.setInputAction((event:any)=> {
-      let earthPosition;
-      // `earthPosition` will be undefined if our mouse is not over the globe.
-      let pickedObject = this.viewer.scene.pick(event.position);
-      if (Cesium.defined(pickedObject)) {
-        earthPosition = this.viewer.scene.pickPosition(event.position);
-      }
-      if (Cesium.defined(earthPosition)) {
-        if (this.temporaryBoundaryPoints.length === 0){
-          this.temporaryPoints.push(this.createPoint(earthPosition));
-          this.temporaryBoundaryPoints.push(earthPosition);
-          const dynamicPositions = new Cesium.CallbackProperty(()=> {
-              return new Cesium.PolygonHierarchy(this.temporaryBoundaryPoints);
-          }, false);
-          this.temporaryBoundary = this.drawBoundary(dynamicPositions, "temporaryMarketBoundary", Cesium.Color.WHITE.withAlpha(0.7));
-        } else {
-          this.temporaryBoundaryPoints.push(earthPosition);
-          this.temporaryPoints.push(this.createPoint(earthPosition));
+      if (this.cesiumService.marketBoundaryDrawingState.getValue() == true) {
+        let earthPosition;
+        // `earthPosition` will be undefined if our mouse is not over the globe.
+        let pickedObject = this.viewer.scene.pick(event.position);
+        if (Cesium.defined(pickedObject)) {
+          earthPosition = this.viewer.scene.pickPosition(event.position);
+        }
+        if (Cesium.defined(earthPosition)) {
+          if (this.temporaryBoundaryPoints.length === 0){
+            this.temporaryPoints.push(this.createPoint(earthPosition));
+            this.temporaryBoundaryPoints.push(earthPosition);
+            const dynamicPositions = new Cesium.CallbackProperty(()=> {
+                return new Cesium.PolygonHierarchy(this.temporaryBoundaryPoints);
+            }, false);
+            this.temporaryBoundary = this.drawBoundary(dynamicPositions, "temporaryMarketBoundary", Cesium.Color.WHITE.withAlpha(0.3));
+          } else {
+            this.temporaryBoundaryPoints.push(earthPosition);
+            this.temporaryPoints.push(this.createPoint(earthPosition));
+          }
         }
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
     this.drawHandler.setInputAction((event:any)=> {
-      event.cancel = true; // Cancel right click dialog
-      this.marketBoundary = this.completeMarketBoundary();
+      if (this.cesiumService.marketBoundaryDrawingState.getValue() == true) {
+        event.cancel = true; // Cancel right click dialog
+        this.marketBoundary = this.completeMarketBoundary(onComplete);
+        this.cesiumService.marketBoundaryDrawingState.next(false);
+      }
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
   }
 
@@ -128,12 +137,12 @@ export class BoundaryService {
     this.drawHandler.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
   }
 
-  showAddVendoryBoundaryDialog(){
+  showAddVendorBoundaryDialog(){
     this.removeVendorDrawBoundaryFunctionality();
     this.dialogsService.toggleShowAddBoundaryDialog(true);
   }
 
-  completeMarketBoundary() {
+  completeMarketBoundary(onComplete:Function) {
     let color = new Cesium.Color(1, 1, 1, 0.7);
     this.removeTemporaryPoints();
     const drawnBoundary = this.drawBoundary(this.temporaryBoundaryPoints, "MarketBoundary", color, true);
@@ -141,7 +150,8 @@ export class BoundaryService {
     this.temporaryPoints = [];
     this.temporaryBoundary = undefined;
     this.temporaryBoundaryPoints = [];
-    this.cesiumService.vendorBoundaryDrawingState.set(false);
+    this.cesiumService.vendorBoundaryDrawingState.next(false);
+    onComplete();
     return drawnBoundary;
   }
 
@@ -154,7 +164,7 @@ export class BoundaryService {
     this.temporaryPoints = [];
     this.temporaryBoundary = undefined;
     this.temporaryBoundaryPoints = [];
-    this.cesiumService.vendorBoundaryDrawingState.set(false);
+    this.cesiumService.vendorBoundaryDrawingState.next(false);
     return drawnBoundary;
   }
 

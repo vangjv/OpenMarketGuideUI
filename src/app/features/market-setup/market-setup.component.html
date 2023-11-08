@@ -35,10 +35,12 @@
 <p-overlayPanel #opAddBoundary>
   <div class="p-2 max-w-30rem" [formGroup]="marketNameForm">
     <div class="text-900 font-medium mb-2 text-xl">Draw the boundary for your market. Your market will take place inside these boundaries.</div>
-    <p class="mt-0 mb-4 p-0 line-height-3">Click on points on the map to create a polygon/boundary. When you are finished, name your market and click the "Next" button.</p>
+
+    <p class="mt-0 mb-4 p-0 line-height-3">Click on the pencil icon to begin add points on the map to create a polygon/boundary. When you are finished, right click on the map to complete the boundary. Finally, name your market and click this "Next" button.</p>
     <div class="flex">
-        <input pInputText class="flex-auto mr-3" formControlName="name" (keyup.enter)="progressToAddVendorLocations()">
-        <button pButton pRipple label="Next" (click)="progressToAddVendorLocations()" [disabled]="mapSearchForm.invalid"></button>
+      <p-button icon="pi pi-pencil" class="mr-2" (click)="enableMarketBoundaryDrawingMode()"></p-button>
+      <input pInputText class="flex-auto mr-2" formControlName="name" (keyup.enter)="progressToAddVendorLocations()">
+      <button pButton pRipple label="Next" (click)="progressToAddVendorLocations()" [disabled]="mapSearchForm.invalid"></button>
     </div>
   </div>
 </p-overlayPanel>

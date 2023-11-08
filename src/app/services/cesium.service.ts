@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { BoundaryService } from './boundary.service';
 import { DialogsService } from './dialogs.service';
 import { ThreeDimensionalModelService } from './three-dimensional-model.service';
+import { BehaviorSubject } from 'rxjs';
 declare let Cesium: any;
 // import * as Cesium from '../assets/js/Cesium.js';
 Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2MWZlOTZjMy1iYjhiLTRkYjktOWEyYS0xYjllYWM4NmQ3YjYiLCJpZCI6ODM1MzksImlhdCI6MTY2MTU0NTg0MX0.PBHIiiQPO0_kfthCfRxp4VVGlhFZp4BMKIeILBwYuqk";
@@ -13,9 +14,12 @@ export class CesiumService {
   private viewer: any;
   private camera:any;
   private scene:any;
-  public vendorBoundaryDrawingState = signal(false);
-  public marketBoundaryDrawingState = signal(false);
-  public adding3DModelState = signal(false);
+  public vendorBoundaryDrawingState = new BehaviorSubject<boolean>(false);
+  public vendorBoundaryDrawingState$ = this.vendorBoundaryDrawingState.asObservable();
+  public marketBoundaryDrawingState = new BehaviorSubject<boolean>(false);
+  public marketBoundaryDrawingState$ = this.marketBoundaryDrawingState.asObservable();
+  public adding3DModelState = new BehaviorSubject<boolean>(false);
+  public adding3DModelState$ = this.adding3DModelState.asObservable();
   public boundaryService!:BoundaryService;
   public threeDimensionalModelService!:ThreeDimensionalModelService;
   constructor(private dialogsService:DialogsService) {

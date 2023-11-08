@@ -1,86 +1,87 @@
-import { AfterViewInit, Component, OnInit, Signal, computed, effect, signal, ViewChild, ElementRef } from '@angular/core';
+import { AfterViewInit, Component, OnInit, Signal, computed, effect, signal, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CesiumService } from '../../services/cesium.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogsService } from 'src/app/services/dialogs.service';
 import { MenuItem, MessageService } from 'primeng/api';
 import { SpeedDial } from 'primeng/speeddial';
 import { OverlayPanel } from 'primeng/overlaypanel';
+import { Subject, Subscription } from 'rxjs';
 @Component({
   selector: 'app-market-setup',
   templateUrl: './market-setup.component.html',
   styleUrls: ['./market-setup.component.scss']
 })
-export class MarketSetupComponent implements AfterViewInit, OnInit {
+export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
   items: MenuItem[] = [];
   @ViewChild('speedDial') speedDial!: SpeedDial;
   @ViewChild('op') overlayPanel!: OverlayPanel;
   @ViewChild('opAddBoundary') opAddBoundary!: OverlayPanel;
   mapSearchForm: FormGroup;
   marketNameForm: FormGroup;
-  marketBoundaryDrawingState:Signal<boolean>;
-  vendorBoundaryDrawingState:Signal<boolean>;
-  adding3DModelState:Signal<boolean>;
   showSaveBoundaryDialog:Signal<boolean> = signal(false);
+  subscriptions = new Subscription();
   vendorLocationForm: FormGroup;
   searchButton:any;
   speedDialButton:any;
   speedDialOriginalOnClickBehavior:any;
+  marketBoundary:any;
+  vendorBoundaries:any[] = [];
   constructor(private cesiumService:CesiumService, private formBuilder: FormBuilder, private dialogsService:DialogsService,
     private messageService:MessageService, private el: ElementRef) {
     this.mapSearchForm = this.createMapSearchForm();
     this.marketNameForm = this.createMarketNameForm();
     this.vendorLocationForm = this.createVendorLocationForm();
-    this.marketBoundaryDrawingState = this.cesiumService.marketBoundaryDrawingState;
-    this.vendorBoundaryDrawingState = this.cesiumService.vendorBoundaryDrawingState;
-    this.adding3DModelState = this.cesiumService.adding3DModelState;
-    effect(() => {
-      if(this.vendorBoundaryDrawingState()==true){
-        this.cesiumService.boundaryService.enableVendorLocationDrawingMode();
-      } else {
-        this.cesiumService.boundaryService.disableVendorLocationDrawingMode();
-      }
-    });
-    effect(() => {
-      if(this.adding3DModelState()==true){
-        this.cesiumService.threeDimensionalModelService.enableAdding3DModel();
-      } else {
-        this.cesiumService.threeDimensionalModelService.disableAdding3DModel();
-      }
-    });
-    // effect(() => {
-    //   if(this.marketBoundaryDrawingState()==true){
-    //     this.cesiumService.boundaryService.addDrawMarketBoundaryFunctionality();
-    //   } else {
-    //     this.cesiumService.boundaryService.removeDrawMarketBoundaryFunctionality();
-    //   }
-    // });
   }
 
-  createVendorLocationForm(){
-    return this.formBuilder.group({
-      name: ['', Validators.required],
-      color: [{r:255,g:255,b:255}, Validators.required]
+
+  ngOnInit(): void {
+    this.showSaveBoundaryDialog = computed(() => {
+      return this.dialogsService.showAddBoundaryDialog();
     });
   }
 
-  createMapSearchForm(){
-    return this.formBuilder.group({
-      searchString: ['', Validators.required]
-    });
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
-
-  createMarketNameForm(){
-    return this.formBuilder.group({
-      name: ['', Validators.required]
-    });
-  }
-
 
   ngAfterViewInit(): void {
     this.cesiumService.initializeMap("cesium");
     this.cesiumService.setHomeLocation();
     this.cesiumService.boundaryService.addDrawBoundaryButton();
     this.cesiumService.threeDimensionalModelService.add3DModelButton();
+    this.subscriptions.add(
+      this.cesiumService.vendorBoundaryDrawingState$.subscribe((state) => {
+        if(state==true){
+          this.cesiumService.boundaryService.enableVendorLocationDrawingMode();
+          console.log("enableVendorLocationDrawingMode");
+        } else {
+          this.cesiumService.boundaryService.disableVendorLocationDrawingMode();
+          console.log("disableVendorLocationDrawingMode");
+        }
+      })
+    );
+    this.subscriptions.add(
+      this.cesiumService.marketBoundaryDrawingState$.subscribe((state) => {
+        if(state==true){
+          this.cesiumService.boundaryService.addDrawMarketBoundaryFunctionality(this.openAddMarketBoundaryDialog);
+          console.log("addDrawMarketBoundaryFunctionality");
+        } else {
+          this.cesiumService.boundaryService.removeDrawMarketBoundaryFunctionality();
+          console.log("removeDrawMarketBoundaryFunctionality");
+        }
+      })
+    );
+    this.subscriptions.add(
+      this.cesiumService.adding3DModelState$.subscribe((state) => {
+        if(state==true){
+          this.cesiumService.threeDimensionalModelService.enableAdding3DModel();
+          console.log("enableAdding3DModel");
+        } else {
+          this.cesiumService.threeDimensionalModelService.disableAdding3DModel();
+          console.log("disableAdding3DModel");
+        }
+      })
+    );
     setTimeout(() => {
       const speedDialMenuItems = this.el.nativeElement.querySelectorAll('.p-speeddial-list');
       this.searchButton = speedDialMenuItems[0].children[0];
@@ -106,11 +107,32 @@ export class MarketSetupComponent implements AfterViewInit, OnInit {
     }, 1000);
   }
 
-  ngOnInit(): void {
-    this.showSaveBoundaryDialog = computed(() => {
-      return this.dialogsService.showAddBoundaryDialog();
-    });
 
+  createVendorLocationForm(){
+    return this.formBuilder.group({
+      name: ['', Validators.required],
+      color: [{r:255,g:255,b:255}, Validators.required]
+    });
+  }
+
+  createMapSearchForm(){
+    return this.formBuilder.group({
+      searchString: ['', Validators.required]
+    });
+  }
+
+  createMarketNameForm(){
+    return this.formBuilder.group({
+      name: ['', Validators.required]
+    });
+  }
+
+  enableMarketBoundaryDrawingMode(){
+    this.cesiumService.marketBoundaryDrawingState.next(true);
+  }
+
+  openAddMarketBoundaryDialog(){
+    this.opAddBoundary.show(null, this.speedDialButton);
   }
 
   saveBoundary(){
@@ -124,6 +146,7 @@ export class MarketSetupComponent implements AfterViewInit, OnInit {
   }
 
   progressToAddVendorLocations(){
-    this.cesiumService.boundaryService.addDrawMarketBoundaryFunctionality();
+
+
   }
 }

@@ -17,8 +17,10 @@ export class CesiumComponent implements AfterViewInit, OnInit {
   constructor(private cesiumService:CesiumService, private formBuilder: FormBuilder, private dialogsService:DialogsService,
     private messageService:MessageService) {
     this.vendorLocationForm = this.createVendorLocationForm();
-    this.vendorBoundaryDrawingState = this.cesiumService.vendorBoundaryDrawingState;
-    this.adding3DModelState = this.cesiumService.adding3DModelState;
+    // this.vendorBoundaryDrawingState = this.cesiumService.vendorBoundaryDrawingState;
+    // this.adding3DModelState = this.cesiumService.adding3DModelState;
+    this.vendorBoundaryDrawingState = signal(false);
+    this.adding3DModelState = signal(false);
     effect(() => {
       if(this.vendorBoundaryDrawingState()==true){
         this.cesiumService.boundaryService.enableVendorLocationDrawingMode();

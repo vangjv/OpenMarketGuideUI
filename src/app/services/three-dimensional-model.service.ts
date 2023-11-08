@@ -22,10 +22,10 @@ export class ThreeDimensionalModelService {
     }
 
     add3DModelBtn.addEventListener("click", () => {
-      if (this.cesiumService.adding3DModelState() == true) {
-        this.cesiumService.adding3DModelState.set(false);
+      if (this.cesiumService.adding3DModelState.getValue() == true) {
+        this.cesiumService.adding3DModelState.next(false);
       } else {
-        this.cesiumService.adding3DModelState.set(true);
+        this.cesiumService.adding3DModelState.next(true);
       }
     });
   }
@@ -92,7 +92,7 @@ export class ThreeDimensionalModelService {
 
       let clickPlaceHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
       clickPlaceHandler.setInputAction((event:any)=> {
-        if (this.cesiumService.adding3DModelState() == true) {
+        if (this.cesiumService.adding3DModelState.getValue() == true) {
           let earthPosition;
           // `earthPosition` will be undefined if our mouse is not over the globe.
           let pickedObject = this.viewer.scene.pick(event.position);
@@ -121,7 +121,7 @@ export class ThreeDimensionalModelService {
             });
             //mouseOverModelHandler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE)
             this.viewer.entities.remove(mouseOverEntity);
-            this.cesiumService.adding3DModelState.set(false);
+            this.cesiumService.adding3DModelState.next(false);
           }
         }
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
