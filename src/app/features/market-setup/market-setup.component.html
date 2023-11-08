@@ -38,7 +38,8 @@
 
     <p class="mt-0 mb-4 p-0 line-height-3">Click on the pencil icon to begin add points on the map to create a polygon/boundary. When you are finished, right click on the map to complete the boundary. Finally, name your market and click this "Next" button.</p>
     <div class="flex">
-      <p-button icon="pi pi-pencil" class="mr-2" (click)="enableMarketBoundaryDrawingMode()"></p-button>
+      <p-button icon="pi pi-pencil" class="mr-2" (click)="enableMarketBoundaryDrawingMode()" *ngIf="marketBoundary == undefined"></p-button>
+      <p-button icon="pi pi-undo" class="mr-2" (click)="resetMarketBoundary()" *ngIf="marketBoundary != undefined"></p-button>
       <input pInputText class="flex-auto mr-2" formControlName="name" (keyup.enter)="progressToAddVendorLocations()">
       <button pButton pRipple label="Next" (click)="progressToAddVendorLocations()" [disabled]="mapSearchForm.invalid"></button>
     </div>

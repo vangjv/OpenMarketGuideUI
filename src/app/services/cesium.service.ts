@@ -11,9 +11,7 @@ Cesium.GoogleMaps.defaultApiKey = "AIzaSyCGia9D0eVwiSKfTEHMKIMPecAar40kqoc";
   providedIn: 'root'
 })
 export class CesiumService {
-  private viewer: any;
-  private camera:any;
-  private scene:any;
+  public viewer: any;
   public vendorBoundaryDrawingState = new BehaviorSubject<boolean>(false);
   public vendorBoundaryDrawingState$ = this.vendorBoundaryDrawingState.asObservable();
   public marketBoundaryDrawingState = new BehaviorSubject<boolean>(false);
@@ -37,15 +35,13 @@ export class CesiumService {
     });
     this.boundaryService = new BoundaryService(this.viewer, this.dialogsService, this);
     this.threeDimensionalModelService = new ThreeDimensionalModelService(this.viewer, this.dialogsService, this);
-    this.camera = this.viewer.camera;
-    this.scene = this.viewer.scene;
-    if (!this.scene.pickPositionSupported) {
+    if (!this.viewer.scene.pickPositionSupported) {
       window.alert("This browser does not support pickPosition.");
     }
 
     try {
       const tileset = await Cesium.createGooglePhotorealistic3DTileset();
-      this.scene.primitives.add(tileset);
+      this.viewer.scene.primitives.add(tileset);
       this.viewer.scene.globe.show = false; //this conflicts with google photorealistic 3d tileset
     } catch (error) {
       console.log(`Failed to load tileset: ${error}`);
@@ -121,12 +117,12 @@ export class CesiumService {
     // Override the home button behavior
     this.viewer.homeButton.viewModel.command.beforeExecute.addEventListener((e:any)=> {
         e.cancel = true; // Cancel the default home button behavior
-        this.scene.camera.setView(homeLocation); // Set the new home location
+        this.viewer.scene.camera.setView(homeLocation); // Set the new home location
     });
   }
 
   setCoordinates(longitude:number, latitude:number, height:number) {
-    this.camera.flyTo({
+    this.viewer.camera.flyTo({
         destination: Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
         orientation: {
             heading: Cesium.Math.toRadians(0),
@@ -137,11 +133,11 @@ export class CesiumService {
   }
 
   addCoordinatesOnDoubleClick(){
-    var handler = new Cesium.ScreenSpaceEventHandler(this.scene.canvas);
+    var handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
     handler.setInputAction((click:any)=> {
-        var pickedObject = this.scene.pick(click.position);
+        var pickedObject = this.viewer.scene.pick(click.position);
         if (Cesium.defined(pickedObject)) {
-            var cartesian = this.scene.pickPosition(click.position);
+            var cartesian = this.viewer.scene.pickPosition(click.position);
             if (cartesian) {
                 var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
                 var longitude = Cesium.Math.toDegrees(cartographic.longitude);
@@ -172,11 +168,11 @@ export class CesiumService {
       },
     });
 
-    let handler = new Cesium.ScreenSpaceEventHandler(this.scene.canvas);
+    let handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
     handler.setInputAction((movement:any) => {
-      const cartesian = this.camera.pickEllipsoid(
+      const cartesian = this.viewer.camera.pickEllipsoid(
         movement.endPosition,
-        this.scene.globe.ellipsoid
+        this.viewer.scene.globe.ellipsoid
       );
       if (cartesian) {
         const cartographic = Cesium.Cartographic.fromCartesian(

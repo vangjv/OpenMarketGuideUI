@@ -1,6 +1,7 @@
 import { Inject, Injectable, effect, signal } from '@angular/core';
 import { CesiumService } from './cesium.service';
 import { DialogsService } from './dialogs.service';
+import { BehaviorSubject } from 'rxjs';
 declare let Cesium: any;
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,8 @@ export class BoundaryService {
   private temporaryBoundaryPoints:any[] = [];
   private temporaryBoundary:any;
   private temporaryPoints:any[] = [];
-  public marketBoundary:any;
+  public marketBoundary = new BehaviorSubject<any>(undefined);
+  public marketBoundary$ = this.marketBoundary.asObservable();
   constructor(@Inject('viewer') private viewer:any, private dialogsService:DialogsService, private cesiumService:CesiumService) { }
 
   addDrawBoundaryButton(){
@@ -89,7 +91,7 @@ export class BoundaryService {
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
   }
 
-  addDrawMarketBoundaryFunctionality(onComplete:Function){
+  addDrawMarketBoundaryFunctionality(){
     this.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(
       Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
     );
@@ -121,7 +123,7 @@ export class BoundaryService {
     this.drawHandler.setInputAction((event:any)=> {
       if (this.cesiumService.marketBoundaryDrawingState.getValue() == true) {
         event.cancel = true; // Cancel right click dialog
-        this.marketBoundary = this.completeMarketBoundary(onComplete);
+        this.completeMarketBoundary();
         this.cesiumService.marketBoundaryDrawingState.next(false);
       }
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
@@ -142,16 +144,16 @@ export class BoundaryService {
     this.dialogsService.toggleShowAddBoundaryDialog(true);
   }
 
-  completeMarketBoundary(onComplete:Function) {
+  completeMarketBoundary() {
     let color = new Cesium.Color(1, 1, 1, 0.7);
     this.removeTemporaryPoints();
-    const drawnBoundary = this.drawBoundary(this.temporaryBoundaryPoints, "MarketBoundary", color, true);
+    const drawnBoundary = this.drawBoundary(this.temporaryBoundaryPoints, "MarketBoundary", color, true, "marketBoundary");
     this.viewer.entities.remove(this.temporaryBoundary);
     this.temporaryPoints = [];
     this.temporaryBoundary = undefined;
     this.temporaryBoundaryPoints = [];
     this.cesiumService.vendorBoundaryDrawingState.next(false);
-    onComplete();
+    this.marketBoundary.next(drawnBoundary);
     return drawnBoundary;
   }
 

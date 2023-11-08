@@ -24,7 +24,7 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
   searchButton:any;
   speedDialButton:any;
   speedDialOriginalOnClickBehavior:any;
-  marketBoundary:any;
+  marketBoundary!:any;
   vendorBoundaries:any[] = [];
   constructor(private cesiumService:CesiumService, private formBuilder: FormBuilder, private dialogsService:DialogsService,
     private messageService:MessageService, private el: ElementRef) {
@@ -63,7 +63,7 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
     this.subscriptions.add(
       this.cesiumService.marketBoundaryDrawingState$.subscribe((state) => {
         if(state==true){
-          this.cesiumService.boundaryService.addDrawMarketBoundaryFunctionality(this.openAddMarketBoundaryDialog);
+          this.cesiumService.boundaryService.addDrawMarketBoundaryFunctionality();
           console.log("addDrawMarketBoundaryFunctionality");
         } else {
           this.cesiumService.boundaryService.removeDrawMarketBoundaryFunctionality();
@@ -79,6 +79,15 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
         } else {
           this.cesiumService.threeDimensionalModelService.disableAdding3DModel();
           console.log("disableAdding3DModel");
+        }
+      })
+    );
+    //monitor market boundary completed
+    this.subscriptions.add(
+      this.cesiumService.boundaryService.marketBoundary$.subscribe((marketBoundary) => {
+        if(marketBoundary){
+          this.marketBoundary = marketBoundary;
+          console.log("marketBoundary:", this.marketBoundary);
         }
       })
     );
@@ -131,7 +140,10 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cesiumService.marketBoundaryDrawingState.next(true);
   }
 
-  openAddMarketBoundaryDialog(){
+  openAddMarketBoundaryDialog(marketBoundary:any){
+    console.log(marketBoundary);
+    this.marketBoundary = marketBoundary._polygon._hierarchy._value.positions;
+    console.log(this.marketBoundary);
     this.opAddBoundary.show(null, this.speedDialButton);
   }
 
@@ -145,8 +157,12 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cesiumService.searchAndZoom(this.mapSearchForm.get('searchString')?.value);
   }
 
-  progressToAddVendorLocations(){
+  resetMarketBoundary(){
+    this.marketBoundary = undefined;
+    this.cesiumService.removeEntityById(this.cesiumService.viewer, "marketBoundary");
+  }
 
+  progressToAddVendorLocations(){
 
   }
 }
