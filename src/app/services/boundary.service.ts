@@ -2,6 +2,7 @@ import { Inject, Injectable, effect, signal } from '@angular/core';
 import { CesiumService } from './cesium.service';
 import { DialogsService } from './dialogs.service';
 import { BehaviorSubject } from 'rxjs';
+import { MapMode } from '../shared/models/map-mode.enum';
 declare let Cesium: any;
 @Injectable({
   providedIn: 'root'
@@ -60,7 +61,7 @@ export class BoundaryService {
 
     this.drawHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
     this.drawHandler.setInputAction((event:any)=> {
-      if (this.cesiumService.vendorBoundaryDrawingState.getValue() == true) {
+      if (this.cesiumService.mapMode.getValue() == MapMode.VendorBoundaryDrawing) {
         let earthPosition;
         // `earthPosition` will be undefined if our mouse is not over the globe.
         let pickedObject = this.viewer.scene.pick(event.position);
@@ -84,20 +85,20 @@ export class BoundaryService {
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
     this.drawHandler.setInputAction((event:any)=> {
-      if (this.cesiumService.vendorBoundaryDrawingState.getValue() == true) {
+      if (this.cesiumService.mapMode.getValue() == MapMode.VendorBoundaryDrawing) {
         event.cancel = true; // Cancel right click dialog
         this.showAddVendorBoundaryDialog();
       }
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
   }
 
-  addDrawMarketBoundaryFunctionality(){
+  enableDrawMarketBoundaryFunctionallity(){
     this.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(
       Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
     );
     this.drawHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
     this.drawHandler.setInputAction((event:any)=> {
-      if (this.cesiumService.marketBoundaryDrawingState.getValue() == true) {
+      if (this.cesiumService.mapMode.getValue() == MapMode.MarketBoundaryDrawing) {
         let earthPosition;
         // `earthPosition` will be undefined if our mouse is not over the globe.
         let pickedObject = this.viewer.scene.pick(event.position);
@@ -121,7 +122,7 @@ export class BoundaryService {
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
     this.drawHandler.setInputAction((event:any)=> {
-      if (this.cesiumService.marketBoundaryDrawingState.getValue() == true) {
+      if (this.cesiumService.mapMode.getValue() == MapMode.MarketBoundaryDrawing) {
         event.cancel = true; // Cancel right click dialog
         this.completeMarketBoundary();
         this.cesiumService.marketBoundaryDrawingState.next(false);

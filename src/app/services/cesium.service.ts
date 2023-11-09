@@ -3,10 +3,13 @@ import { BoundaryService } from './boundary.service';
 import { DialogsService } from './dialogs.service';
 import { ThreeDimensionalModelService } from './three-dimensional-model.service';
 import { BehaviorSubject } from 'rxjs';
+import { MapMode } from '../shared/models/map-mode.enum';
+
 declare let Cesium: any;
 // import * as Cesium from '../assets/js/Cesium.js';
 Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2MWZlOTZjMy1iYjhiLTRkYjktOWEyYS0xYjllYWM4NmQ3YjYiLCJpZCI6ODM1MzksImlhdCI6MTY2MTU0NTg0MX0.PBHIiiQPO0_kfthCfRxp4VVGlhFZp4BMKIeILBwYuqk";
 Cesium.GoogleMaps.defaultApiKey = "AIzaSyCGia9D0eVwiSKfTEHMKIMPecAar40kqoc";
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,6 +23,9 @@ export class CesiumService {
   public adding3DModelState$ = this.adding3DModelState.asObservable();
   public boundaryService!:BoundaryService;
   public threeDimensionalModelService!:ThreeDimensionalModelService;
+
+  public mapMode:BehaviorSubject<MapMode> = new BehaviorSubject<MapMode>(MapMode.EntitySelection);
+  public mapMode$ = this.mapMode.asObservable();
   constructor(private dialogsService:DialogsService) {
 
   }
@@ -33,6 +39,7 @@ export class CesiumService {
       timeline : false,
       animation : false
     });
+    this.hideFullScreenButton();
     this.boundaryService = new BoundaryService(this.viewer, this.dialogsService, this);
     this.threeDimensionalModelService = new ThreeDimensionalModelService(this.viewer, this.dialogsService, this);
     if (!this.viewer.scene.pickPositionSupported) {
@@ -210,6 +217,10 @@ export class CesiumService {
 
   hideCesiumIonLogo(){
     document.getElementsByClassName("cesium-credit-logoContainer")[0].remove();
+  }
+
+  hideFullScreenButton(){
+    this.viewer._fullscreenButton._container.style.visibility = 'hidden';
   }
 
   setDefaultClickFunctionality(){

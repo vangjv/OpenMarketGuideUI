@@ -1,12 +1,15 @@
 import { Inject, Injectable } from '@angular/core';
 import { DialogsService } from './dialogs.service';
 import { CesiumService } from './cesium.service';
+import { MapMode } from '../shared/models/map-mode.enum';
+import { BehaviorSubject } from 'rxjs';
 declare let Cesium: any;
 @Injectable({
   providedIn: 'root'
 })
 export class ThreeDimensionalModelService {
-
+  public new3dModel = new BehaviorSubject<any>(undefined);
+  public new3dModel$ = this.new3dModel.asObservable();
   constructor(@Inject('viewer') private viewer:any, private dialogsService:DialogsService, private cesiumService:CesiumService) { }
 
   add3DModelButton(){
@@ -22,10 +25,10 @@ export class ThreeDimensionalModelService {
     }
 
     add3DModelBtn.addEventListener("click", () => {
-      if (this.cesiumService.adding3DModelState.getValue() == true) {
-        this.cesiumService.adding3DModelState.next(false);
+      if (this.cesiumService.mapMode.getValue() == MapMode.ThreeDModelPlacement) {
+        this.cesiumService.mapMode.next(MapMode.EntitySelection);
       } else {
-        this.cesiumService.adding3DModelState.next(true);
+        this.cesiumService.mapMode.next(MapMode.ThreeDModelPlacement);
       }
     });
   }
@@ -59,17 +62,17 @@ export class ThreeDimensionalModelService {
       //   hpr
       // );
 
-      const mouseOverEntity = this.viewer.entities.add({
-        id: "mouseOverEntity",
-        name: "Raw",
-        // position: position,
-        // orientation: orientation,
-        model: {
-          uri: "./assets/3dmodels/meatmarket.glb"
-        },
-        clampToGround: true
-        // heightReference:Cesium.HeightReference.CLAMP_TO_GROUND
-      });
+      // const mouseOverEntity = this.viewer.entities.add({
+      //   id: "mouseOverEntity",
+      //   name: "Raw",
+      //   // position: position,
+      //   // orientation: orientation,
+      //   model: {
+      //     uri: "./assets/3dmodels/meatmarket.glb"
+      //   },
+      //   clampToGround: true
+      //   // heightReference:Cesium.HeightReference.CLAMP_TO_GROUND
+      // });
 
       // let mouseOverModelHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
       // mouseOverModelHandler.setInputAction((movement:any) => {
@@ -92,7 +95,7 @@ export class ThreeDimensionalModelService {
 
       let clickPlaceHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
       clickPlaceHandler.setInputAction((event:any)=> {
-        if (this.cesiumService.adding3DModelState.getValue() == true) {
+        if (this.cesiumService.mapMode.getValue() == MapMode.ThreeDModelPlacement) {
           let earthPosition;
           // `earthPosition` will be undefined if our mouse is not over the globe.
           let pickedObject = this.viewer.scene.pick(event.position);
@@ -114,14 +117,17 @@ export class ThreeDimensionalModelService {
               position: earthPosition,
               orientation: orientation,
               model: {
-                uri: "./assets/3dmodels/meatmarket.glb"
+                uri: "./assets/3dmodels/meatmarket.glb",
+                silhouetteColor: Cesium.Color.WHITE,
+                silhouetteSize: 2
               },
               // heighReference:Cesium.HeightReference.RELATIVE_TO_GROUND
               heighReference:Cesium.HeightReference.CLAMP_TO_GROUND
             });
+            this.new3dModel.next(newEntity);
             //mouseOverModelHandler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE)
-            this.viewer.entities.remove(mouseOverEntity);
-            this.cesiumService.adding3DModelState.next(false);
+            // this.viewer.entities.remove(mouseOverEntity);
+            this.cesiumService.mapMode.next(MapMode.EntitySelection);
           }
         }
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);

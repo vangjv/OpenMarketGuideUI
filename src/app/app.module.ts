@@ -18,6 +18,7 @@ import { SpeedDialModule } from 'primeng/speeddial';
 import { MessageService } from 'primeng/api';
 import { MarketSetupComponent } from './features/market-setup/market-setup.component';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { SidebarModule } from 'primeng/sidebar';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
     ReactiveFormsModule,
     ColorPickerModule,
     SpeedDialModule,
-    OverlayPanelModule
+    OverlayPanelModule,
+    SidebarModule
   ],
   providers: [
     DialogService,

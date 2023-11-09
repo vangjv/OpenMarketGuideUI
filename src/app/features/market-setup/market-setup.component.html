@@ -1,6 +1,19 @@
 <div id="cesium"></div>
 <div id="geocoderContainer"></div>
 <p-speedDial [model]="items" direction="right" showIcon="pi pi-map" hideIcon="pi pi-times" #speedDial></p-speedDial>
+<p-sidebar [(visible)]="showSidebar" position="right">
+  <h3>Right Sidebar</h3>
+</p-sidebar>
+<!-- <div class="card">
+  <div style="height: 100vh; position: relative;" class="speeddial-circle-omg">
+    <p-speedDial [model]="items" direction="down"></p-speedDial>
+  </div>
+</div> -->
+<div class="card">
+  <div class="next-step-button">
+    <button pButton pRipple label="Next" (click)="progressStep($event)" [disabled]="nextDisabled"></button>
+  </div>
+</div>
 <p-dialog header="Save Vendor Spot" [visible]="showSaveBoundaryDialog()" position="bottom" [style]="{ width: '50vw' }">
   <div class="card" [formGroup]="vendorLocationForm">
     <div class="field">
@@ -24,7 +37,7 @@
 <p-overlayPanel #op>
   <div class="p-2 max-w-30rem" [formGroup]="mapSearchForm">
     <div class="text-900 font-medium mb-2 text-xl">Let's get started</div>
-    <p class="mt-0 mb-4 p-0 line-height-3">Enter the address or landmark where your market will be. When you are finished click the pencil to draw your market boundaries.</p>
+    <p class="mt-0 mb-4 p-0 line-height-3">Enter the address or landmark where your market will be. When you are finished, click the "Next" button.</p>
     <div class="flex">
         <input pInputText class="flex-auto mr-3" formControlName="searchString" (keyup.enter)="searchAndZoom()">
         <button pButton pRipple label="Search" (click)="searchAndZoom()" [disabled]="mapSearchForm.invalid"></button>
@@ -35,13 +48,11 @@
 <p-overlayPanel #opAddBoundary>
   <div class="p-2 max-w-30rem" [formGroup]="marketNameForm">
     <div class="text-900 font-medium mb-2 text-xl">Draw the boundary for your market. Your market will take place inside these boundaries.</div>
-
     <p class="mt-0 mb-4 p-0 line-height-3">Click on the pencil icon to begin add points on the map to create a polygon/boundary. When you are finished, right click on the map to complete the boundary. Finally, name your market and click this "Next" button.</p>
     <div class="flex">
       <p-button icon="pi pi-pencil" class="mr-2" (click)="enableMarketBoundaryDrawingMode()" *ngIf="marketBoundary == undefined"></p-button>
       <p-button icon="pi pi-undo" class="mr-2" (click)="resetMarketBoundary()" *ngIf="marketBoundary != undefined"></p-button>
       <input pInputText class="flex-auto mr-2" formControlName="name" (keyup.enter)="progressToAddVendorLocations()">
-      <button pButton pRipple label="Next" (click)="progressToAddVendorLocations()" [disabled]="mapSearchForm.invalid"></button>
     </div>
   </div>
 </p-overlayPanel>

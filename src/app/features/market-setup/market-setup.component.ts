@@ -6,6 +6,7 @@ import { MenuItem, MessageService } from 'primeng/api';
 import { SpeedDial } from 'primeng/speeddial';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { Subject, Subscription } from 'rxjs';
+import { MapMode } from 'src/app/shared/models/map-mode.enum';
 @Component({
   selector: 'app-market-setup',
   templateUrl: './market-setup.component.html',
@@ -25,7 +26,13 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
   speedDialButton:any;
   speedDialOriginalOnClickBehavior:any;
   marketBoundary!:any;
+  new3dModel!:any;
+  selectedEntity:any;
   vendorBoundaries:any[] = [];
+  showSidebar:boolean = false;
+  nextDisabled:boolean = false;
+  stepState:number = 1;
+  mapMode:MapMode = MapMode.EntitySelection;
   constructor(private cesiumService:CesiumService, private formBuilder: FormBuilder, private dialogsService:DialogsService,
     private messageService:MessageService, private el: ElementRef) {
     this.mapSearchForm = this.createMapSearchForm();
@@ -50,35 +57,19 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cesiumService.boundaryService.addDrawBoundaryButton();
     this.cesiumService.threeDimensionalModelService.add3DModelButton();
     this.subscriptions.add(
-      this.cesiumService.vendorBoundaryDrawingState$.subscribe((state) => {
-        if(state==true){
+      this.cesiumService.mapMode$.subscribe((mode) => {
+        console.log("mapMode:", mode);
+        if(mode == MapMode.EntitySelection){
+          this.cesiumService.setDefaultClickFunctionality();
+        } else if (mode == MapMode.MarketBoundaryDrawing) {
+          this.cesiumService.boundaryService.enableDrawMarketBoundaryFunctionallity();
+          console.log("enableVendorLocationDrawingMode");
+        } else if (mode == MapMode.VendorBoundaryDrawing) {
           this.cesiumService.boundaryService.enableVendorLocationDrawingMode();
           console.log("enableVendorLocationDrawingMode");
-        } else {
-          this.cesiumService.boundaryService.disableVendorLocationDrawingMode();
-          console.log("disableVendorLocationDrawingMode");
-        }
-      })
-    );
-    this.subscriptions.add(
-      this.cesiumService.marketBoundaryDrawingState$.subscribe((state) => {
-        if(state==true){
-          this.cesiumService.boundaryService.addDrawMarketBoundaryFunctionality();
-          console.log("addDrawMarketBoundaryFunctionality");
-        } else {
-          this.cesiumService.boundaryService.removeDrawMarketBoundaryFunctionality();
-          console.log("removeDrawMarketBoundaryFunctionality");
-        }
-      })
-    );
-    this.subscriptions.add(
-      this.cesiumService.adding3DModelState$.subscribe((state) => {
-        if(state==true){
+        } else if (mode == MapMode.ThreeDModelPlacement) {
           this.cesiumService.threeDimensionalModelService.enableAdding3DModel();
-          console.log("enableAdding3DModel");
-        } else {
-          this.cesiumService.threeDimensionalModelService.disableAdding3DModel();
-          console.log("disableAdding3DModel");
+          console.log("enable3dModelPlacement");
         }
       })
     );
@@ -87,7 +78,16 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
       this.cesiumService.boundaryService.marketBoundary$.subscribe((marketBoundary) => {
         if(marketBoundary){
           this.marketBoundary = marketBoundary;
+          this.opAddBoundary.show(null, this.speedDialButton);
           console.log("marketBoundary:", this.marketBoundary);
+        }
+      })
+    );
+    this.subscriptions.add(
+      this.cesiumService.threeDimensionalModelService.new3dModel$.subscribe((new3dModel) => {
+        if(new3dModel){
+          this.new3dModel = new3dModel;
+          console.log("new3dModel:", this.new3dModel);
         }
       })
     );
@@ -96,24 +96,43 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
       this.searchButton = speedDialMenuItems[0].children[0];
       const speedDialButton = this.el.nativeElement.querySelectorAll('.p-speeddial-button ');
       this.speedDialButton = speedDialButton[0];
+      this.speedDial.onButtonClick = (event) => {
+        this.overlayPanel.show(event, this.speedDialButton);
+      };
       this.overlayPanel.show(null, this.speedDialButton);
-      this.items = [
-        {
-          icon: 'pi pi-search',
-          command: (click) => {
-            const speedDialMenuItems = this.el.nativeElement.querySelectorAll('.p-speeddial-list');
-            this.searchButton = speedDialMenuItems[0].children[0];
-            this.overlayPanel.show(click.originalEvent, this.speedDialButton);
-          }
-        },
-        {
-          icon: 'pi pi-pencil',
-          command: (click) => {
-            this.opAddBoundary.show(click.originalEvent, this.speedDialButton);
-          }
-        }
-      ];
+      // this.items = [
+      //   {
+      //     icon: 'pi pi-search',
+      //     command: (click) => {
+      //       const speedDialMenuItems = this.el.nativeElement.querySelectorAll('.p-speeddial-list');
+      //       this.searchButton = speedDialMenuItems[0].children[0];
+      //       this.overlayPanel.show(click.originalEvent, this.speedDialButton);
+      //     },
+      //     tooltipOptions: {
+      //       tooltipLabel: 'Map search'
+      //     },
+      //   },
+      //   {
+      //     icon: 'pi pi-pencil',
+      //     command: (click) => {
+      //       this.opAddBoundary.show(click.originalEvent, this.speedDialButton);
+      //     },
+      //     tooltipOptions: {
+      //       tooltipLabel: 'Draw market boundary'
+      //     },
+      //   }
+      // ];
     }, 1000);
+  }
+
+  progressStep(event:any){
+    this.stepState++;
+    if (this.stepState == 2) {
+      this.speedDial.onButtonClick = (event) => {
+        this.opAddBoundary.show(event, this.speedDialButton);
+      };
+      this.opAddBoundary.show(event, this.speedDialButton);
+    }
   }
 
 
@@ -137,7 +156,7 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   enableMarketBoundaryDrawingMode(){
-    this.cesiumService.marketBoundaryDrawingState.next(true);
+    this.cesiumService.mapMode.next(MapMode.MarketBoundaryDrawing);
   }
 
   openAddMarketBoundaryDialog(marketBoundary:any){
