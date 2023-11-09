@@ -23,9 +23,11 @@ export class CesiumService {
   public adding3DModelState$ = this.adding3DModelState.asObservable();
   public boundaryService!:BoundaryService;
   public threeDimensionalModelService!:ThreeDimensionalModelService;
-
+  public selectedEntity = new BehaviorSubject<any>(undefined);
+  public selectedEntity$ = this.selectedEntity.asObservable();
   public mapMode:BehaviorSubject<MapMode> = new BehaviorSubject<MapMode>(MapMode.EntitySelection);
   public mapMode$ = this.mapMode.asObservable();
+  private clickHandler:any;
   constructor(private dialogsService:DialogsService) {
 
   }
@@ -223,18 +225,22 @@ export class CesiumService {
     this.viewer._fullscreenButton._container.style.visibility = 'hidden';
   }
 
-  setDefaultClickFunctionality(){
-    let handler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-    handler.setInputAction((event:any)=> {
-      let earthPosition;
+  enableEntitySelectionMode(){
+    this.clickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+    this.clickHandler .setInputAction((event:any)=> {
       // `earthPosition` will be undefined if our mouse is not over the globe.
       let pickedObject = this.viewer.scene.pick(event.position);
       if (Cesium.defined(pickedObject)) {
         const id = Cesium.defaultValue(pickedObject.id, pickedObject.primitive.id);
         if (id instanceof Cesium.Entity) {
           console.log("object clicked:", id);
+          this.selectedEntity.next(id);
           return id;
+        } else {
+          this.selectedEntity.next(undefined);
         }
+      } else {
+        this.selectedEntity.next(undefined);
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
   }
@@ -250,6 +256,30 @@ export class CesiumService {
       viewer.entities.remove(entity);
     }
   }
+
+  highlightEntity(entity:any) {
+    entity.model.silhouetteColor = Cesium.Color.WHITE; // Silhouette color
+    entity.model.silhouetteSize = 2.0; // Silhouette size
+  }
+
+  removeHighlightFromAllEntities() {
+    if (this.viewer.entities._entities._array.length > 0 ) {
+      this.viewer.entities._entities._array.forEach((entity:any) => {
+        entity.model.silhouetteColor = Cesium.Color.TRANSPARENT; // Silhouette color
+        entity.model.silhouetteSize = 0.0; // Silhouette size
+      });
+    }
+  }
+
+  resetLeftandRightClickHandlers(){
+    if (this.clickHandler) {
+      this.clickHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      this.clickHandler.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+    }
+    this.boundaryService.resetLeftandRightClickHandler();
+    this.threeDimensionalModelService.resetLeftandRightClickHandler();
+  }
+
 
   /**
    * Returns the top-most entity at the provided window coordinates

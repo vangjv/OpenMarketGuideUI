@@ -10,6 +10,7 @@ declare let Cesium: any;
 export class ThreeDimensionalModelService {
   public new3dModel = new BehaviorSubject<any>(undefined);
   public new3dModel$ = this.new3dModel.asObservable();
+  public clickHandler:any;
   constructor(@Inject('viewer') private viewer:any, private dialogsService:DialogsService, private cesiumService:CesiumService) { }
 
   add3DModelButton(){
@@ -93,8 +94,8 @@ export class ThreeDimensionalModelService {
       //   }
       // }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-      let clickPlaceHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-      clickPlaceHandler.setInputAction((event:any)=> {
+      this.clickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+      this.clickHandler.setInputAction((event:any)=> {
         if (this.cesiumService.mapMode.getValue() == MapMode.ThreeDModelPlacement) {
           let earthPosition;
           // `earthPosition` will be undefined if our mouse is not over the globe.
@@ -117,9 +118,7 @@ export class ThreeDimensionalModelService {
               position: earthPosition,
               orientation: orientation,
               model: {
-                uri: "./assets/3dmodels/meatmarket.glb",
-                silhouetteColor: Cesium.Color.WHITE,
-                silhouetteSize: 2
+                uri: "./assets/3dmodels/meatmarket.glb"
               },
               // heighReference:Cesium.HeightReference.RELATIVE_TO_GROUND
               heighReference:Cesium.HeightReference.CLAMP_TO_GROUND
@@ -134,13 +133,20 @@ export class ThreeDimensionalModelService {
     }
   }
 
+  resetLeftandRightClickHandler(){
+    if (this.clickHandler) {
+      this.clickHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      this.clickHandler.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+    }
+  }
+
   disableAdding3DModel() {
     const add3DModelBtn = document.getElementById("add3DModelBtn");
     if (add3DModelBtn)
     {
       add3DModelBtn.innerHTML = "M";
       this.cesiumService.removeEntityById(this.viewer, "mouseOverEntity");
-      this.cesiumService.setDefaultClickFunctionality();
+      this.cesiumService.enableEntitySelectionMode();
       this.cesiumService.setDefaultHoverFunctionality();
     }
   }

@@ -1,6 +1,6 @@
 export enum MapMode {
   EntitySelection = "EntitySelection",
   MarketBoundaryDrawing = "MarketBoundaryDrawing",
-  VendorBoundaryDrawing = "VendorBoundaryDrawing",
+  VendorLocationDrawing = "VendorLocationDrawing",
   ThreeDModelPlacement = "3dModelPlacement"
 }

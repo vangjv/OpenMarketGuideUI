@@ -15,8 +15,9 @@ import { MapMode } from 'src/app/shared/models/map-mode.enum';
 export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
   items: MenuItem[] = [];
   @ViewChild('speedDial') speedDial!: SpeedDial;
-  @ViewChild('op') overlayPanel!: OverlayPanel;
+  @ViewChild('opSearch') opSearch!: OverlayPanel;
   @ViewChild('opAddBoundary') opAddBoundary!: OverlayPanel;
+  @ViewChild('opAddVendorLocations') opAddVendorLocations!: OverlayPanel;
   mapSearchForm: FormGroup;
   marketNameForm: FormGroup;
   showSaveBoundaryDialog:Signal<boolean> = signal(false);
@@ -28,7 +29,7 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
   marketBoundary!:any;
   new3dModel!:any;
   selectedEntity:any;
-  vendorBoundaries:any[] = [];
+  vendorLocations:any[] = [];
   showSidebar:boolean = false;
   nextDisabled:boolean = false;
   stepState:number = 1;
@@ -56,18 +57,59 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cesiumService.setHomeLocation();
     this.cesiumService.boundaryService.addDrawBoundaryButton();
     this.cesiumService.threeDimensionalModelService.add3DModelButton();
+    this.addSubscriptions();
+    const speedDialMenuItems = this.el.nativeElement.querySelectorAll('.p-speeddial-list');
+    this.searchButton = speedDialMenuItems[0].children[0];
+    const speedDialButton = this.el.nativeElement.querySelectorAll('.p-speeddial-button ');
+    this.speedDialButton = speedDialButton[0];
+    this.speedDial.onButtonClick = (event) => {
+      this.opSearch.show(event, this.speedDialButton);
+    };
+    this.opSearch.show(null, this.speedDialButton);
+
+
+    // this.items = [
+    //   {
+    //     icon: 'pi pi-search',
+    //     command: (click) => {
+    //       const speedDialMenuItems = this.el.nativeElement.querySelectorAll('.p-speeddial-list');
+    //       this.searchButton = speedDialMenuItems[0].children[0];
+    //       this.overlayPanel.show(click.originalEvent, this.speedDialButton);
+    //     },
+    //     tooltipOptions: {
+    //       tooltipLabel: 'Map search'
+    //     },
+    //   },
+    //   {
+    //     icon: 'pi pi-pencil',
+    //     command: (click) => {
+    //       this.opAddBoundary.show(click.originalEvent, this.speedDialButton);
+    //     },
+    //     tooltipOptions: {
+    //       tooltipLabel: 'Draw market boundary'
+    //     },
+    //   }
+    // ];
+  }
+
+  addSubscriptions(){
     this.subscriptions.add(
       this.cesiumService.mapMode$.subscribe((mode) => {
         console.log("mapMode:", mode);
+        this.mapMode = mode;
         if(mode == MapMode.EntitySelection){
-          this.cesiumService.setDefaultClickFunctionality();
+          this.cesiumService.resetLeftandRightClickHandlers()
+          this.cesiumService.enableEntitySelectionMode();
         } else if (mode == MapMode.MarketBoundaryDrawing) {
+          this.cesiumService.resetLeftandRightClickHandlers()
           this.cesiumService.boundaryService.enableDrawMarketBoundaryFunctionallity();
-          console.log("enableVendorLocationDrawingMode");
-        } else if (mode == MapMode.VendorBoundaryDrawing) {
+          console.log("enableDrawMarketBoundaryFunctionallity");
+        } else if (mode == MapMode.VendorLocationDrawing) {
+          this.cesiumService.resetLeftandRightClickHandlers()
           this.cesiumService.boundaryService.enableVendorLocationDrawingMode();
           console.log("enableVendorLocationDrawingMode");
         } else if (mode == MapMode.ThreeDModelPlacement) {
+          this.cesiumService.resetLeftandRightClickHandlers()
           this.cesiumService.threeDimensionalModelService.enableAdding3DModel();
           console.log("enable3dModelPlacement");
         }
@@ -83,6 +125,16 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
         }
       })
     );
+    //monitor when a new vendor location is added to map
+    this.subscriptions.add(
+      this.cesiumService.boundaryService.vendorLocation$.subscribe((vendorLocation) => {
+        if(vendorLocation){
+          this.vendorLocations.push(vendorLocation);
+          console.log("vendorLocation:", vendorLocation);
+        }
+      })
+    );
+    //monitor when new 3dmodel is added to map
     this.subscriptions.add(
       this.cesiumService.threeDimensionalModelService.new3dModel$.subscribe((new3dModel) => {
         if(new3dModel){
@@ -91,38 +143,24 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
         }
       })
     );
-    setTimeout(() => {
-      const speedDialMenuItems = this.el.nativeElement.querySelectorAll('.p-speeddial-list');
-      this.searchButton = speedDialMenuItems[0].children[0];
-      const speedDialButton = this.el.nativeElement.querySelectorAll('.p-speeddial-button ');
-      this.speedDialButton = speedDialButton[0];
-      this.speedDial.onButtonClick = (event) => {
-        this.overlayPanel.show(event, this.speedDialButton);
-      };
-      this.overlayPanel.show(null, this.speedDialButton);
-      // this.items = [
-      //   {
-      //     icon: 'pi pi-search',
-      //     command: (click) => {
-      //       const speedDialMenuItems = this.el.nativeElement.querySelectorAll('.p-speeddial-list');
-      //       this.searchButton = speedDialMenuItems[0].children[0];
-      //       this.overlayPanel.show(click.originalEvent, this.speedDialButton);
-      //     },
-      //     tooltipOptions: {
-      //       tooltipLabel: 'Map search'
-      //     },
-      //   },
-      //   {
-      //     icon: 'pi pi-pencil',
-      //     command: (click) => {
-      //       this.opAddBoundary.show(click.originalEvent, this.speedDialButton);
-      //     },
-      //     tooltipOptions: {
-      //       tooltipLabel: 'Draw market boundary'
-      //     },
-      //   }
-      // ];
-    }, 1000);
+    //monitor when an entity is selected
+    this.subscriptions.add(
+      this.cesiumService.selectedEntity$.subscribe((selectedEntity) => {
+        if(this.mapMode == MapMode.EntitySelection){
+          this.selectedEntity = selectedEntity;
+          console.log("selectedEntity:", this.selectedEntity);
+          if (this.selectedEntity == undefined) {
+            this.cesiumService.removeHighlightFromAllEntities();
+          } else {
+            if (this.selectedEntity?.model || this.selectedEntity?.polygon) {
+              // Highlight the model by changing its color
+              this.cesiumService.highlightEntity(this.selectedEntity);
+            }
+          }
+
+        }
+      })
+    );
   }
 
   progressStep(event:any){
@@ -132,9 +170,13 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
         this.opAddBoundary.show(event, this.speedDialButton);
       };
       this.opAddBoundary.show(event, this.speedDialButton);
+    } else if (this.stepState == 3) {
+      this.speedDial.onButtonClick = (event) => {
+        this.opAddVendorLocations.show(event, this.speedDialButton);
+      };
+      this.opAddVendorLocations.show(event, this.speedDialButton);
     }
   }
-
 
   createVendorLocationForm(){
     return this.formBuilder.group({
@@ -159,11 +201,19 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cesiumService.mapMode.next(MapMode.MarketBoundaryDrawing);
   }
 
+  enableVendorLocationDrawingMode(){
+    this.cesiumService.mapMode.next(MapMode.VendorLocationDrawing);
+  }
+
   openAddMarketBoundaryDialog(marketBoundary:any){
     console.log(marketBoundary);
     this.marketBoundary = marketBoundary._polygon._hierarchy._value.positions;
     console.log(this.marketBoundary);
     this.opAddBoundary.show(null, this.speedDialButton);
+  }
+
+  openAddVendorLocationDialog(){
+    this.opAddVendorLocations.show(null, this.speedDialButton);
   }
 
   saveBoundary(){

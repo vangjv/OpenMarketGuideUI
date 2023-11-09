@@ -11,7 +11,9 @@
 </div> -->
 <div class="card">
   <div class="next-step-button">
-    <button pButton pRipple label="Next" (click)="progressStep($event)" [disabled]="nextDisabled"></button>
+    <button pButton pRipple label="Next" (click)="progressStep($event)" *ngIf="stepState==1"></button>
+    <button pButton pRipple label="Next" (click)="progressStep($event)" [disabled]="marketNameForm.invalid || marketBoundary == undefined" *ngIf="stepState==2"></button>
+    <button pButton pRipple label="Next" (click)="progressStep($event)" [disabled]="marketNameForm.invalid || marketBoundary == undefined" *ngIf="stepState==3"></button>
   </div>
 </div>
 <p-dialog header="Save Vendor Spot" [visible]="showSaveBoundaryDialog()" position="bottom" [style]="{ width: '50vw' }">
@@ -34,10 +36,10 @@
   </div>
 </p-dialog>
 
-<p-overlayPanel #op>
+<p-overlayPanel #opSearch>
   <div class="p-2 max-w-30rem" [formGroup]="mapSearchForm">
     <div class="text-900 font-medium mb-2 text-xl">Let's get started</div>
-    <p class="mt-0 mb-4 p-0 line-height-3">Enter the address or landmark where your market will be. When you are finished, click the "Next" button.</p>
+    <p class="mt-0 mb-4 p-0 line-height-3">Enter the address or landmark where your market is located. When you are finished finding the area on the map, click the "Next" button.</p>
     <div class="flex">
         <input pInputText class="flex-auto mr-3" formControlName="searchString" (keyup.enter)="searchAndZoom()">
         <button pButton pRipple label="Search" (click)="searchAndZoom()" [disabled]="mapSearchForm.invalid"></button>
@@ -48,11 +50,23 @@
 <p-overlayPanel #opAddBoundary>
   <div class="p-2 max-w-30rem" [formGroup]="marketNameForm">
     <div class="text-900 font-medium mb-2 text-xl">Draw the boundary for your market. Your market will take place inside these boundaries.</div>
-    <p class="mt-0 mb-4 p-0 line-height-3">Click on the pencil icon to begin add points on the map to create a polygon/boundary. When you are finished, right click on the map to complete the boundary. Finally, name your market and click this "Next" button.</p>
+    <p class="mt-0 mb-4 p-0 line-height-3">Click on the pencil icon to begin adding points on the map to create a polygon/boundary. When you are finished, right click on the map to complete the boundary. Finally, name your market and click the "Next" button.</p>
     <div class="flex">
       <p-button icon="pi pi-pencil" class="mr-2" (click)="enableMarketBoundaryDrawingMode()" *ngIf="marketBoundary == undefined"></p-button>
       <p-button icon="pi pi-undo" class="mr-2" (click)="resetMarketBoundary()" *ngIf="marketBoundary != undefined"></p-button>
-      <input pInputText class="flex-auto mr-2" formControlName="name" (keyup.enter)="progressToAddVendorLocations()">
+      <input pInputText class="flex-auto mr-2" formControlName="name" (keyup.enter)="progressToAddVendorLocations()" *ngIf="marketBoundary != undefined">
+    </div>
+  </div>
+</p-overlayPanel>
+
+<p-overlayPanel #opAddVendorLocations>
+  <div class="p-2 max-w-30rem">
+    <div class="text-900 font-medium mb-2 text-xl">Next let's add some vendor locations. These are the areas on the map that you can assign to a vendor.</div>
+    <p class="mt-0 mb-4 p-0 line-height-3">Click on the pencil icon to begin adding points on the map to create a vendor location. When you are finished, right click on the map to complete the boundary. Finally, name your vendor location. When you are finished adding vendor locations, click the "Next" button.</p>
+    <div class="flex">
+      <p-button icon="pi pi-pencil" class="mr-2" (click)="enableVendorLocationDrawingMode()"></p-button>
+      <!-- <p-button icon="pi pi-undo" class="mr-2" (click)="resetMarketBoundary()" *ngIf="marketBoundary != undefined"></p-button>
+      <input pInputText class="flex-auto mr-2" formControlName="name" (keyup.enter)="progressToAddVendorLocations()"> -->
     </div>
   </div>
 </p-overlayPanel>
