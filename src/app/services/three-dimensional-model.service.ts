@@ -118,7 +118,8 @@ export class ThreeDimensionalModelService {
               position: earthPosition,
               orientation: orientation,
               model: {
-                uri: "./assets/3dmodels/meatmarket.glb"
+                uri: "./assets/3dmodels/meatmarket.glb",
+                scale: 1
               },
               // heighReference:Cesium.HeightReference.RELATIVE_TO_GROUND
               heighReference:Cesium.HeightReference.CLAMP_TO_GROUND

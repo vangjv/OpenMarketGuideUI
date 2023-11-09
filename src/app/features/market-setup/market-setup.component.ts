@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, Signal, computed, effect, signal, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, OnInit, Signal, computed, effect, signal, ViewChild, ElementRef, OnDestroy, HostListener } from '@angular/core';
 import { CesiumService } from '../../services/cesium.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogsService } from 'src/app/services/dialogs.service';
@@ -34,6 +34,10 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
   nextDisabled:boolean = false;
   stepState:number = 1;
   mapMode:MapMode = MapMode.EntitySelection;
+  @HostListener('window:keydown', ['$event'])
+  handleKeyDown(event: KeyboardEvent) {
+    this.cesiumService.handleKeyboardTransformation(event);
+  }
   constructor(private cesiumService:CesiumService, private formBuilder: FormBuilder, private dialogsService:DialogsService,
     private messageService:MessageService, private el: ElementRef) {
     this.mapSearchForm = this.createMapSearchForm();
@@ -57,6 +61,7 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cesiumService.setHomeLocation();
     this.cesiumService.boundaryService.addDrawBoundaryButton();
     this.cesiumService.threeDimensionalModelService.add3DModelButton();
+    // this.cesiumService.enable3dModelRotation();
     this.addSubscriptions();
     const speedDialMenuItems = this.el.nativeElement.querySelectorAll('.p-speeddial-list');
     this.searchButton = speedDialMenuItems[0].children[0];
