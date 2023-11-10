@@ -16,10 +16,10 @@
     <button pButton pRipple label="Next" (click)="progressStep($event)" [disabled]="marketNameForm.invalid || marketBoundary == undefined" *ngIf="stepState==3"></button>
   </div>
 </div>
-<p-dialog header="Save Vendor Spot" [visible]="showSaveBoundaryDialog()" position="bottom" [style]="{ width: '50vw' }">
+<p-dialog header="Save Vendor Location" [visible]="showSaveBoundaryDialog()" position="bottom" [style]="{ width: '50vw' }">
   <div class="card" [formGroup]="vendorLocationForm">
     <div class="field">
-      <label for="boundaryName">Vendor Spot Name</label>
+      <label for="boundaryName">Vendor Location Name</label>
       <input id="boundaryName" type="text"
         class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
         formControlName="name">
@@ -54,7 +54,7 @@
     <div class="flex">
       <p-button icon="pi pi-pencil" class="mr-2" (click)="enableMarketBoundaryDrawingMode()" *ngIf="marketBoundary == undefined"></p-button>
       <p-button icon="pi pi-undo" class="mr-2" (click)="resetMarketBoundary()" *ngIf="marketBoundary != undefined"></p-button>
-      <input pInputText class="flex-auto mr-2" formControlName="name" (keyup.enter)="progressToAddVendorLocations()" *ngIf="marketBoundary != undefined">
+      <input pInputText class="flex-auto mr-2" formControlName="name" *ngIf="marketBoundary != undefined">
     </div>
   </div>
 </p-overlayPanel>
@@ -70,3 +70,17 @@
     </div>
   </div>
 </p-overlayPanel>
+
+<p-overlayPanel #op3DModelPlacement>
+  <div class="p-2 max-w-30rem">
+    <div class="text-900 font-medium mb-2 text-xl">Adding 3d models</div>
+    <p class="mt-0 mb-4 p-0 line-height-3">If you would like to add some 3d models to your market to highlight landmarks to vistors, now is the time to do it.  Select a 3d model and click on the plus button to add it to the map.</p>
+    <hr class="my-3 mx-0 border-top-1 border-none surface-border">
+    <app-model-picker [threeDModelInfoList]="threeDModelInfoList" (modelInfoChanged)="update3dModelSelection($event)"></app-model-picker>
+    <hr class="my-3 mx-0 border-top-1 border-none surface-border">
+    <div class="flex justify-content-end">
+      <p-button icon="pi pi-plus" class="mr-2" (click)="enable3DModelPlacement()"></p-button>
+    </div>
+  </div>
+</p-overlayPanel>
+

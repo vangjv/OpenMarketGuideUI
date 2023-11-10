@@ -30,7 +30,7 @@ export class CesiumComponent implements AfterViewInit, OnInit {
     });
     effect(() => {
       if(this.adding3DModelState()==true){
-        this.cesiumService.threeDimensionalModelService.enableAdding3DModel();
+        // this.cesiumService.threeDimensionalModelService.enableAdding3DModel();
       } else {
         console.log("disable adding 3d model");
         this.cesiumService.threeDimensionalModelService.disableAdding3DModel();

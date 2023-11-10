@@ -19,6 +19,7 @@ import { MessageService } from 'primeng/api';
 import { MarketSetupComponent } from './features/market-setup/market-setup.component';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { SidebarModule } from 'primeng/sidebar';
+import { ModelPickerComponent } from './features/market-setup/model-picker/model-picker.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { SidebarModule } from 'primeng/sidebar';
     LayoutComponent,
     GoodsListingComponent,
     GoodsDetailsComponent,
-    MarketSetupComponent
+    MarketSetupComponent,
+    ModelPickerComponent
   ],
   imports: [
     BrowserModule,

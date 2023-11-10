@@ -7,6 +7,7 @@ import { SpeedDial } from 'primeng/speeddial';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { Subject, Subscription } from 'rxjs';
 import { MapMode } from 'src/app/shared/models/map-mode.enum';
+import { ThreeDModelInfo } from 'src/app/shared/models/three-d-model-info.model';
 @Component({
   selector: 'app-market-setup',
   templateUrl: './market-setup.component.html',
@@ -18,6 +19,7 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('opSearch') opSearch!: OverlayPanel;
   @ViewChild('opAddBoundary') opAddBoundary!: OverlayPanel;
   @ViewChild('opAddVendorLocations') opAddVendorLocations!: OverlayPanel;
+  @ViewChild('op3DModelPlacement') op3DModelPlacement!: OverlayPanel;
   mapSearchForm: FormGroup;
   marketNameForm: FormGroup;
   showSaveBoundaryDialog:Signal<boolean> = signal(false);
@@ -34,6 +36,8 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
   nextDisabled:boolean = false;
   stepState:number = 1;
   mapMode:MapMode = MapMode.EntitySelection;
+  current3dModelSelected:ThreeDModelInfo | undefined = undefined;
+  threeDModelInfoList:ThreeDModelInfo[] = [];
   @HostListener('window:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
     this.cesiumService.handleKeyboardTransformation(event);
@@ -68,9 +72,13 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
     const speedDialButton = this.el.nativeElement.querySelectorAll('.p-speeddial-button ');
     this.speedDialButton = speedDialButton[0];
     this.speedDial.onButtonClick = (event) => {
-      this.opSearch.show(event, this.speedDialButton);
+      // this.opSearch.show(event, this.speedDialButton);
+      this.op3DModelPlacement.show(null, this.speedDialButton);
     };
-    this.opSearch.show(null, this.speedDialButton);
+    //load 3d models
+    this.threeDModelInfoList = this.cesiumService.threeDimensionalModelService.get3dModels();
+    // this.opSearch.show(null, this.speedDialButton);
+    this.op3DModelPlacement.show(null, this.speedDialButton);
 
 
     // this.items = [
@@ -115,7 +123,13 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
           console.log("enableVendorLocationDrawingMode");
         } else if (mode == MapMode.ThreeDModelPlacement) {
           this.cesiumService.resetLeftandRightClickHandlers()
-          this.cesiumService.threeDimensionalModelService.enableAdding3DModel();
+          console.log("this.current3dModelSelected:", this.current3dModelSelected);
+          if (this.current3dModelSelected) {
+            this.cesiumService.threeDimensionalModelService.enableAdding3DModel(this.current3dModelSelected.modelUri);
+          }
+          this.speedDial.onButtonClick = (event) => {
+            this.op3DModelPlacement.show(null, this.speedDialButton);
+          };
           console.log("enable3dModelPlacement");
         }
       })
@@ -236,7 +250,11 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cesiumService.removeEntityById(this.cesiumService.viewer, "marketBoundary");
   }
 
-  progressToAddVendorLocations(){
+  update3dModelSelection(threeDModelInfo:ThreeDModelInfo){
+    this.current3dModelSelected = threeDModelInfo;
+  }
 
+  enable3DModelPlacement(){
+    this.cesiumService.mapMode.next(MapMode.ThreeDModelPlacement);
   }
 }

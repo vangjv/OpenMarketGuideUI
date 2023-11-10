@@ -1,0 +1,12 @@
+
+
+<ng-container *ngIf="threeDModelInfoList.length > 0">
+  <div class="flex align-items-center"><span class="font-bold text-xl text-900">{{threeDModelInfoList[currentModelIndex].name}}</span></div>
+  <div class="flex justify-content-between">
+    <div class="flex align-items-center flex-none justify-content-center"><p-button icon="pi pi-angle-left" (click)="decrementIndex()"></p-button></div>
+    <div class="flex justify-content-center max-h-8rem max-w-4rem">
+      <img [src]="threeDModelInfoList[currentModelIndex].previewFile" style="height:100%;">
+    </div>
+    <div class="flex align-items-center flex-none justify-content-center"><p-button icon="pi pi-angle-right" (click)="incrementIndex()"></p-button></div>
+  </div>
+</ng-container>

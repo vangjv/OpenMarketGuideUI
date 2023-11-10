@@ -3,6 +3,7 @@ import { DialogsService } from './dialogs.service';
 import { CesiumService } from './cesium.service';
 import { MapMode } from '../shared/models/map-mode.enum';
 import { BehaviorSubject } from 'rxjs';
+import { ThreeDModelInfo } from '../shared/models/three-d-model-info.model';
 declare let Cesium: any;
 @Injectable({
   providedIn: 'root'
@@ -49,7 +50,7 @@ export class ThreeDimensionalModelService {
 }
 
 
-  enableAdding3DModel(){
+  enableAdding3DModel(modelUri:string){
     const add3DModelBtn = document.getElementById("add3DModelBtn");
     if (add3DModelBtn)
     {
@@ -118,7 +119,7 @@ export class ThreeDimensionalModelService {
               position: earthPosition,
               orientation: orientation,
               model: {
-                uri: "./assets/3dmodels/meatmarket.glb",
+                uri: modelUri,
                 scale: 1
               },
               // heighReference:Cesium.HeightReference.RELATIVE_TO_GROUND
@@ -150,5 +151,80 @@ export class ThreeDimensionalModelService {
       this.cesiumService.enableEntitySelectionMode();
       this.cesiumService.setDefaultHoverFunctionality();
     }
+  }
+
+  get3dModels():ThreeDModelInfo[]{
+    return [
+      {
+        "name" : "ATM",
+        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/ATM.webp",
+        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/ATM.glb"
+      },
+      {
+        "name" : "Avocados and Bananas",
+        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/AvocadosandBananas.webp",
+        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/AvocadosandBananas.glb"
+      },
+      {
+        "name" : "Garden Table",
+        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/GardenTable.webp",
+        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/GardenTable.glb"
+      },
+      {
+        "name" : "Market Tent",
+        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/MarketTent.webp",
+        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/MarketTent.glb"
+      },
+      {
+        "name" : "Medical Kit",
+        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/MedicalKit.webp",
+        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/MedicalKit.glb"
+      },
+      {
+        "name" : "Out House",
+        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/OutHouse.webp",
+        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/OutHouse.glb"
+      },
+      {
+        "name" : "Picnic Table",
+        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/PicnicTable.webp",
+        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/PicnicTable.glb"
+      },
+      {
+        "name" : "Plants",
+        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/Plants.webp",
+        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/Plants.glb"
+      },
+      {
+        "name" : "Pumpkin",
+        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/Pumpkin.webp",
+        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/Pumpkin.glb"
+      },
+      {
+        "name" : "Pumpkin Table",
+        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/PumpkinTable.webp",
+        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/PumpkinTable.glb"
+      },
+      {
+        "name" : "Shopping Cart",
+        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/ShoppingCart.webp",
+        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/ShoppingCart.glb"
+      },
+      {
+        "name" : "Side Table",
+        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/SideTable.webp",
+        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/SideTable.glb"
+      },
+      {
+        "name" : "White Apples",
+        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/WhiteApples.webp",
+        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/WhiteApples.glb"
+      },
+      {
+        "name" : "Wide Table",
+        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/WideTable.webp",
+        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/WideTable.glb"
+      }
+    ]
   }
 }
