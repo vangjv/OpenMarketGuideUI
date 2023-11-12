@@ -61,7 +61,8 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.cesiumService.initializeMap("cesium");
-    this.cesiumService.setHomeLocation();
+    this.cesiumService.hideDefaultCesiumSearch();
+    this.cesiumService.changeCesiumHomeButtonToGoToAppHome();
     if (this.marketId) {
       this.subscriptions.add(
         this.marketService.getMarketById(this.marketId).subscribe((market) => {

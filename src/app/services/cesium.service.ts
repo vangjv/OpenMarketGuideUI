@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { MapMode } from '../shared/models/map-mode.enum';
 import { CoordinateData } from '../shared/models/coordinate-data.model';
 import { Market } from '../shared/models/market.model';
+import { Router } from '@angular/router';
 
 declare let Cesium: any;
 // import * as Cesium from '../assets/js/Cesium.js';
@@ -34,7 +35,7 @@ export class CesiumService {
   public initialMousePosition:any = null;
   public initialOrientation:any = null;
 
-  constructor(private dialogsService:DialogsService) {
+  constructor(private dialogsService:DialogsService, private router:Router) {
 
   }
 
@@ -260,6 +261,16 @@ export class CesiumService {
 
   hideCesiumIonLogo(){
     document.getElementsByClassName("cesium-credit-logoContainer")[0].remove();
+  }
+
+  hideDefaultCesiumSearch(){
+    document.getElementsByClassName("cesium-viewer-geocoderContainer")[0].remove();
+  }
+
+  changeCesiumHomeButtonToGoToAppHome(){
+    document.getElementsByClassName("cesium-home-button")[0].addEventListener("click", ()=>{
+      this.router.navigate(['/']);
+    });
   }
 
   hideFullScreenButton(){

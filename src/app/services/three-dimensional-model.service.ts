@@ -255,97 +255,97 @@ export class ThreeDimensionalModelService {
           "defaultScale" : 1
         },
         {
-          "name": "apple",
+          "name": "Apple",
           "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/apple.webp",
           "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/apple.glb",
           "defaultScale": 1
         },
         {
-          "name": "artstand",
+          "name": "Art Stand",
           "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/artstand.webp",
           "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/artstand.glb",
           "defaultScale": 1
         },
         {
-          "name": "banana",
+          "name": "Banana",
           "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/banana.webp",
           "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/banana.glb",
           "defaultScale": 1
         },
         {
-          "name": "bread",
+          "name": "Bread",
           "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/bread.webp",
           "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/bread.glb",
           "defaultScale": 1
         },
         {
-          "name": "broccoli",
+          "name": "Broccoli",
           "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/broccoli.webp",
         "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/broccoli.glb",
         "defaultScale": 1
       },
       {
-        "name": "cheese",
+        "name": "Cheese",
         "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/cheese.webp",
         "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/cheese.glb",
         "defaultScale": 1
       },
       {
-        "name": "crate",
+        "name": "Crate",
         "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/crate.webp",
         "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/crate.glb",
         "defaultScale": 1
       },
       {
-        "name": "dishwithvegetables",
+        "name": "Dish with Vegetables",
         "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/dishwithvegetables.webp",
         "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/dishwithvegetables.glb",
         "defaultScale": 1
       },
       {
-        "name": "flowers",
+        "name": "Flowers",
         "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/flowers.webp",
         "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/flowers.glb",
         "defaultScale": 1
       },
       {
-        "name": "greens",
+        "name": "Greens",
         "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/greens.webp",
         "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/greens.glb",
         "defaultScale": 1
       },
       {
-        "name": "saladgreens",
+        "name": "Salad greens",
         "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/saladgreens.webp",
         "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/saladgreens.glb",
         "defaultScale": 1
       },
       {
-        "name": "tablewithbread",
+        "name": "Table with Bread",
         "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tablewithbread.webp",
         "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tablewithbread.glb",
         "defaultScale": 1
       },
       {
-        "name": "tablewithcheeses",
+        "name": "Table with Cheese",
         "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tablewithcheeses.webp",
         "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tablewithcheeses.glb",
         "defaultScale": 1
       },
       {
-        "name": "tablewithcookies",
+        "name": "Table with Cookies",
         "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tablewithcookies.webp",
         "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tablewithcookies.glb",
         "defaultScale": 1
       },
       {
-        "name": "tent",
+        "name": "Tent",
         "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tent.webp",
         "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tent.glb",
         "defaultScale": 1
       },
       {
-        "name": "vegatablebasket",
+        "name": "Vegatable Basket",
         "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/vegatablebasket.webp",
         "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/vegatablebasket.glb",
         "defaultScale": 1

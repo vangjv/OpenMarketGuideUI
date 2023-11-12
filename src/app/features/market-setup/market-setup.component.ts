@@ -69,9 +69,11 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.cesiumService.initializeMap("cesium");
-    this.cesiumService.setHomeLocation();
-    this.cesiumService.boundaryService.addDrawBoundaryButton();
-    this.cesiumService.threeDimensionalModelService.add3DModelButton();
+    this.cesiumService.hideDefaultCesiumSearch();
+    this.cesiumService.changeCesiumHomeButtonToGoToAppHome();
+    // this.cesiumService.setHomeLocation();
+    // this.cesiumService.boundaryService.addDrawBoundaryButton();
+    // this.cesiumService.threeDimensionalModelService.add3DModelButton();
     // this.cesiumService.enable3dModelRotation();
     this.addSubscriptions();
     const speedDialMenuItems = this.el.nativeElement.querySelectorAll('.p-speeddial-list');

@@ -27,7 +27,7 @@
               <li class="lg:flex lg:align-items-end">
                   <a pRipple class="border-round-top flex align-items-center px-6 py-3 lg:px-3 lg:py-3 text-900 font-medium cursor-pointer transition-colors transition-duration-150"
                       [ngClass]="{'surface-ground text-900': activeTab === 2, 'hover:surface-hover': activeTab !== 2}" (click)="navigateToTab(2)">
-                      <span class="mr-2">Map my Market</span>
+                      <span class="mr-2">Setup My Market</span>
                       <!-- <i class="pi pi-map ml-2"></i> -->
                   </a>
               </li>
@@ -64,8 +64,8 @@
           </ul>
       </div>
   </div>
-  <div class="p-5 flex flex-column flex-auto surface-ground">
-      <div class="border-2 border-dashed surface-border border-round surface-section flex-auto">
+  <div class="p-5 flex flex-column flex-auto">
+      <div class="border-2 surface-border border-round surface-section flex-auto">
         <router-outlet></router-outlet>
       </div>
   </div>
