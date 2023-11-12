@@ -14,6 +14,8 @@
     <button pButton pRipple label="Next" (click)="progressStep($event)" *ngIf="stepState==1"></button>
     <button pButton pRipple label="Next" (click)="progressStep($event)" [disabled]="marketNameForm.invalid || marketBoundary == undefined" *ngIf="stepState==2"></button>
     <button pButton pRipple label="Next" (click)="progressStep($event)" [disabled]="marketNameForm.invalid || marketBoundary == undefined" *ngIf="stepState==3"></button>
+    <button pButton pRipple label="Next" (click)="completeMarketSetup($event)" [disabled]="marketNameForm.invalid || marketBoundary == undefined" *ngIf="stepState==4"></button>
+
   </div>
 </div>
 <p-dialog header="Save Vendor Location" [visible]="showSaveBoundaryDialog()" position="bottom" [style]="{ width: '50vw' }">
@@ -74,7 +76,7 @@
 <p-overlayPanel #op3DModelPlacement>
   <div class="p-2 max-w-30rem">
     <div class="text-900 font-medium mb-2 text-xl">Adding 3d models</div>
-    <p class="mt-0 mb-4 p-0 line-height-3">If you would like to add some 3d models to your market to highlight landmarks to vistors, now is the time to do it.  Select a 3d model and click on the plus button to add it to the map.</p>
+    <p class="mt-0 mb-4 p-0 line-height-3">If you would like to add some 3d models to your market to highlight landmarks to vistors, now is the time to do it.  Select a 3d model and click on the plus button to add it to the map. When you are finished click the next button.</p>
     <hr class="my-3 mx-0 border-top-1 border-none surface-border">
     <app-model-picker [threeDModelInfoList]="threeDModelInfoList" (modelInfoChanged)="update3dModelSelection($event)"></app-model-picker>
     <hr class="my-3 mx-0 border-top-1 border-none surface-border">

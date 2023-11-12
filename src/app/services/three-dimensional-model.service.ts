@@ -180,11 +180,11 @@ export class ThreeDimensionalModelService {
         "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/MedicalKit.webp",
         "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/MedicalKit.glb"
       },
-      {
-        "name" : "Out House",
-        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/OutHouse.webp",
-        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/OutHouse.glb"
-      },
+      // {
+      //   "name" : "Out House",
+      //   "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/OutHouse.webp",
+      //   "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/OutHouse.glb"
+      // },
       {
         "name" : "Picnic Table",
         "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/PicnicTable.webp",

@@ -231,107 +231,79 @@ export class CesiumService {
 
   enableEntitySelectionMode(){
     if (this.clickHandler) {
-      this.clickHandler.setInputAction((event:any)=> {
-        // `earthPosition` will be undefined if our mouse is not over the globe.
-        let pickedObject = this.viewer.scene.pick(event.position);
-        if (Cesium.defined(pickedObject)) {
-          const id = Cesium.defaultValue(pickedObject.id, pickedObject.primitive.id);
-          if (id instanceof Cesium.Entity) {
-            console.log("object clicked:", id);
-            this.selectedEntity.next(id);
-            return id;
-          } else {
-            this.selectedEntity.next(undefined);
-          }
-        } else {
-          this.selectedEntity.next(undefined);
-        }
-      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      this.addEntityPickedClickHandler(this.clickHandler);
     } else {
       this.clickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-      this.clickHandler.setInputAction((event:any)=> {
-        // `earthPosition` will be undefined if our mouse is not over the globe.
-        let pickedObject = this.viewer.scene.pick(event.position);
-        if (Cesium.defined(pickedObject)) {
-          const id = Cesium.defaultValue(pickedObject.id, pickedObject.primitive.id);
-          if (id instanceof Cesium.Entity) {
-            console.log("object clicked:", id);
-            this.selectedEntity.next(id);
-            return id;
-          } else {
-            this.selectedEntity.next(undefined);
-          }
+      this.addEntityPickedClickHandler(this.clickHandler);
+    }
+  }
+
+  addEntityPickedClickHandler(clickHandler:any){
+    clickHandler.setInputAction((event:any)=> {
+      let pickedObject = this.viewer.scene.pick(event.position);
+      if (Cesium.defined(pickedObject)) {
+        const id = Cesium.defaultValue(pickedObject.id, pickedObject.primitive.id);
+        if (id instanceof Cesium.Entity) {
+          console.log("object clicked:", id);
+          this.selectedEntity.next(id);
+          return id;
         } else {
           this.selectedEntity.next(undefined);
         }
-      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-    }
-
+      } else {
+        this.selectedEntity.next(undefined);
+      }
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
   }
 
   enable3dModelRotation(){
     if (this.clickHandler) {
-      this.clickHandler.setInputAction((click:any) => {
-        const pickedObject = this.viewer.scene.pick(click.position);
-        console.log("pickedObject", pickedObject);
-        console.log("this.selectedEntity.getValue()", this.selectedEntity.getValue());
-        if (Cesium.defined(pickedObject) && pickedObject.id == this.selectedEntity.getValue()) {
-            this.isRotating = true;
-            this.initialMousePosition = click.position;
-            this.initialOrientation = Cesium.Matrix3.clone(
-                Cesium.Matrix3.fromQuaternion(this.selectedEntity.getValue().orientation.getValue(this.viewer.clock.currentTime))
-            );
-        }
-      }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
-
-      // Rotate the model as the mouse moves
-      this.clickHandler.setInputAction((movement:any) => {
-        if (this.isRotating) {
-          this.rotateModel(movement);
-        }
-      }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-
-      // Stop rotating the model on left click release
-      this.clickHandler.setInputAction(() => {
-          if (this.isRotating) {
-              this.isRotating = false;
-              this.initialMousePosition = null;
-              this.initialOrientation = null;
-          }
-      }, Cesium.ScreenSpaceEventType.LEFT_UP);
+      this.addRotationClickHandlers();
     } else {
       this.clickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-      this.clickHandler.setInputAction((click:any) => {
-        const pickedObject = this.viewer.scene.pick(click.position);
-        console.log("pickedObject", pickedObject);
-        console.log("this.selectedEntity.getValue()", this.selectedEntity.getValue());
-        console.log("Cesium.defined(pickedObject)", Cesium.defined(pickedObject));
-        console.log("pickedObject.id == this.selectedEntity.getValue()", pickedObject.id == this.selectedEntity.getValue());
-        if (Cesium.defined(pickedObject) && this.selectedEntity.getValue() != undefined && pickedObject.id == this.selectedEntity.getValue()) {
-            this.isRotating = true;
-            this.initialMousePosition = click.position;
-            this.initialOrientation = Cesium.Matrix3.clone(
-                Cesium.Matrix3.fromQuaternion(this.selectedEntity.getValue().orientation.getValue(this.viewer.clock.currentTime))
-            );
-        }
-      }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
-
-      // Rotate the model as the mouse moves
-      this.clickHandler.setInputAction((movement:any) => {
-        if (this.isRotating) {
-          this.rotateModel(movement);
-        }
-      }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-
-      // Stop rotating the model on left click release
-      this.clickHandler.setInputAction(() => {
-          if (this.isRotating) {
-              this.isRotating = false;
-              this.initialMousePosition = null;
-              this.initialOrientation = null;
-          }
-      }, Cesium.ScreenSpaceEventType.LEFT_UP);
+      this.addRotationClickHandlers();
     }
+  }
+
+  addRotationClickHandlers(){
+    this.setLeftDownRotateHandler(this.clickHandler);
+    // Rotate the model as the mouse moves
+    this.setMouseMoveRotateHandler(this.clickHandler);
+    // Stop rotating the model on left click release
+    this.setLeftUpRotateHandler(this.clickHandler);
+  }
+
+  setMouseMoveRotateHandler(clickHandler:any){
+    clickHandler.setInputAction((movement:any) => {
+      if (this.isRotating) {
+        this.rotateModel(movement);
+      }
+    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+  }
+
+  setLeftDownRotateHandler(clickHandler:any){
+    clickHandler.setInputAction((click:any) => {
+      const pickedObject = this.viewer.scene.pick(click.position);
+      console.log("pickedObject", pickedObject);
+      console.log("this.selectedEntity.getValue()", this.selectedEntity.getValue());
+      if (Cesium.defined(pickedObject) && this.selectedEntity.getValue() != undefined && pickedObject.id == this.selectedEntity.getValue()) {
+          this.isRotating = true;
+          this.initialMousePosition = click.position;
+          this.initialOrientation = Cesium.Matrix3.clone(
+              Cesium.Matrix3.fromQuaternion(this.selectedEntity.getValue().orientation.getValue(this.viewer.clock.currentTime))
+          );
+      }
+    }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+  }
+
+  setLeftUpRotateHandler(clickHandler:any) {
+    clickHandler.setInputAction(() => {
+      if (this.isRotating) {
+          this.isRotating = false;
+          this.initialMousePosition = null;
+          this.initialOrientation = null;
+      }
+  }, Cesium.ScreenSpaceEventType.LEFT_UP);
   }
 
   handleKeyboardTransformation(event:any){
@@ -341,10 +313,10 @@ export class CesiumService {
       console.log(event.key);
       switch (event.key) {
         case 'ArrowUp':    // Move up
-          position = Cesium.Cartesian3.add(position, new Cesium.Cartesian3(0, 0, 1), position);
+          position = Cesium.Cartesian3.add(position, new Cesium.Cartesian3(0, 1, 0), position);
           break;
         case 'ArrowDown':  // Move down
-          position = Cesium.Cartesian3.add(position, new Cesium.Cartesian3(0, 0, -1), position);
+          position = Cesium.Cartesian3.add(position, new Cesium.Cartesian3(0, -1, 0), position);
           break;
         case 'ArrowLeft':  // Move left
           position = Cesium.Cartesian3.add(position, new Cesium.Cartesian3(-1, 0, 0), position);
@@ -352,10 +324,16 @@ export class CesiumService {
         case 'ArrowRight': // Move right
           position = Cesium.Cartesian3.add(position, new Cesium.Cartesian3(1, 0, 0), position);
           break;
-        case 'a':          // Rotate left
+        case 'PageUp':    // Move up
+          position = Cesium.Cartesian3.add(position, new Cesium.Cartesian3(0, 0, 1), position);
+          break;
+        case 'PageDown':  // Move down
+          position = Cesium.Cartesian3.add(position, new Cesium.Cartesian3(0, 0, -1), position);
+          break;
+        case ',':          // Rotate left
           orientation = Cesium.Quaternion.multiply(orientation, Cesium.Quaternion.fromAxisAngle(Cesium.Cartesian3.UNIT_Z, Cesium.Math.toRadians(1)), orientation);
           break;
-        case 'd':          // Rotate right
+        case '.':          // Rotate right
           orientation = Cesium.Quaternion.multiply(orientation, Cesium.Quaternion.fromAxisAngle(Cesium.Cartesian3.UNIT_Z, -Cesium.Math.toRadians(1)), orientation);
           break;
         case '=':          // Scale up
@@ -440,16 +418,20 @@ export class CesiumService {
   }
 
   highlightEntity(entity:any) {
-    entity.model.silhouetteColor = Cesium.Color.WHITE; // Silhouette color
-    entity.model.silhouetteSize = 2.0; // Silhouette size
-    this.removeHighlightFromAllButSelectedEntity(entity.id);
+    if (entity.model) {
+      entity.model.silhouetteColor = Cesium.Color.WHITE; // Silhouette color
+      entity.model.silhouetteSize = 2.0; // Silhouette size
+      this.removeHighlightFromAllButSelectedEntity(entity.id);
+    }
   }
 
   removeHighlightFromAllEntities() {
     if (this.viewer.entities._entities._array.length > 0 ) {
       this.viewer.entities._entities._array.forEach((entity:any) => {
-        entity.model.silhouetteColor = Cesium.Color.TRANSPARENT; // Silhouette color
-        entity.model.silhouetteSize = 0.0; // Silhouette size
+        if (entity.model) {
+          entity.model.silhouetteColor = Cesium.Color.TRANSPARENT; // Silhouette color
+          entity.model.silhouetteSize = 0.0; // Silhouette size
+        }
       });
     }
   }
@@ -457,7 +439,7 @@ export class CesiumService {
   removeHighlightFromAllButSelectedEntity(entityId:string) {
     if (this.viewer.entities._entities._array.length > 0 ) {
       this.viewer.entities._entities._array.forEach((entity:any) => {
-        if (entity.id != entityId) {
+        if (entity.id != entityId && entity.model != undefined) {
           entity.model.silhouetteColor = Cesium.Color.TRANSPARENT; // Silhouette color
           entity.model.silhouetteSize = 0.0; // Silhouette size
         }
