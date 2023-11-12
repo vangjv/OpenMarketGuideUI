@@ -22,6 +22,18 @@ export class Boundary {
         let positionData = new CoordinateData(entity.polygon.position?.getValue().x, entity.polygon.position?.getValue().y, entity.polygon.position?.getValue().z);
         boundary.position = positionData;
       }
+      if (entity.polygon.outline.getValue() !== undefined) {
+        boundary.outline = entity.polygon.outline.getValue();
+      }
+      if (entity.polygon.material.getValue().color) {
+        boundary.color = CesiumColor.fromCesiumColor(entity.polygon.material.getValue().color);
+      }
+      if (entity.polygon.outlineColor.getValue()) {
+        boundary.outlineColor = CesiumColor.fromCesiumColor(entity.polygon.outlineColor.getValue());
+      }
+      if (entity.polygon.outlineWidth.getValue()) {
+        boundary.outlineWidth = entity.polygon.outlineWidth.getValue();
+      }
       return boundary;
     }
 }

@@ -21,4 +21,20 @@ export class MarketService {
     );
   }
 
+  getMarketById(id:string): Observable<Market> {
+    return this.http.get<Market>(this.apiUrl + 'markets/' + id).pipe(
+      map((market: Market) => {
+        // Perform any necessary transformations on the data here
+        return market;
+      })
+    );
+  }
+
+  createMarket(market: Market): Observable<Market> {
+    if (market.state == undefined) {
+      market.state = "Neverland";
+    }
+    return this.http.post<Market>(this.apiUrl + 'markets', market);
+  }
+
 }

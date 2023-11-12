@@ -9,6 +9,8 @@ import { MapMode } from 'src/app/shared/models/map-mode.enum';
 import { ThreeDModelInfo } from 'src/app/shared/models/three-d-model-info.model';
 import { MarketService } from 'src/app/services/market.service';
 import { Market } from 'src/app/shared/models/market.model';
+import { ActivatedRoute, Router } from '@angular/router';
+
 @Component({
   selector: 'app-market-viewer',
   templateUrl: './market-viewer.component.html',
@@ -31,18 +33,26 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
   vendorLocations:any[] = [];
   threeDModelInfoList:ThreeDModelInfo[] = [];
   threeDModelEntities:any[] = [];
-  markets:Market[] = [];
+  // markets:Market[] = [];
+  marketId: string | null = null;
+  market:Market | undefined = undefined;
   @HostListener('window:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
     this.cesiumService.handleKeyboardTransformation(event);
   }
-  constructor(private cesiumService:CesiumService, private formBuilder: FormBuilder, private dialogsService:DialogsService,
-    private messageService:MessageService, private marketService:MarketService) {
+  constructor(private cesiumService:CesiumService, private formBuilder: FormBuilder, private router:Router,
+    private messageService:MessageService, private marketService:MarketService, private route: ActivatedRoute) {
   }
 
-
   ngOnInit(): void {
-
+    this.route.params.subscribe(params => {
+      this.marketId = params['marketid'];
+      console.log('Market ID:', this.marketId);
+      // Do something with the market ID
+      if (this.marketId == undefined) {
+        this.router.navigate(['/']);
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -52,17 +62,18 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
   ngAfterViewInit(): void {
     this.cesiumService.initializeMap("cesium");
     this.cesiumService.setHomeLocation();
-    this.subscriptions.add(
-      this.marketService.getMarkets().subscribe((markets) => {
-        console.log("markets:", markets);
-        this.markets = markets;
-        if (markets[0].location) {
-          this.cesiumService.flyTo(markets[0].location);
-          this.cesiumService.createEntitiesFromMarket(markets[0]);
-        }
-      })
-    );
+    if (this.marketId) {
+      this.subscriptions.add(
+        this.marketService.getMarketById(this.marketId).subscribe((market) => {
+          console.log("market:", market);
+          this.market = market;
+          if (market.location) {
+            this.cesiumService.flyTo(market.location);
+            this.cesiumService.createEntitiesFromMarket(market);
+          }
+        })
+      );
+    }
   }
-
 
 }

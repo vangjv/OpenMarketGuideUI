@@ -13,6 +13,8 @@ import { Boundary } from 'src/app/shared/models/boundary.model';
 import { CoordinateData } from 'src/app/shared/models/coordinate-data.model';
 import { VendorLocation } from 'src/app/shared/models/vendor-location.model';
 import { ThreeDModelEntity } from 'src/app/shared/models/three-d-model-entity.model';
+import { MarketService } from 'src/app/services/market.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-market-setup',
   templateUrl: './market-setup.component.html',
@@ -48,7 +50,7 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cesiumService.handleKeyboardTransformation(event);
   }
   constructor(private cesiumService:CesiumService, private formBuilder: FormBuilder, private dialogsService:DialogsService,
-    private messageService:MessageService, private el: ElementRef) {
+    private messageService:MessageService, private el: ElementRef, private marketService:MarketService, private router:Router) {
     this.mapSearchForm = this.createMapSearchForm();
     this.marketNameForm = this.createMarketNameForm();
     this.vendorLocationForm = this.createVendorLocationForm();
@@ -206,6 +208,10 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
     let market:Market = Market.buildMarket(this.marketNameForm.value.name, CoordinateData.fromCesiumEntity(this.marketBoundary),
       Boundary.fromCesiumEntity(this.marketBoundary), vendorLocations, threeDModelEntities);
       console.log("completedMarket:", market);
+    this.marketService.createMarket(market).subscribe((market:Market) => {
+      console.log("new market:", market);
+      this.router.navigate(['/market-viewer/' + market.id ]);
+    });
   }
 
   createVendorLocationForm(){

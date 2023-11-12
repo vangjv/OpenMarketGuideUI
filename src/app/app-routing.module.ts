@@ -10,7 +10,7 @@ import { MarketViewerComponent } from './features/market-viewer/market-viewer.co
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'market-setup', component: MarketSetupComponent },
-  { path: 'market-viewer', component: MarketViewerComponent },
+  { path: 'market-viewer/:marketid', component: MarketViewerComponent },
   { path: 'map', component: CesiumComponent },
   { path: 'goods-listing', component: GoodsListingComponent },
   { path: 'goods-details', component: GoodsDetailsComponent }
