@@ -1,0 +1,21 @@
+<IfModule mod_headers.c>
+  Header set Cache-Control "private"
+  # Remove X-Powerered-By header
+  Header unset X-Powered-By
+  Header always unset X-Powered-By
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # If an existing asset or directory is requested go to it as it is
+  RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
+  RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
+  RewriteRule ^ - [L]
+
+  # If the requested resource doesn't exist, use index.html
+  RewriteRule ^ /index.html
+</IfModule>
+
+
+# Remove server signature
+ServerSignature Off
