@@ -51,7 +51,7 @@ export class ThreeDimensionalModelService {
 }
 
 
-  enableAdding3DModel(modelUri:string){
+  enableAdding3DModel(modelUri:string, name:string, scale:number){
     const add3DModelBtn = document.getElementById("add3DModelBtn");
     if (add3DModelBtn)
     {
@@ -116,12 +116,12 @@ export class ThreeDimensionalModelService {
             );
 
             let newEntity = this.viewer.entities.add({
-              name: "Raw",
+              name: name,
               position: earthPosition,
               orientation: orientation,
               model: {
                 uri: modelUri,
-                scale: 1
+                scale: scale
               },
               // heighReference:Cesium.HeightReference.RELATIVE_TO_GROUND
               heighReference:Cesium.HeightReference.CLAMP_TO_GROUND
@@ -172,73 +172,183 @@ export class ThreeDimensionalModelService {
     return [
       {
         "name" : "ATM",
-        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/ATM.webp",
-        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/ATM.glb"
+          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/ATM.webp",
+          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/ATM.glb",
+          "defaultScale": 1
+        },
+        {
+          "name" : "Avocados and Bananas",
+          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/AvocadosandBananas.webp",
+          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/AvocadosandBananas.glb",
+          "defaultScale": 1
+        },
+        {
+          "name" : "Garden Table",
+          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/GardenTable.webp",
+          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/GardenTable.glb",
+          "defaultScale": 1
+        },
+        {
+          "name" : "Market Tent",
+          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/MarketTent.webp",
+          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/MarketTent.glb",
+          "defaultScale": 1
+        },
+        {
+          "name" : "Medical Kit",
+          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/MedicalKit.webp",
+          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/MedicalKit.glb",
+          "defaultScale": 1
+        },
+        // {
+        //   "name" : "Out House",
+        //   "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/OutHouse.webp",
+        //   "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/OutHouse.glb",
+        //   "defaultScale": 1
+        // },
+        {
+          "name" : "Picnic Table",
+          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/PicnicTable.webp",
+          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/PicnicTable.glb",
+          "defaultScale": 1
+        },
+        {
+          "name" : "Plants",
+          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/Plants.webp",
+          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/Plants.glb",
+          "defaultScale": 1
+        },
+        {
+          "name" : "Pumpkin",
+          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/Pumpkin.webp",
+          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/Pumpkin.glb",
+          "defaultScale": 1
+        },
+        {
+          "name" : "Pumpkin Table",
+          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/PumpkinTable.webp",
+          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/PumpkinTable.glb",
+          "defaultScale": 1
+        },
+        {
+          "name" : "Shopping Cart",
+          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/ShoppingCart.webp",
+          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/ShoppingCart.glb",
+          "defaultScale": 1
+        },
+        {
+          "name" : "Side Table",
+          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/SideTable.webp",
+          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/SideTable.glb",
+          "defaultScale": 1
+        },
+        {
+          "name" : "White Apples",
+          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/WhiteApples.webp",
+          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/WhiteApples.glb",
+          "defaultScale": 1
+        },
+        {
+          "name" : "Wide Table",
+          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/WideTable.webp",
+          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/WideTable.glb",
+          "defaultScale" : 1
+        },
+        {
+          "name": "apple",
+          "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/apple.webp",
+          "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/apple.glb",
+          "defaultScale": 1
+        },
+        {
+          "name": "artstand",
+          "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/artstand.webp",
+          "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/artstand.glb",
+          "defaultScale": 1
+        },
+        {
+          "name": "banana",
+          "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/banana.webp",
+          "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/banana.glb",
+          "defaultScale": 1
+        },
+        {
+          "name": "bread",
+          "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/bread.webp",
+          "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/bread.glb",
+          "defaultScale": 1
+        },
+        {
+          "name": "broccoli",
+          "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/broccoli.webp",
+        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/broccoli.glb",
+        "defaultScale": 1
       },
       {
-        "name" : "Avocados and Bananas",
-        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/AvocadosandBananas.webp",
-        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/AvocadosandBananas.glb"
+        "name": "cheese",
+        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/cheese.webp",
+        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/cheese.glb",
+        "defaultScale": 1
       },
       {
-        "name" : "Garden Table",
-        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/GardenTable.webp",
-        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/GardenTable.glb"
+        "name": "crate",
+        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/crate.webp",
+        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/crate.glb",
+        "defaultScale": 1
       },
       {
-        "name" : "Market Tent",
-        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/MarketTent.webp",
-        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/MarketTent.glb"
+        "name": "dishwithvegetables",
+        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/dishwithvegetables.webp",
+        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/dishwithvegetables.glb",
+        "defaultScale": 1
       },
       {
-        "name" : "Medical Kit",
-        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/MedicalKit.webp",
-        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/MedicalKit.glb"
-      },
-      // {
-      //   "name" : "Out House",
-      //   "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/OutHouse.webp",
-      //   "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/OutHouse.glb"
-      // },
-      {
-        "name" : "Picnic Table",
-        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/PicnicTable.webp",
-        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/PicnicTable.glb"
+        "name": "flowers",
+        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/flowers.webp",
+        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/flowers.glb",
+        "defaultScale": 1
       },
       {
-        "name" : "Plants",
-        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/Plants.webp",
-        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/Plants.glb"
+        "name": "greens",
+        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/greens.webp",
+        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/greens.glb",
+        "defaultScale": 1
       },
       {
-        "name" : "Pumpkin",
-        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/Pumpkin.webp",
-        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/Pumpkin.glb"
+        "name": "saladgreens",
+        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/saladgreens.webp",
+        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/saladgreens.glb",
+        "defaultScale": 1
       },
       {
-        "name" : "Pumpkin Table",
-        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/PumpkinTable.webp",
-        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/PumpkinTable.glb"
+        "name": "tablewithbread",
+        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tablewithbread.webp",
+        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tablewithbread.glb",
+        "defaultScale": 1
       },
       {
-        "name" : "Shopping Cart",
-        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/ShoppingCart.webp",
-        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/ShoppingCart.glb"
+        "name": "tablewithcheeses",
+        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tablewithcheeses.webp",
+        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tablewithcheeses.glb",
+        "defaultScale": 1
       },
       {
-        "name" : "Side Table",
-        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/SideTable.webp",
-        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/SideTable.glb"
+        "name": "tablewithcookies",
+        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tablewithcookies.webp",
+        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tablewithcookies.glb",
+        "defaultScale": 1
       },
       {
-        "name" : "White Apples",
-        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/WhiteApples.webp",
-        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/WhiteApples.glb"
+        "name": "tent",
+        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tent.webp",
+        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tent.glb",
+        "defaultScale": 1
       },
       {
-        "name" : "Wide Table",
-        "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/WideTable.webp",
-        "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/WideTable.glb"
+        "name": "vegatablebasket",
+        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/vegatablebasket.webp",
+        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/vegatablebasket.glb",
+        "defaultScale": 1
       }
     ]
   }

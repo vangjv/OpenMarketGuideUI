@@ -106,7 +106,8 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
           this.cesiumService.resetLeftandRightClickHandlers()
           console.log("this.current3dModelSelected:", this.current3dModelSelected);
           if (this.current3dModelSelected) {
-            this.cesiumService.threeDimensionalModelService.enableAdding3DModel(this.current3dModelSelected.modelUri);
+            this.cesiumService.threeDimensionalModelService.enableAdding3DModel(this.current3dModelSelected.modelUri, this.current3dModelSelected.name,
+              this.current3dModelSelected.defaultScale);
           }
           this.speedDial.onButtonClick = (event) => {
             this.op3DModelPlacement.show(null, this.speedDialButton);
