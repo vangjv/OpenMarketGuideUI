@@ -4,6 +4,7 @@ import { CesiumService } from './cesium.service';
 import { MapMode } from '../shared/models/map-mode.enum';
 import { BehaviorSubject } from 'rxjs';
 import { ThreeDModelInfo } from '../shared/models/three-d-model-info.model';
+import { ThreeDModelEntity } from '../shared/models/three-d-model-entity.model';
 declare let Cesium: any;
 @Injectable({
   providedIn: 'root'
@@ -151,6 +152,20 @@ export class ThreeDimensionalModelService {
       this.cesiumService.enableEntitySelectionMode();
       this.cesiumService.setDefaultHoverFunctionality();
     }
+  }
+
+  create3DModelFrom3DModelEntity(threeDModelEntity:ThreeDModelEntity) {
+    let newEntity = this.viewer.entities.add({
+      name: threeDModelEntity.name,
+      position: new Cesium.ConstantPositionProperty(new Cesium.Cartesian3(threeDModelEntity.position?.x, threeDModelEntity.position?.y, threeDModelEntity.position?.z)),
+      orientation: new Cesium.Quaternion(threeDModelEntity.orientation?.x, threeDModelEntity.orientation?.y, threeDModelEntity.orientation?.z, threeDModelEntity.orientation?.w),
+      model: {
+        uri: threeDModelEntity.model?.uri,
+        scale: threeDModelEntity.model?.scale
+      },
+      // heighReference:Cesium.HeightReference.RELATIVE_TO_GROUND
+      heighReference:Cesium.HeightReference.CLAMP_TO_GROUND
+    });
   }
 
   get3dModels():ThreeDModelInfo[]{

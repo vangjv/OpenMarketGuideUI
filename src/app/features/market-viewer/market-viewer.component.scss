@@ -1,0 +1,48 @@
+#cesium {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.card {
+  background: var(--surface-card);
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+:host ::ng-deep {
+  .speeddial-circle-omg {
+
+    .p-speeddial-direction-up-left {
+        right: 0;
+        bottom: 0;
+    }
+
+    .p-speeddial-direction-up-right {
+        left: 0;
+        bottom: 0;
+    }
+
+    .p-speeddial-direction-down {
+        right: 0;
+        top: 0;
+    }
+
+    .p-speeddial-direction-down-right {
+        left: 0;
+        top: 0;
+    }
+
+  }
+
+  .next-step-button {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 1rem;
+  }
+}

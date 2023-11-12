@@ -3,6 +3,8 @@ import { CesiumService } from './cesium.service';
 import { DialogsService } from './dialogs.service';
 import { BehaviorSubject } from 'rxjs';
 import { MapMode } from '../shared/models/map-mode.enum';
+import { Boundary } from '../shared/models/boundary.model';
+import { CoordinateData } from '../shared/models/coordinate-data.model';
 declare let Cesium: any;
 @Injectable({
   providedIn: 'root'
@@ -244,6 +246,26 @@ export class BoundaryService {
   removeTemporaryPoints(){
     this.temporaryPoints.forEach((point:any) => {
       this.cesiumService.removeEntityById(this.viewer, point.id)
+    });
+  }
+
+  createBoundaryFromBoundaryObject(boundaryObject:Boundary, name?:string, id?:string) {
+    let positions:any[] = [];
+    boundaryObject.boundaryPositions.forEach((position:CoordinateData) => {
+      positions.push(new Cesium.Cartesian3(position.x, position.y, position.z));
+    });
+    let boundary = this.viewer.entities.add({
+      id: id ? id : self.crypto.randomUUID(),
+      name: name,
+      polygon: {
+        hierarchy: new Cesium.PolygonHierarchy(positions),
+        material: new Cesium.ColorMaterialProperty(
+          new Cesium.Color(boundaryObject.color.red, boundaryObject.color.green, boundaryObject.color.blue, boundaryObject.color.alpha)
+        ),
+        outline: boundaryObject.outline,
+        outlineWidth: boundaryObject.outlineWidth,
+        outlineColor:  new Cesium.Color(boundaryObject.outlineColor.red, boundaryObject.outlineColor.green, boundaryObject.outlineColor.blue, boundaryObject.outlineColor.alpha)
+      },
     });
   }
 

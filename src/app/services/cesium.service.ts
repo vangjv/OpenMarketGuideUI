@@ -4,6 +4,8 @@ import { DialogsService } from './dialogs.service';
 import { ThreeDimensionalModelService } from './three-dimensional-model.service';
 import { BehaviorSubject } from 'rxjs';
 import { MapMode } from '../shared/models/map-mode.enum';
+import { CoordinateData } from '../shared/models/coordinate-data.model';
+import { Market } from '../shared/models/market.model';
 
 declare let Cesium: any;
 // import * as Cesium from '../assets/js/Cesium.js';
@@ -117,6 +119,41 @@ export class CesiumService {
     //     });
     //   }
     // });
+  }
+
+  createEntitiesFromMarket(market:Market) {
+    //create market boundary
+    if (market.marketBoundary) {
+      this.boundaryService.createBoundaryFromBoundaryObject(market.marketBoundary);
+    }
+    //create vendor locations
+    if (market.vendorLocations && market.vendorLocations.length > 0) {
+      market.vendorLocations.forEach((vendorLocation) => {
+        if (vendorLocation.boundary) {
+          this.boundaryService.createBoundaryFromBoundaryObject(vendorLocation.boundary, vendorLocation.name, vendorLocation.id);
+        }
+      });
+    }
+    //create 3d models
+    if (market.threeDModelEntities && market.threeDModelEntities.length > 0) {
+      market.threeDModelEntities.forEach((threeDModelEntity) => {
+        if (threeDModelEntity) {
+          this.threeDimensionalModelService.create3DModelFrom3DModelEntity(threeDModelEntity);
+        }
+      });
+    }
+    console.log("all entities", this.viewer.entities.values);
+  }
+
+  flyTo(location:CoordinateData) {
+    let destination = new Cesium.Cartesian3(location.x, location.y, location.z);
+    console.log("destination:", destination);
+    this.viewer.camera.flyTo({
+      destination: destination,
+      complete: ()=>{
+        this.viewer.camera.zoomOut(1000);
+      }
+    });
   }
 
   setHomeLocation(){

@@ -20,6 +20,8 @@ import { MarketSetupComponent } from './features/market-setup/market-setup.compo
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { SidebarModule } from 'primeng/sidebar';
 import { ModelPickerComponent } from './features/market-setup/model-picker/model-picker.component';
+import { MarketViewerComponent } from './features/market-viewer/market-viewer.component';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -30,12 +32,14 @@ import { ModelPickerComponent } from './features/market-setup/model-picker/model
     GoodsListingComponent,
     GoodsDetailsComponent,
     MarketSetupComponent,
-    ModelPickerComponent
+    ModelPickerComponent,
+    MarketViewerComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     StyleClassModule,
+    HttpClientModule,
     ButtonModule,
     DialogModule,
     DynamicDialogModule,
@@ -49,7 +53,8 @@ import { ModelPickerComponent } from './features/market-setup/model-picker/model
   ],
   providers: [
     DialogService,
-    MessageService
+    MessageService,
+
   ],
   bootstrap: [AppComponent]
 })
