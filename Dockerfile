@@ -18,6 +18,6 @@ FROM nginx
 
 RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx.conf /etc/nginx/conf.d
-COPY --from=build /app/dist/angular-tutorial /usr/share/nginx/html
+COPY --from=build /app/dist/openmarketguide /usr/share/nginx/html
 
 EXPOSE 80

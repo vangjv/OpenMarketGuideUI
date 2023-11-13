@@ -1,7 +1,4 @@
 .image-container {
-  position: relative;
-  display: inline-block; /* Or flex, block, etc., depending on your layout */
   border-radius: 20px; /* Adjust the px value to your preference for rounded edges */
-  overflow: hidden; /* Ensures the fade effect doesn't spill outside the rounded corners */
 }
 

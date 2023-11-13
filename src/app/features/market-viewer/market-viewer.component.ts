@@ -10,6 +10,10 @@ import { ThreeDModelInfo } from 'src/app/shared/models/three-d-model-info.model'
 import { MarketService } from 'src/app/services/market.service';
 import { Market } from 'src/app/shared/models/market.model';
 import { ActivatedRoute, Router } from '@angular/router';
+enum SideBarState {
+  Vendors = "Vendors",
+  MarketDates = "MarketDates"
+}
 
 @Component({
   selector: 'app-market-viewer',
@@ -19,6 +23,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
   items: MenuItem[] = [];
   @ViewChild('speedDial') speedDial!: SpeedDial;
+  SideBarState = SideBarState
+  sidebarState:SideBarState = SideBarState.Vendors;
   subscriptions = new Subscription();
   searchButton:any;
   speedDialButton:any;
@@ -36,6 +42,56 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
   // markets:Market[] = [];
   marketId: string | null = null;
   market:Market | undefined = undefined;
+  menuItems:MenuItem[] = [
+    {
+        icon: 'pi pi-pencil',
+        tooltip: 'Add vendor location',
+        tooltipOptions: {
+          tooltipLabel: 'Add vendor location',
+          tooltipEvent: 'hover',
+          tooltipPosition: 'bottom'
+        },
+        command: () => {
+          this.messageService.add({ severity: 'info', summary: 'Add', detail: 'Data Added', });
+        }
+    },
+    {
+        icon: 'pi pi-box',
+        tooltip: 'Add 3d model',
+        tooltipOptions: {
+          tooltipEvent: 'hover',
+          tooltipPosition: 'bottom',
+          tooltipLabel: 'Add 3d model'
+        },
+        command: () => {
+            this.messageService.add({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
+        }
+    },
+    {
+        icon: 'pi pi-users',
+        tooltip: 'Vendors',
+        tooltipOptions: {
+          tooltipEvent: 'hover',
+          tooltipPosition: 'bottom',
+          tooltipLabel: 'Vendors'
+        },
+        command: () => {
+          this.showSidebar = true;
+        }
+    },
+    {
+        icon: 'pi pi-calendar',
+        tooltip: 'Market dates',
+        tooltipOptions: {
+          tooltipEvent: 'hover',
+          tooltipPosition: 'bottom',
+          tooltipLabel: 'Market dates'
+        },
+        command: () => {
+            this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
+        }
+    }
+  ];
   @HostListener('window:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
     this.cesiumService.handleKeyboardTransformation(event);
@@ -63,6 +119,7 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cesiumService.initializeMap("cesium");
     this.cesiumService.hideDefaultCesiumSearch();
     this.cesiumService.changeCesiumHomeButtonToGoToAppHome();
+    this.addSubscriptions();
     if (this.marketId) {
       this.subscriptions.add(
         this.marketService.getMarketById(this.marketId).subscribe((market) => {
@@ -71,10 +128,89 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
           if (market.location) {
             this.cesiumService.flyTo(market.location);
             this.cesiumService.createEntitiesFromMarket(market);
+            this.cesiumService.mapMode.next(MapMode.EntitySelection);
           }
         })
       );
     }
+  }
+
+  addSubscriptions(){
+    this.subscriptions.add(
+      this.cesiumService.mapMode$.subscribe((mode) => {
+        console.log("mapMode:", mode);
+        this.mapMode = mode;
+        if(mode == MapMode.EntitySelection){
+          this.cesiumService.resetLeftandRightClickHandlers()
+          this.cesiumService.enableEntitySelectionMode();
+        } else if (mode == MapMode.MarketBoundaryDrawing) {
+          this.cesiumService.resetLeftandRightClickHandlers()
+          this.cesiumService.boundaryService.enableDrawMarketBoundaryFunctionallity();
+          console.log("enableDrawMarketBoundaryFunctionallity");
+        } else if (mode == MapMode.VendorLocationDrawing) {
+          this.cesiumService.resetLeftandRightClickHandlers()
+          this.cesiumService.boundaryService.enableVendorLocationDrawingMode();
+          console.log("enableVendorLocationDrawingMode");
+        } else if (mode == MapMode.ThreeDModelPlacement) {
+          this.cesiumService.resetLeftandRightClickHandlers()
+          console.log("this.current3dModelSelected:", this.current3dModelSelected);
+          if (this.current3dModelSelected) {
+            this.cesiumService.threeDimensionalModelService.enableAdding3DModel(this.current3dModelSelected.modelUri, this.current3dModelSelected.name,
+              this.current3dModelSelected.defaultScale);
+          }
+          this.speedDial.onButtonClick = (event) => {
+            // this.op3DModelPlacement.show(null, this.speedDialButton);
+          };
+          console.log("enable3dModelPlacement");
+        }
+      })
+    );
+    //monitor market boundary completed
+    this.subscriptions.add(
+      this.cesiumService.boundaryService.marketBoundary$.subscribe((marketBoundary) => {
+        if(marketBoundary){
+          this.marketBoundary = marketBoundary;
+          // this.opAddBoundary.show(null, this.speedDialButton);
+          console.log("marketBoundary:", this.marketBoundary);
+        }
+      })
+    );
+    //monitor when a new vendor location is added to map
+    this.subscriptions.add(
+      this.cesiumService.boundaryService.vendorLocation$.subscribe((vendorLocation) => {
+        if(vendorLocation){
+          this.vendorLocations.push(vendorLocation);
+          console.log("vendorLocation:", vendorLocation);
+        }
+      })
+    );
+    //monitor when new 3dmodel is added to map
+    this.subscriptions.add(
+      this.cesiumService.threeDimensionalModelService.new3dModel$.subscribe((new3dModel) => {
+        if(new3dModel){
+          this.new3dModel = new3dModel;
+          this.threeDModelEntities.push(new3dModel);
+          console.log("new3dModel:", this.new3dModel);
+        }
+      })
+    );
+    //monitor when an entity is selected
+    this.subscriptions.add(
+      this.cesiumService.selectedEntity$.subscribe((selectedEntity) => {
+        if(this.mapMode == MapMode.EntitySelection){
+          this.selectedEntity = selectedEntity;
+          console.log("selectedEntity:", this.selectedEntity);
+          if (this.selectedEntity == undefined) {
+            this.cesiumService.removeHighlightFromAllEntities();
+          } else {
+            if (this.selectedEntity?.model || this.selectedEntity?.polygon) {
+              // Highlight the model by changing its color
+              this.cesiumService.highlightEntity(this.selectedEntity);
+            }
+          }
+        }
+      })
+    );
   }
 
 }
