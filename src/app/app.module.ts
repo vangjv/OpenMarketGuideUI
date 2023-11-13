@@ -22,6 +22,8 @@ import { SidebarModule } from 'primeng/sidebar';
 import { ModelPickerComponent } from './features/market-setup/model-picker/model-picker.component';
 import { MarketViewerComponent } from './features/market-viewer/market-viewer.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { VendorCardsComponent } from './features/market-viewer/vendor-cards/vendor-cards.component';
+import { MapExplorerComponent } from './features/map-explorer/map-explorer.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +35,9 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
     GoodsDetailsComponent,
     MarketSetupComponent,
     ModelPickerComponent,
-    MarketViewerComponent
+    MarketViewerComponent,
+    VendorCardsComponent,
+    MapExplorerComponent
   ],
   imports: [
     BrowserModule,

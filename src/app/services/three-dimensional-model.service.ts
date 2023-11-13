@@ -349,6 +349,12 @@ export class ThreeDimensionalModelService {
         "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/vegatablebasket.webp",
         "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/vegatablebasket.glb",
         "defaultScale": 1
+      },
+      {
+        "name": "Custom gaussian splaat",
+        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/customsplat.webp",
+        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/customsplat.glb",
+        "defaultScale": 1
       }
     ]
   }

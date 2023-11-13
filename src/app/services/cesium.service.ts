@@ -7,6 +7,7 @@ import { MapMode } from '../shared/models/map-mode.enum';
 import { CoordinateData } from '../shared/models/coordinate-data.model';
 import { Market } from '../shared/models/market.model';
 import { Router } from '@angular/router';
+import { MapExplorerService } from './map-explorer.service';
 
 declare let Cesium: any;
 // import * as Cesium from '../assets/js/Cesium.js';
@@ -26,6 +27,7 @@ export class CesiumService {
   public adding3DModelState$ = this.adding3DModelState.asObservable();
   public boundaryService!:BoundaryService;
   public threeDimensionalModelService!:ThreeDimensionalModelService;
+  public mapExplorerService!:MapExplorerService;
   public selectedEntity = new BehaviorSubject<any>(undefined);
   public selectedEntity$ = this.selectedEntity.asObservable();
   public mapMode:BehaviorSubject<MapMode> = new BehaviorSubject<MapMode>(MapMode.EntitySelection);
@@ -51,6 +53,8 @@ export class CesiumService {
     this.hideFullScreenButton();
     this.boundaryService = new BoundaryService(this.viewer, this.dialogsService, this);
     this.threeDimensionalModelService = new ThreeDimensionalModelService(this.viewer, this.dialogsService, this);
+    this.threeDimensionalModelService = new ThreeDimensionalModelService(this.viewer, this.dialogsService, this);
+    this.mapExplorerService = new MapExplorerService(this.viewer, this.dialogsService, this, this.router);
     if (!this.viewer.scene.pickPositionSupported) {
       window.alert("This browser does not support pickPosition.");
     }
