@@ -52,88 +52,84 @@ export class ThreeDimensionalModelService {
 
 
   enableAdding3DModel(modelUri:string, name:string, scale:number){
-    const add3DModelBtn = document.getElementById("add3DModelBtn");
-    if (add3DModelBtn)
-    {
-      add3DModelBtn.innerHTML = "X";
-      const heading = Cesium.Math.toRadians(135);
-      const pitch = 0;
-      const roll = 0;
-      const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
-      // const orientation = Cesium.Transforms.headingPitchRollQuaternion(
-      //   position,
-      //   hpr
-      // );
+    const heading = Cesium.Math.toRadians(135);
+    const pitch = 0;
+    const roll = 0;
+    const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+    // const orientation = Cesium.Transforms.headingPitchRollQuaternion(
+    //   position,
+    //   hpr
+    // );
 
-      // const mouseOverEntity = this.viewer.entities.add({
-      //   id: "mouseOverEntity",
-      //   name: "Raw",
-      //   // position: position,
-      //   // orientation: orientation,
-      //   model: {
-      //     uri: "./assets/3dmodels/meatmarket.glb"
-      //   },
-      //   clampToGround: true
-      //   // heightReference:Cesium.HeightReference.CLAMP_TO_GROUND
-      // });
+    // const mouseOverEntity = this.viewer.entities.add({
+    //   id: "mouseOverEntity",
+    //   name: "Raw",
+    //   // position: position,
+    //   // orientation: orientation,
+    //   model: {
+    //     uri: "./assets/3dmodels/meatmarket.glb"
+    //   },
+    //   clampToGround: true
+    //   // heightReference:Cesium.HeightReference.CLAMP_TO_GROUND
+    // });
 
-      // let mouseOverModelHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
-      // mouseOverModelHandler.setInputAction((movement:any) => {
-      //   if (this.cesiumService.adding3DModelState() == true) {
-      //     // const cartesian = this.viewer.camera.pickEllipsoid(
-      //     //   movement.endPosition,
-      //     //   this.viewer.scene.globe.ellipsoid
-      //     // );
-      //     // if (cartesian) {
-      //     //   const cartographic = Cesium.Cartographic.fromCartesian(
-      //     //     cartesian
-      //     //   );
-      //     //   const objectsToExclude = [mouseOverEntity];
-      //     //   //entity.position = cartesian;
-      //     //   mouseOverEntity.position = this.viewer.scene.clampToHeight(cartesian, objectsToExclude);
-      //     // }
-      //     this.updateModelPosition(mouseOverEntity, movement.endPosition.x, movement.endPosition.y);
-      //   }
-      // }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+    // let mouseOverModelHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
+    // mouseOverModelHandler.setInputAction((movement:any) => {
+    //   if (this.cesiumService.adding3DModelState() == true) {
+    //     // const cartesian = this.viewer.camera.pickEllipsoid(
+    //     //   movement.endPosition,
+    //     //   this.viewer.scene.globe.ellipsoid
+    //     // );
+    //     // if (cartesian) {
+    //     //   const cartographic = Cesium.Cartographic.fromCartesian(
+    //     //     cartesian
+    //     //   );
+    //     //   const objectsToExclude = [mouseOverEntity];
+    //     //   //entity.position = cartesian;
+    //     //   mouseOverEntity.position = this.viewer.scene.clampToHeight(cartesian, objectsToExclude);
+    //     // }
+    //     this.updateModelPosition(mouseOverEntity, movement.endPosition.x, movement.endPosition.y);
+    //   }
+    // }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-      this.clickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-      this.clickHandler.setInputAction((event:any)=> {
-        if (this.cesiumService.mapMode.getValue() == MapMode.ThreeDModelPlacement) {
-          let earthPosition;
-          // `earthPosition` will be undefined if our mouse is not over the globe.
-          let pickedObject = this.viewer.scene.pick(event.position);
-          if (Cesium.defined(pickedObject)) {
-            earthPosition = this.viewer.scene.pickPosition(event.position);
-          }
-          if (Cesium.defined(earthPosition)) {
-            const heading = Cesium.Math.toRadians(90);
-            const pitch = 0;
-            const roll = 0;
-            const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
-            const orientation = Cesium.Transforms.headingPitchRollQuaternion(
-              earthPosition,
-              hpr
-            );
-
-            let newEntity = this.viewer.entities.add({
-              name: name,
-              position: earthPosition,
-              orientation: orientation,
-              model: {
-                uri: modelUri,
-                scale: scale
-              },
-              // heighReference:Cesium.HeightReference.RELATIVE_TO_GROUND
-              heighReference:Cesium.HeightReference.CLAMP_TO_GROUND
-            });
-            this.new3dModel.next(newEntity);
-            //mouseOverModelHandler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE)
-            // this.viewer.entities.remove(mouseOverEntity);
-            this.cesiumService.mapMode.next(MapMode.EntitySelection);
-          }
+    this.clickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+    this.clickHandler.setInputAction((event:any)=> {
+      if (this.cesiumService.mapMode.getValue() == MapMode.ThreeDModelPlacement) {
+        let earthPosition;
+        // `earthPosition` will be undefined if our mouse is not over the globe.
+        let pickedObject = this.viewer.scene.pick(event.position);
+        if (Cesium.defined(pickedObject)) {
+          earthPosition = this.viewer.scene.pickPosition(event.position);
         }
-      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-    }
+        if (Cesium.defined(earthPosition)) {
+          const heading = Cesium.Math.toRadians(90);
+          const pitch = 0;
+          const roll = 0;
+          const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+          const orientation = Cesium.Transforms.headingPitchRollQuaternion(
+            earthPosition,
+            hpr
+          );
+
+          let newEntity = this.viewer.entities.add({
+            name: name,
+            position: earthPosition,
+            orientation: orientation,
+            model: {
+              uri: modelUri,
+              scale: scale
+            },
+            // heighReference:Cesium.HeightReference.RELATIVE_TO_GROUND
+            heighReference:Cesium.HeightReference.CLAMP_TO_GROUND
+          });
+          this.new3dModel.next(newEntity);
+          //mouseOverModelHandler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE)
+          // this.viewer.entities.remove(mouseOverEntity);
+          this.cesiumService.mapMode.next(MapMode.EntitySelection);
+        }
+      }
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
   }
 
   resetLeftandRightClickHandler(){
@@ -345,9 +341,9 @@ export class ThreeDimensionalModelService {
         "defaultScale": 1
       },
       {
-        "name": "Vegatable Basket",
-        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/vegatablebasket.webp",
-        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/vegatablebasket.glb",
+        "name": "Vegetable Basket",
+        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/vegetablebasket.webp",
+        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/vegetablebasket.glb",
         "defaultScale": 1
       },
       {

@@ -40,14 +40,6 @@ export class BoundaryService {
     });
   }
 
-  enableVendorLocationDrawingMode(){
-    const vendorLocationButton = document.getElementById("drawBoundaryButton");
-    if (vendorLocationButton){
-      vendorLocationButton.innerHTML = "-";
-      this.addDrawVendorLocationFunctionality();
-    }
-  }
-
   disableVendorLocationDrawingMode(){
     const vendorLocationButton = document.getElementById("drawBoundaryButton");
     if (vendorLocationButton){
@@ -57,13 +49,15 @@ export class BoundaryService {
     }
   }
 
-  addDrawVendorLocationFunctionality(){
+  enableVendorLocationDrawingMode(){
+    console.log("addDrawVendorLocationFunctionality");
     this.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(
       Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
     );
 
     this.clickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
     this.clickHandler.setInputAction((event:any)=> {
+      console.log("addDrawVendorLocationFunctionality left click");
       if (this.cesiumService.mapMode.getValue() == MapMode.VendorLocationDrawing) {
         let earthPosition;
         // `earthPosition` will be undefined if our mouse is not over the globe.
@@ -88,6 +82,7 @@ export class BoundaryService {
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
     this.clickHandler.setInputAction((event:any)=> {
+      console.log("addDrawVendorLocationFunctionality right click");
       if (this.cesiumService.mapMode.getValue() == MapMode.VendorLocationDrawing) {
         event.cancel = true; // Cancel right click dialog
         this.showAddVendorBoundaryDialog();
