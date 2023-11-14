@@ -1,16 +1,24 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CesiumComponent } from './features/cesium/cesium.component';
 import { HomeComponent } from './features/home/home.component';
 import { GoodsListingComponent } from './features/goods-listing/goods-listing.component';
 import { GoodsDetailsComponent } from './features/goods-details/goods-details.component';
 import { MarketSetupComponent } from './features/market-setup/market-setup.component';
 import { MarketViewerComponent } from './features/market-viewer/market-viewer.component';
 import { MapExplorerComponent } from './features/map-explorer/map-explorer.component';
+import { BrowserUtils } from '@azure/msal-browser';
+import { MsalGuard } from '@azure/msal-angular';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'market-setup', component: MarketSetupComponent },
+  {
+    path: '',
+    component: HomeComponent
+  },
+  {
+    path: 'market-setup',
+    component: MarketSetupComponent,
+    canActivate: [MsalGuard]
+  },
   { path: 'market-viewer/:marketid', component: MarketViewerComponent },
   { path: 'map', component: MapExplorerComponent },
   { path: 'goods-listing', component: GoodsListingComponent },
@@ -20,7 +28,10 @@ const routes: Routes = [
 
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {
+    // Don't perform initial navigation in iframes or popups
+    initialNavigation: !BrowserUtils.isInIframe() && !BrowserUtils.isInPopup() ? 'enabledNonBlocking' : 'disabled' // Set to enabledBlocking to use Angular Universal
+  })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

@@ -68,7 +68,7 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.cesiumService.initializeMap("cesium");
+    this.cesiumService.initializeMap("market-setup");
     this.cesiumService.hideDefaultCesiumSearch();
     this.cesiumService.changeCesiumHomeButtonToGoToAppHome();
     // this.cesiumService.setHomeLocation();

@@ -11,12 +11,10 @@ import { MapExplorerService } from './map-explorer.service';
 
 declare let Cesium: any;
 // import * as Cesium from '../assets/js/Cesium.js';
-Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2MWZlOTZjMy1iYjhiLTRkYjktOWEyYS0xYjllYWM4NmQ3YjYiLCJpZCI6ODM1MzksImlhdCI6MTY2MTU0NTg0MX0.PBHIiiQPO0_kfthCfRxp4VVGlhFZp4BMKIeILBwYuqk";
+Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2NTMyNWExMC02NzNjLTRjMTUtYWUxMy0xMDg4OTAwMjgyOWMiLCJpZCI6MTc4MDE2LCJpYXQiOjE2OTk5MTQyNDF9.oyFmWXaMENmkFU_YK7pd15LkTE1X34js0Pq6542rnQA";
 Cesium.GoogleMaps.defaultApiKey = "AIzaSyCGia9D0eVwiSKfTEHMKIMPecAar40kqoc";
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class CesiumService {
   public viewer: any;
   public vendorBoundaryDrawingState = new BehaviorSubject<boolean>(false);

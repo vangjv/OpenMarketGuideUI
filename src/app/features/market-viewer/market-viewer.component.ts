@@ -52,7 +52,7 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
           tooltipPosition: 'bottom'
         },
         command: () => {
-          this.messageService.add({ severity: 'info', summary: 'Add', detail: 'Data Added', });
+          this.messageService.add({ key: 'primary', severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
         }
     },
     {
@@ -64,7 +64,7 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
           tooltipLabel: 'Add 3d model'
         },
         command: () => {
-            this.messageService.add({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
+          this.messageService.add({ key: 'primary', severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
         }
     },
     {
@@ -88,7 +88,7 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
           tooltipLabel: 'Market dates'
         },
         command: () => {
-            this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
+          this.messageService.add({ key: 'primary', severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
         }
     }
   ];
@@ -116,7 +116,7 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.cesiumService.initializeMap("cesium");
+    this.cesiumService.initializeMap("market-viewer");
     this.cesiumService.hideDefaultCesiumSearch();
     this.cesiumService.changeCesiumHomeButtonToGoToAppHome();
     this.addSubscriptions();

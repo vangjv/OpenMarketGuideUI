@@ -21,9 +21,64 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { SidebarModule } from 'primeng/sidebar';
 import { ModelPickerComponent } from './features/market-setup/model-picker/model-picker.component';
 import { MarketViewerComponent } from './features/market-viewer/market-viewer.component';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { VendorCardsComponent } from './features/market-viewer/vendor-cards/vendor-cards.component';
 import { MapExplorerComponent } from './features/map-explorer/map-explorer.component';
+import { CesiumService } from './services/cesium.service';
+import { IPublicClientApplication, PublicClientApplication, InteractionType, BrowserCacheLocation, LogLevel } from '@azure/msal-browser';
+import { MsalGuard, MsalInterceptor, MsalBroadcastService, MsalInterceptorConfiguration, MsalModule, MsalService, MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalGuardConfiguration, MsalRedirectComponent } from '@azure/msal-angular';
+import { environment } from 'src/environments/environment';
+import { ToastModule } from 'primeng/toast';
+import { MenuModule } from 'primeng/menu';
+import { AvatarModule } from 'primeng/avatar';
+
+export function loggerCallback(logLevel: LogLevel, message: string) {
+  console.log(message);
+}
+
+export function MSALInstanceFactory(): IPublicClientApplication {
+  return new PublicClientApplication({
+    auth: {
+      clientId: environment.msalConfig.auth.clientId,
+      authority: environment.b2cPolicies.authorities.signUpSignIn.authority,
+      redirectUri: environment.redirectUri,
+      postLogoutRedirectUri: '/',
+      knownAuthorities: [environment.b2cPolicies.authorityDomain]
+    },
+    cache: {
+      cacheLocation: BrowserCacheLocation.LocalStorage
+    },
+    system: {
+      allowNativeBroker: false, // Disables WAM Broker
+      loggerOptions: {
+        loggerCallback,
+        logLevel: LogLevel.Verbose,
+        piiLoggingEnabled: false
+      }
+    }
+  });
+}
+
+export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
+  const protectedResourceMap = new Map<string, Array<string>>();
+
+  // protectedResourceMap.set(environment.apiConfig.uri, environment.apiConfig.scopes);
+
+  return {
+    interactionType: InteractionType.Redirect,
+    protectedResourceMap
+  };
+}
+
+export function MSALGuardConfigFactory(): MsalGuardConfiguration {
+  return {
+    interactionType: InteractionType.Redirect,
+    authRequest: {
+      scopes: [...environment.apiConfig.scopes],
+    },
+    loginFailedRoute: '/login-failed'
+  };
+}
 
 @NgModule({
   declarations: [
@@ -53,13 +108,39 @@ import { MapExplorerComponent } from './features/map-explorer/map-explorer.compo
     ColorPickerModule,
     SpeedDialModule,
     OverlayPanelModule,
-    SidebarModule
+    SidebarModule,
+    MsalModule,
+    ToastModule,
+    MenuModule,
+    AvatarModule
   ],
   providers: [
     DialogService,
     MessageService,
-
+    CesiumService,
+    [
+      {
+        provide: HTTP_INTERCEPTORS,
+        useClass: MsalInterceptor,
+        multi: true
+      },
+      {
+        provide: MSAL_INSTANCE,
+        useFactory: MSALInstanceFactory
+      },
+      {
+        provide: MSAL_GUARD_CONFIG,
+        useFactory: MSALGuardConfigFactory
+      },
+      {
+        provide: MSAL_INTERCEPTOR_CONFIG,
+        useFactory: MSALInterceptorConfigFactory
+      },
+      MsalService,
+      MsalGuard,
+      MsalBroadcastService
+    ],
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent, MsalRedirectComponent]
 })
 export class AppModule { }

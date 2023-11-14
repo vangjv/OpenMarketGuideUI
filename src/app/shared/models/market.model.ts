@@ -11,9 +11,9 @@ export class Market extends BaseEntity {
   state?: string;
   location?: CoordinateData;
   marketBoundary?: Boundary;
-  vendorLocations?: VendorLocation[];
-  threeDModelEntities?: ThreeDModelEntity[];
-  vendors?:Vendor[];
+  vendorLocations?: VendorLocation[] = [];
+  threeDModelEntities?: ThreeDModelEntity[] = [];
+  vendors?:Vendor[] = [];
 
   static buildMarket(name:string, location:CoordinateData, marketBoundary:Boundary, vendorLocations:VendorLocation[], threeDModelEntities?: ThreeDModelEntity[]):Market {
     let market = new Market();
@@ -23,5 +23,24 @@ export class Market extends BaseEntity {
     market.vendorLocations = vendorLocations;
     market.threeDModelEntities = threeDModelEntities
     return market;
+  };
+
+  initialize(name:string, location:CoordinateData, marketBoundary:Boundary) {
+    this.name = name;
+    this.location = location;
+    this.marketBoundary = marketBoundary;
+  };
+
+  addVendorLocations(vendorLocations:VendorLocation[]) {
+    this.vendorLocations = vendorLocations;
   }
+
+  addThreeDModelEntities(threeDModelEntities:ThreeDModelEntity[]) {
+    this.threeDModelEntities = threeDModelEntities;
+  }
+
+  addVendor(vendor:Vendor) {
+    this.vendors?.push(vendor)
+  }
+
 }

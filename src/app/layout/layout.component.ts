@@ -1,7 +1,11 @@
-import { Component, OnInit, Signal, computed, signal } from '@angular/core';
+import { Component, OnInit, Signal, WritableSignal, computed, effect, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { ScreenService } from '../services/screen.service';
 import { filter } from 'rxjs';
+import { MenuItem } from 'primeng/api';
+import { AppStateService } from '../services/app-state.service';
+import { AccountInfo } from '@azure/msal-browser';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-layout',
@@ -11,9 +15,29 @@ import { filter } from 'rxjs';
 export class LayoutComponent implements OnInit {
   activeTab = 0;
   isMapView: Signal<boolean> = signal(false);
-
-  constructor(private router:Router, private screenService:ScreenService) { }
-
+  currentUser: AccountInfo | undefined;
+  currentUserInitials: string = "";
+  userMenu: MenuItem[] = [
+    {
+      label: 'Sign in',
+      icon: 'pi pi-fw pi-sign-in',
+      command: () => {
+        this.authService.login();
+      }
+    }
+  ];
+  constructor(private router: Router, private screenService: ScreenService, private appStateService: AppStateService, private authService: AuthService) {
+    effect(() => {
+      this.currentUser = this.appStateService.state.$currentUser();
+      this.currentUserInitials = this.getInitialsFromToken(this.currentUser);
+      console.log("this.currentUser", this.currentUser);
+      if (this.currentUser === undefined) {
+        this.setNoLoggedInUserMenu();
+      } else {
+        this.setLoggedInUserMenu();
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.router.events.pipe(
@@ -34,7 +58,41 @@ export class LayoutComponent implements OnInit {
     });
   }
 
-  checkMapViewBasedOnTabIndex(){
+  getInitialsFromToken(currentUser:AccountInfo | undefined){
+    if (currentUser) {
+      if (currentUser.idTokenClaims) {
+        let firstName = currentUser.idTokenClaims['given_name'] as string[];
+        let lastName =  currentUser.idTokenClaims['family_name'] as string[];
+        return (firstName[0] + lastName[0]).toUpperCase();
+      }
+    }
+    return "";
+  }
+  setLoggedInUserMenu(){
+    this.userMenu = [
+      {
+        label: 'Sign out',
+        icon: 'pi pi-fw pi-sign-out',
+        command: () => {
+          this.authService.logout();
+        }
+      }
+    ];
+  }
+
+  setNoLoggedInUserMenu(){
+    this.userMenu = [
+      {
+        label: 'Sign in',
+        icon: 'pi pi-fw pi-sign-in',
+        command: () => {
+          this.authService.login();
+        }
+      }
+    ];
+  }
+
+  checkMapViewBasedOnTabIndex() {
     if (this.activeTab === 0) {
       this.screenService.toggleMapView(false);
     }
