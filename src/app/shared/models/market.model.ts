@@ -1,6 +1,7 @@
 import { BaseEntity } from "./base-entity.model";
 import { Boundary } from "./boundary.model";
 import { CoordinateData } from "./coordinate-data.model";
+import { MarketUser } from "./market-user.model";
 import { ThreeDModelEntity } from "./three-d-model-entity.model";
 import { VendorLocation } from "./vendor-location.model";
 import { Vendor } from "./vendor.model";
@@ -14,6 +15,7 @@ export class Market extends BaseEntity {
   vendorLocations?: VendorLocation[] = [];
   threeDModelEntities?: ThreeDModelEntity[] = [];
   vendors?:Vendor[] = [];
+  marketUsers?:MarketUser[] = [];
 
   static buildMarket(name:string, location:CoordinateData, marketBoundary:Boundary, vendorLocations:VendorLocation[], threeDModelEntities?: ThreeDModelEntity[]):Market {
     let market = new Market();

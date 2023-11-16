@@ -26,7 +26,7 @@ import { VendorCardsComponent } from './features/market-viewer/vendor-cards/vend
 import { MapExplorerComponent } from './features/map-explorer/map-explorer.component';
 import { CesiumService } from './services/cesium.service';
 import { IPublicClientApplication, PublicClientApplication, InteractionType, BrowserCacheLocation, LogLevel } from '@azure/msal-browser';
-import { MsalGuard, MsalInterceptor, MsalBroadcastService, MsalInterceptorConfiguration, MsalModule, MsalService, MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalGuardConfiguration, MsalRedirectComponent } from '@azure/msal-angular';
+import { MsalGuard, MsalInterceptor, MsalBroadcastService, MsalInterceptorConfiguration, MsalModule, MsalService, MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalGuardConfiguration, MsalRedirectComponent, ProtectedResourceScopes } from '@azure/msal-angular';
 import { environment } from 'src/environments/environment';
 import { ToastModule } from 'primeng/toast';
 import { MenuModule } from 'primeng/menu';
@@ -60,9 +60,13 @@ export function MSALInstanceFactory(): IPublicClientApplication {
 }
 
 export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
-  const protectedResourceMap = new Map<string, Array<string>>();
-
-  // protectedResourceMap.set(environment.apiConfig.uri, environment.apiConfig.scopes);
+  const protectedResourceMap = new Map<string, Array<ProtectedResourceScopes>>();
+  //protect only Post requests.  unauthenticated users should be able to get markets
+  let protectedResourceScopes:ProtectedResourceScopes = {
+    httpMethod: "POST",
+    scopes: ["https://openmarketguide.onmicrosoft.com/api-access/api-access"]
+  };
+  protectedResourceMap.set(environment.apiConfig.uri, [protectedResourceScopes]);
 
   return {
     interactionType: InteractionType.Redirect,
