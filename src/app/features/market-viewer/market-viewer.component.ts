@@ -10,6 +10,8 @@ import { ThreeDModelInfo } from 'src/app/shared/models/three-d-model-info.model'
 import { MarketService } from 'src/app/services/market.service';
 import { Market } from 'src/app/shared/models/market.model';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AccountInfo } from '@azure/msal-browser';
+import { AppStateService } from 'src/app/services/app-state.service';
 enum SideBarState {
   Vendors = "Vendors",
   MarketDates = "MarketDates"
@@ -21,6 +23,8 @@ enum SideBarState {
   styleUrls: ['./market-viewer.component.scss']
 })
 export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
+  currentUser: AccountInfo | undefined;
+  userIsOwner: boolean = false;
   items: MenuItem[] = [];
   @ViewChild('speedDial') speedDial!: SpeedDial;
   SideBarState = SideBarState
@@ -96,8 +100,10 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
   handleKeyDown(event: KeyboardEvent) {
     this.cesiumService.handleKeyboardTransformation(event);
   }
-  constructor(private cesiumService:CesiumService, private formBuilder: FormBuilder, private router:Router,
-    private messageService:MessageService, private marketService:MarketService, private route: ActivatedRoute) {
+  constructor(private cesiumService:CesiumService, private formBuilder: FormBuilder, private router:Router,private appStateService:AppStateService,
+    private messageService:MessageService, private marketService:MarketService, private route: ActivatedRoute) {    effect(() => {
+      this.currentUser = this.appStateService.state.$currentUser();
+    });
   }
 
   ngOnInit(): void {
@@ -129,6 +135,16 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
             this.cesiumService.flyTo(market.location);
             this.cesiumService.createEntitiesFromMarket(market);
             this.cesiumService.mapMode.next(MapMode.EntitySelection);
+          }
+          console.log("this.currentUser:", this.currentUser);
+          if (this.currentUser && this.currentUser.idTokenClaims?.oid) {
+            console.log("this.market?.marketUsers:", this.market?.marketUsers);
+            if (this.market?.marketUsers) {
+              const owner = this.market?.marketUsers.find(user => user.id === this.currentUser?.idTokenClaims?.oid && user.role === "Owner");
+              if (owner) {
+                this.userIsOwner = true;
+              }
+            }
           }
         })
       );
