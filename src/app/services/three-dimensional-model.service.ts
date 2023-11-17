@@ -4,7 +4,7 @@ import { CesiumService } from './cesium.service';
 import { MapMode } from '../shared/models/map-mode.enum';
 import { BehaviorSubject } from 'rxjs';
 import { ThreeDModelInfo } from '../shared/models/three-d-model-info.model';
-import { ThreeDModelEntity } from '../shared/models/three-d-model-entity.model';
+import { ThreeDModelEntity, ThreeDModelEntityType } from '../shared/models/three-d-model-entity.model';
 import { ThreeDModelCollectionService } from './three-dimensional-model-collection.service';
 import { OMGType } from '../shared/models/omg-type.enum';
 declare let Cesium: any;
@@ -53,7 +53,7 @@ export class ThreeDimensionalModelService {
   }
 
 
-  enableAdding3DModel(modelUri: string, name: string, scale: number) {
+  enableAdding3DModel(modelUri: string, name: string, scale: number, type: OMGType = OMGType.Market3DModel) {
     const heading = Cesium.Math.toRadians(135);
     const pitch = 0;
     const roll = 0;
@@ -121,6 +121,7 @@ export class ThreeDimensionalModelService {
               uri: modelUri,
               scale: scale
             },
+            omgType: type,
             // heighReference:Cesium.HeightReference.RELATIVE_TO_GROUND
             heighReference: Cesium.HeightReference.CLAMP_TO_GROUND
           });

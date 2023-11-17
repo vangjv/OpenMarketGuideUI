@@ -45,4 +45,12 @@ export class MarketService {
     );
   }
 
+  updateMarket(market: Market): Observable<Market> {
+    if (market.state == undefined) {
+      market.state = "Neverland";
+    }
+    return this.http.put<Market>(this.apiUrl + 'markets/' + market.id, market);
+  }
+
+
 }

@@ -67,11 +67,16 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
     httpMethod: "POST",
     scopes: ["https://openmarketguide.onmicrosoft.com/api-access/api-access"]
   };
+  let protectedResourceScopesPut:ProtectedResourceScopes = {
+    httpMethod: "PUT",
+    scopes: ["https://openmarketguide.onmicrosoft.com/api-access/api-access"]
+  };
   let protectedResourceScopesGet:ProtectedResourceScopes = {
     httpMethod: "GET",
     scopes: ["https://openmarketguide.onmicrosoft.com/api-access/api-access"]
   };
   protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/markets", [protectedResourceScopesPost]);
+  protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/markets", [protectedResourceScopesPut]);
   protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/markets/me", [protectedResourceScopesGet]);
 
   return {

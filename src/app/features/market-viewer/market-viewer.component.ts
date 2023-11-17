@@ -60,7 +60,14 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
         tooltipPosition: 'bottom'
       },
       command: () => {
-        this.messageService.add({ key: 'primary', severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
+        this.messageService.add({
+          key: 'primary',
+          severity: 'custom-2',
+          summary: 'Message Title',
+          closable: false,
+          detail: 'Sagittis eu volutpat odio facilisis mauris sit amet. Sed velit dignissim sodales ut eu sem integer.',
+          contentStyleClass: 'p-0'
+        });
       }
     },
     {
@@ -247,8 +254,12 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   saveChanges(){
+    console.log("this.cesiumService.viewer.entities.values:", this.cesiumService.viewer.entities.values);
     let updatedMarket = Market.buildUpdatedMarketFromCesiumEntities(this.market!, this.cesiumService.viewer.entities.values);
     console.log(updatedMarket);
+    this.marketService.updateMarket(updatedMarket).subscribe((market:Market) => {
+      console.log("updated market:", updatedMarket);
+    });
   }
 
 
