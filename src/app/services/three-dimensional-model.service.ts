@@ -5,6 +5,7 @@ import { MapMode } from '../shared/models/map-mode.enum';
 import { BehaviorSubject } from 'rxjs';
 import { ThreeDModelInfo } from '../shared/models/three-d-model-info.model';
 import { ThreeDModelEntity } from '../shared/models/three-d-model-entity.model';
+import { ThreeDModelCollectionService } from './three-dimensional-model-collection.service';
 declare let Cesium: any;
 @Injectable({
   providedIn: 'root'
@@ -12,10 +13,10 @@ declare let Cesium: any;
 export class ThreeDimensionalModelService {
   public new3dModel = new BehaviorSubject<any>(undefined);
   public new3dModel$ = this.new3dModel.asObservable();
-  public clickHandler:any;
-  constructor(@Inject('viewer') private viewer:any, private dialogsService:DialogsService, private cesiumService:CesiumService) { }
+  public clickHandler: any;
+  constructor(@Inject('viewer') private viewer: any, private dialogsService: DialogsService, private cesiumService: CesiumService) { }
 
-  add3DModelButton(){
+  add3DModelButton() {
     //add button
     const toolbar = document.querySelector("div.cesium-viewer-toolbar");
     const modeButton = document.querySelector("span.cesium-sceneModePicker-wrapper");
@@ -36,22 +37,22 @@ export class ThreeDimensionalModelService {
     });
   }
 
-  updateModelPosition(modelEntity:any, screenX:any, screenY:any) {
+  updateModelPosition(modelEntity: any, screenX: any, screenY: any) {
     let mousePosition = new Cesium.Cartesian2(screenX, screenY);
     let ellipsoid = this.viewer.scene.globe.ellipsoid;
     let cartesian = this.viewer.camera.pickEllipsoid(mousePosition, ellipsoid);
 
     if (cartesian) {
-        let cartographic = ellipsoid.cartesianToCartographic(cartesian);
-        let longitude = Cesium.Math.toDegrees(cartographic.longitude);
-        let latitude = Cesium.Math.toDegrees(cartographic.latitude);
-        modelEntity.position = Cesium.Cartesian3.fromDegrees(longitude, latitude);
-        modelEntity.position = this.viewer.scene.clampToHeight(Cesium.Cartesian3.fromDegrees(longitude, latitude), [modelEntity]);
+      let cartographic = ellipsoid.cartesianToCartographic(cartesian);
+      let longitude = Cesium.Math.toDegrees(cartographic.longitude);
+      let latitude = Cesium.Math.toDegrees(cartographic.latitude);
+      modelEntity.position = Cesium.Cartesian3.fromDegrees(longitude, latitude);
+      modelEntity.position = this.viewer.scene.clampToHeight(Cesium.Cartesian3.fromDegrees(longitude, latitude), [modelEntity]);
     }
-}
+  }
 
 
-  enableAdding3DModel(modelUri:string, name:string, scale:number){
+  enableAdding3DModel(modelUri: string, name: string, scale: number) {
     const heading = Cesium.Math.toRadians(135);
     const pitch = 0;
     const roll = 0;
@@ -93,7 +94,7 @@ export class ThreeDimensionalModelService {
     // }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
     this.clickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-    this.clickHandler.setInputAction((event:any)=> {
+    this.clickHandler.setInputAction((event: any) => {
       if (this.cesiumService.mapMode.getValue() == MapMode.ThreeDModelPlacement) {
         let earthPosition;
         // `earthPosition` will be undefined if our mouse is not over the globe.
@@ -120,7 +121,7 @@ export class ThreeDimensionalModelService {
               scale: scale
             },
             // heighReference:Cesium.HeightReference.RELATIVE_TO_GROUND
-            heighReference:Cesium.HeightReference.CLAMP_TO_GROUND
+            heighReference: Cesium.HeightReference.CLAMP_TO_GROUND
           });
           this.new3dModel.next(newEntity);
           //mouseOverModelHandler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE)
@@ -132,7 +133,7 @@ export class ThreeDimensionalModelService {
 
   }
 
-  resetLeftandRightClickHandler(){
+  resetLeftandRightClickHandler() {
     if (this.clickHandler) {
       this.clickHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
       this.clickHandler.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
@@ -141,8 +142,7 @@ export class ThreeDimensionalModelService {
 
   disableAdding3DModel() {
     const add3DModelBtn = document.getElementById("add3DModelBtn");
-    if (add3DModelBtn)
-    {
+    if (add3DModelBtn) {
       add3DModelBtn.innerHTML = "M";
       this.cesiumService.removeEntityById(this.viewer, "mouseOverEntity");
       this.cesiumService.enableEntitySelectionMode();
@@ -150,7 +150,7 @@ export class ThreeDimensionalModelService {
     }
   }
 
-  create3DModelFrom3DModelEntity(threeDModelEntity:ThreeDModelEntity) {
+  create3DModelFrom3DModelEntity(threeDModelEntity: ThreeDModelEntity) {
     let newEntity = this.viewer.entities.add({
       name: threeDModelEntity.name,
       position: new Cesium.ConstantPositionProperty(new Cesium.Cartesian3(threeDModelEntity.position?.x, threeDModelEntity.position?.y, threeDModelEntity.position?.z)),
@@ -160,198 +160,7 @@ export class ThreeDimensionalModelService {
         scale: threeDModelEntity.model?.scale
       },
       // heighReference:Cesium.HeightReference.RELATIVE_TO_GROUND
-      heighReference:Cesium.HeightReference.CLAMP_TO_GROUND
+      heighReference: Cesium.HeightReference.CLAMP_TO_GROUND
     });
-  }
-
-  get3dModels():ThreeDModelInfo[]{
-    return [
-      {
-        "name" : "ATM",
-          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/ATM.webp",
-          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/ATM.glb",
-          "defaultScale": 1
-        },
-        {
-          "name" : "Avocados and Bananas",
-          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/AvocadosandBananas.webp",
-          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/AvocadosandBananas.glb",
-          "defaultScale": 1
-        },
-        {
-          "name" : "Garden Table",
-          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/GardenTable.webp",
-          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/GardenTable.glb",
-          "defaultScale": 1
-        },
-        {
-          "name" : "Market Tent",
-          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/MarketTent.webp",
-          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/MarketTent.glb",
-          "defaultScale": 1
-        },
-        {
-          "name" : "Medical Kit",
-          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/MedicalKit.webp",
-          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/MedicalKit.glb",
-          "defaultScale": 1
-        },
-        // {
-        //   "name" : "Out House",
-        //   "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/OutHouse.webp",
-        //   "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/OutHouse.glb",
-        //   "defaultScale": 1
-        // },
-        {
-          "name" : "Picnic Table",
-          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/PicnicTable.webp",
-          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/PicnicTable.glb",
-          "defaultScale": 1
-        },
-        {
-          "name" : "Plants",
-          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/Plants.webp",
-          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/Plants.glb",
-          "defaultScale": 1
-        },
-        {
-          "name" : "Pumpkin",
-          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/Pumpkin.webp",
-          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/Pumpkin.glb",
-          "defaultScale": 1
-        },
-        {
-          "name" : "Pumpkin Table",
-          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/PumpkinTable.webp",
-          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/PumpkinTable.glb",
-          "defaultScale": 1
-        },
-        {
-          "name" : "Shopping Cart",
-          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/ShoppingCart.webp",
-          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/ShoppingCart.glb",
-          "defaultScale": 1
-        },
-        {
-          "name" : "Side Table",
-          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/SideTable.webp",
-          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/SideTable.glb",
-          "defaultScale": 1
-        },
-        {
-          "name" : "White Apples",
-          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/WhiteApples.webp",
-          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/WhiteApples.glb",
-          "defaultScale": 1
-        },
-        {
-          "name" : "Wide Table",
-          "previewFile" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/WideTable.webp",
-          "modelUri" : "https://omgmodelstorage.blob.core.windows.net/3dmodels/WideTable.glb",
-          "defaultScale" : 1
-        },
-        {
-          "name": "Apple",
-          "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/apple.webp",
-          "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/apple.glb",
-          "defaultScale": 1
-        },
-        {
-          "name": "Art Stand",
-          "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/artstand.webp",
-          "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/artstand.glb",
-          "defaultScale": 1
-        },
-        {
-          "name": "Banana",
-          "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/banana.webp",
-          "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/banana.glb",
-          "defaultScale": 1
-        },
-        {
-          "name": "Bread",
-          "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/bread.webp",
-          "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/bread.glb",
-          "defaultScale": 1
-        },
-        {
-          "name": "Broccoli",
-          "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/broccoli.webp",
-        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/broccoli.glb",
-        "defaultScale": 1
-      },
-      {
-        "name": "Cheese",
-        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/cheese.webp",
-        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/cheese.glb",
-        "defaultScale": 1
-      },
-      {
-        "name": "Crate",
-        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/crate.webp",
-        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/crate.glb",
-        "defaultScale": 1
-      },
-      {
-        "name": "Dish with Vegetables",
-        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/dishwithvegetables.webp",
-        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/dishwithvegetables.glb",
-        "defaultScale": 1
-      },
-      {
-        "name": "Flowers",
-        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/flowers.webp",
-        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/flowers.glb",
-        "defaultScale": 1
-      },
-      {
-        "name": "Greens",
-        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/greens.webp",
-        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/greens.glb",
-        "defaultScale": 1
-      },
-      {
-        "name": "Salad greens",
-        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/saladgreens.webp",
-        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/saladgreens.glb",
-        "defaultScale": 1
-      },
-      {
-        "name": "Table with Bread",
-        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tablewithbread.webp",
-        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tablewithbread.glb",
-        "defaultScale": 1
-      },
-      {
-        "name": "Table with Cheese",
-        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tablewithcheeses.webp",
-        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tablewithcheeses.glb",
-        "defaultScale": 1
-      },
-      {
-        "name": "Table with Cookies",
-        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tablewithcookies.webp",
-        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tablewithcookies.glb",
-        "defaultScale": 1
-      },
-      {
-        "name": "Tent",
-        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tent.webp",
-        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/tent.glb",
-        "defaultScale": 1
-      },
-      {
-        "name": "Vegetable Basket",
-        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/vegetablebasket.webp",
-        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/vegetablebasket.glb",
-        "defaultScale": 1
-      },
-      {
-        "name": "Custom gaussian splaat",
-        "previewFile": "https://omgmodelstorage.blob.core.windows.net/3dmodels/customsplat.webp",
-        "modelUri": "https://omgmodelstorage.blob.core.windows.net/3dmodels/customsplat.glb",
-        "defaultScale": 1
-      }
-    ]
   }
 }

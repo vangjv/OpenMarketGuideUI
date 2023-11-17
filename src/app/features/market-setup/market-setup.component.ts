@@ -15,6 +15,7 @@ import { VendorLocation } from 'src/app/shared/models/vendor-location.model';
 import { ThreeDModelEntity } from 'src/app/shared/models/three-d-model-entity.model';
 import { MarketService } from 'src/app/services/market.service';
 import { Router } from '@angular/router';
+import { ThreeDModelCollectionService } from 'src/app/services/three-dimensional-model-collection.service';
 @Component({
   selector: 'app-market-setup',
   templateUrl: './market-setup.component.html',
@@ -50,7 +51,8 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cesiumService.handleKeyboardTransformation(event);
   }
   constructor(private cesiumService:CesiumService, private formBuilder: FormBuilder, private dialogsService:DialogsService,
-    private messageService:MessageService, private el: ElementRef, private marketService:MarketService, private router:Router) {
+    private messageService:MessageService, private el: ElementRef, private marketService:MarketService, private router:Router,
+    private threeDModelCollectionService:ThreeDModelCollectionService) {
     this.mapSearchForm = this.createMapSearchForm();
     this.marketNameForm = this.createMarketNameForm();
     this.vendorLocationForm = this.createVendorLocationForm();
@@ -60,6 +62,10 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnInit(): void {
     this.showSaveBoundaryDialog = computed(() => {
       return this.dialogsService.showAddBoundaryDialog();
+    });
+    //load 3dmodels
+    this.threeDModelCollectionService.getPublic3DModels().subscribe((threeDModelInfoList:ThreeDModelInfo[]) => {
+      this.threeDModelInfoList = threeDModelInfoList;
     });
   }
 
@@ -71,10 +77,6 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cesiumService.initializeMap("market-setup");
     this.cesiumService.hideDefaultCesiumSearch();
     this.cesiumService.changeCesiumHomeButtonToGoToAppHome();
-    // this.cesiumService.setHomeLocation();
-    // this.cesiumService.boundaryService.addDrawBoundaryButton();
-    // this.cesiumService.threeDimensionalModelService.add3DModelButton();
-    // this.cesiumService.enable3dModelRotation();
     this.addSubscriptions();
     const speedDialMenuItems = this.el.nativeElement.querySelectorAll('.p-speeddial-list');
     this.searchButton = speedDialMenuItems[0].children[0];
@@ -83,8 +85,6 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
     this.speedDial.onButtonClick = (event) => {
       this.opSearch.show(event, this.speedDialButton);
     };
-    //load 3d models
-    this.threeDModelInfoList = this.cesiumService.threeDimensionalModelService.get3dModels();
     this.opSearch.show(null, this.speedDialButton);
   }
 

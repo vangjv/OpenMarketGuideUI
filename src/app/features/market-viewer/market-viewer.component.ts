@@ -31,80 +31,105 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
   items: MenuItem[] = [];
   @ViewChild('speedDial') speedDial!: SpeedDial;
   SideBarState = SideBarState
-  sidebarState:SideBarState = SideBarState.Vendors;
+  sidebarState: SideBarState = SideBarState.Vendors;
   subscriptions = new Subscription();
-  searchButton:any;
-  speedDialButton:any;
-  speedDialOriginalOnClickBehavior:any;
-  new3dModel!:any;
-  selectedEntity:any;
-  showSidebar:boolean = false;
-  stepState:number = 1;
-  mapMode:MapMode = MapMode.EntitySelection;
-  current3dModelSelected:ThreeDModelInfo | undefined = undefined;
-  marketBoundary!:any;
-  vendorLocations:any[] = [];
-  threeDModelInfoList:ThreeDModelInfo[] = [];
-  threeDModelEntities:any[] = [];
+  searchButton: any;
+  speedDialButton: any;
+  speedDialOriginalOnClickBehavior: any;
+  new3dModel!: any;
+  selectedEntity: any;
+  showSidebar: boolean = false;
+  stepState: number = 1;
+  mapMode: MapMode = MapMode.EntitySelection;
+  current3dModelSelected: ThreeDModelInfo | undefined = undefined;
+  marketBoundary!: any;
+  vendorLocations: any[] = [];
+  threeDModelInfoList: ThreeDModelInfo[] = [];
+  threeDModelEntities: any[] = [];
   // markets:Market[] = [];
   marketId: string | null = null;
-  market:Market | undefined = undefined;
-  menuItems:MenuItem[] = [
+  market: Market | undefined = undefined;
+  menuItems: MenuItem[] = [
     {
-        icon: 'pi pi-pencil',
-        tooltip: 'Add vendor location',
-        tooltipOptions: {
-          tooltipLabel: 'Add vendor location',
-          tooltipEvent: 'hover',
-          tooltipPosition: 'bottom'
-        },
-        command: () => {
-          this.messageService.add({ key: 'primary', severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
-        }
+      icon: 'pi pi-pencil',
+      tooltip: 'Add vendor location',
+      tooltipOptions: {
+        tooltipLabel: 'Add vendor location',
+        tooltipEvent: 'hover',
+        tooltipPosition: 'bottom'
+      },
+      command: () => {
+        this.messageService.add({ key: 'primary', severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
+      }
     },
     {
-        icon: 'pi pi-box',
-        tooltip: 'Add 3d model',
-        tooltipOptions: {
-          tooltipEvent: 'hover',
-          tooltipPosition: 'bottom',
-          tooltipLabel: 'Add 3d model'
-        },
-        command: () => {
-          this.messageService.add({ key: 'primary', severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
-        }
+      icon: 'pi pi-box',
+      tooltip: 'Add 3d model',
+      tooltipOptions: {
+        tooltipEvent: 'hover',
+        tooltipPosition: 'bottom',
+        tooltipLabel: 'Add 3d model'
+      },
+      command: (event) => {
+        this.op3DModelPlacement.show(event, this.speedDialButton);
+      }
+    },
+    // {
+    //   icon: 'pi pi-users',
+    //   tooltip: 'Vendors',
+    //   tooltipOptions: {
+    //     tooltipEvent: 'hover',
+    //     tooltipPosition: 'bottom',
+    //     tooltipLabel: 'Vendors'
+    //   },
+    //   command: () => {
+    //     this.showSidebar = true;
+    //   }
+    // },
+    {
+      icon: 'pi pi-calendar',
+      tooltip: 'Market dates',
+      tooltipOptions: {
+        tooltipEvent: 'hover',
+        tooltipPosition: 'bottom',
+        tooltipLabel: 'Market dates'
+      },
+      command: () => {
+        this.messageService.add({ key: 'primary', severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
+      }
     },
     {
-        icon: 'pi pi-users',
-        tooltip: 'Vendors',
-        tooltipOptions: {
-          tooltipEvent: 'hover',
-          tooltipPosition: 'bottom',
-          tooltipLabel: 'Vendors'
-        },
-        command: () => {
-          this.showSidebar = true;
-        }
+      icon: 'pi pi-save',
+      tooltip: 'Save',
+      tooltipOptions: {
+        tooltipEvent: 'hover',
+        tooltipPosition: 'bottom',
+        tooltipLabel: 'Save changes'
+      },
+      command: () => {
+        this.messageService.add({ key: 'primary', severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
+      }
     },
     {
-        icon: 'pi pi-calendar',
-        tooltip: 'Market dates',
-        tooltipOptions: {
-          tooltipEvent: 'hover',
-          tooltipPosition: 'bottom',
-          tooltipLabel: 'Market dates'
-        },
-        command: () => {
-          this.messageService.add({ key: 'primary', severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
-        }
+      icon: 'pi pi-database',
+      tooltip: 'Log entities',
+      tooltipOptions: {
+        tooltipEvent: 'hover',
+        tooltipPosition: 'bottom',
+        tooltipLabel: 'Console log entities'
+      },
+      command: () => {
+        console.log("Entities:", this.cesiumService.viewer.entities.values);
+      }
     }
   ];
   @HostListener('window:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
     this.cesiumService.handleKeyboardTransformation(event);
   }
-  constructor(private cesiumService:CesiumService, private formBuilder: FormBuilder, private router:Router,private appStateService:AppStateService,
-    private messageService:MessageService, private marketService:MarketService, private route: ActivatedRoute) {    effect(() => {
+  constructor(private cesiumService: CesiumService, private formBuilder: FormBuilder, private router: Router, private appStateService: AppStateService,
+    private messageService: MessageService, private marketService: MarketService, private route: ActivatedRoute) {
+    effect(() => {
       this.currentUser = this.appStateService.state.$currentUser();
     });
   }
@@ -139,14 +164,14 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
             this.cesiumService.createEntitiesFromMarket(market);
             this.cesiumService.mapMode.next(MapMode.EntitySelection);
           }
-          console.log("this.currentUser:", this.currentUser);
           this.setUserAsOwnerIfIsMarketOwner();
+          this.addSubscriptions();
         })
       );
     }
   }
 
-  setUserAsOwnerIfIsMarketOwner(){
+  setUserAsOwnerIfIsMarketOwner() {
     if (this.currentUser && this.currentUser.idTokenClaims?.oid) {
       if (this.market?.marketUsers) {
         const owner = this.market?.marketUsers.find(user => user.id === this.currentUser?.idTokenClaims?.oid && user.role === "Owner");
@@ -157,18 +182,14 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  addSubscriptions(){
+  addSubscriptions() {
     this.subscriptions.add(
       this.cesiumService.mapMode$.subscribe((mode) => {
         console.log("mapMode:", mode);
         this.mapMode = mode;
-        if(mode == MapMode.EntitySelection){
+        if (mode == MapMode.EntitySelection) {
           this.cesiumService.resetLeftandRightClickHandlers()
           this.cesiumService.enableEntitySelectionMode();
-        } else if (mode == MapMode.MarketBoundaryDrawing) {
-          this.cesiumService.resetLeftandRightClickHandlers()
-          this.cesiumService.boundaryService.enableDrawMarketBoundaryFunctionallity();
-          console.log("enableDrawMarketBoundaryFunctionallity");
         } else if (mode == MapMode.VendorLocationDrawing) {
           this.cesiumService.resetLeftandRightClickHandlers()
           this.cesiumService.boundaryService.enableVendorLocationDrawingMode();
@@ -187,20 +208,10 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
         }
       })
     );
-    //monitor market boundary completed
-    this.subscriptions.add(
-      this.cesiumService.boundaryService.marketBoundary$.subscribe((marketBoundary) => {
-        if(marketBoundary){
-          this.marketBoundary = marketBoundary;
-          // this.opAddBoundary.show(null, this.speedDialButton);
-          console.log("marketBoundary:", this.marketBoundary);
-        }
-      })
-    );
     //monitor when a new vendor location is added to map
     this.subscriptions.add(
       this.cesiumService.boundaryService.vendorLocation$.subscribe((vendorLocation) => {
-        if(vendorLocation){
+        if (vendorLocation) {
           this.vendorLocations.push(vendorLocation);
           console.log("vendorLocation:", vendorLocation);
         }
@@ -209,7 +220,7 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
     //monitor when new 3dmodel is added to map
     this.subscriptions.add(
       this.cesiumService.threeDimensionalModelService.new3dModel$.subscribe((new3dModel) => {
-        if(new3dModel){
+        if (new3dModel) {
           this.new3dModel = new3dModel;
           this.threeDModelEntities.push(new3dModel);
           console.log("new3dModel:", this.new3dModel);
@@ -219,7 +230,7 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
     //monitor when an entity is selected
     this.subscriptions.add(
       this.cesiumService.selectedEntity$.subscribe((selectedEntity) => {
-        if(this.mapMode == MapMode.EntitySelection){
+        if (this.mapMode == MapMode.EntitySelection) {
           this.selectedEntity = selectedEntity;
           console.log("selectedEntity:", this.selectedEntity);
           if (this.selectedEntity == undefined) {
@@ -235,19 +246,19 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
     );
   }
 
-  enableVendorLocationDrawingMode(){
+  enableVendorLocationDrawingMode() {
     this.cesiumService.mapMode.next(MapMode.VendorLocationDrawing);
   }
 
-  openAddVendorLocationDialog(){
+  openAddVendorLocationDialog() {
     this.opAddVendorLocations.show(null, this.speedDialButton);
   }
 
-  update3dModelSelection(threeDModelInfo:ThreeDModelInfo){
+  update3dModelSelection(threeDModelInfo: ThreeDModelInfo) {
     this.current3dModelSelected = threeDModelInfo;
   }
 
-  enable3DModelPlacement(){
+  enable3DModelPlacement() {
     this.cesiumService.mapMode.next(MapMode.ThreeDModelPlacement);
   }
 

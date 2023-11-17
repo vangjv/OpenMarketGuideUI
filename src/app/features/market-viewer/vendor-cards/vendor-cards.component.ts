@@ -16,5 +16,8 @@ export class VendorCardsComponent {
   assignVendor(vendor:Vendor) {
 
   }
+
+  addVendor() {
+  }
 }
 

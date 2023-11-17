@@ -127,7 +127,7 @@ export class CesiumService {
   createEntitiesFromMarket(market:Market) {
     //create market boundary
     if (market.marketBoundary) {
-      this.boundaryService.createBoundaryFromBoundaryObject(market.marketBoundary);
+      this.boundaryService.createBoundaryFromBoundaryObject(market.marketBoundary, market.name, market.id);
     }
     //create vendor locations
     if (market.vendorLocations && market.vendorLocations.length > 0) {
