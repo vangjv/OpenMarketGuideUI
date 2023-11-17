@@ -127,13 +127,13 @@ export class CesiumService {
   createEntitiesFromMarket(market:Market) {
     //create market boundary
     if (market.marketBoundary) {
-      this.boundaryService.createBoundaryFromBoundaryObject(market.marketBoundary, market.name, market.id);
+      this.boundaryService.createBoundaryFromBoundaryObject(market.marketBoundary, market.name, market.id, true);
     }
     //create vendor locations
     if (market.vendorLocations && market.vendorLocations.length > 0) {
       market.vendorLocations.forEach((vendorLocation) => {
         if (vendorLocation.boundary) {
-          this.boundaryService.createBoundaryFromBoundaryObject(vendorLocation.boundary, vendorLocation.name, vendorLocation.id);
+          this.boundaryService.createBoundaryFromBoundaryObject(vendorLocation.boundary, vendorLocation.name, vendorLocation.id, false);
         }
       });
     }
@@ -141,7 +141,7 @@ export class CesiumService {
     if (market.threeDModelEntities && market.threeDModelEntities.length > 0) {
       market.threeDModelEntities.forEach((threeDModelEntity) => {
         if (threeDModelEntity) {
-          this.threeDimensionalModelService.create3DModelFrom3DModelEntity(threeDModelEntity);
+          this.threeDimensionalModelService.create3DModelFrom3DModelEntity(threeDModelEntity, true);
         }
       });
     }

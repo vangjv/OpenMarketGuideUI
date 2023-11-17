@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ThreeDModelInfo } from '../shared/models/three-d-model-info.model';
 import { ThreeDModelEntity } from '../shared/models/three-d-model-entity.model';
 import { ThreeDModelCollectionService } from './three-dimensional-model-collection.service';
+import { OMGType } from '../shared/models/omg-type.enum';
 declare let Cesium: any;
 @Injectable({
   providedIn: 'root'
@@ -150,9 +151,10 @@ export class ThreeDimensionalModelService {
     }
   }
 
-  create3DModelFrom3DModelEntity(threeDModelEntity: ThreeDModelEntity) {
+  create3DModelFrom3DModelEntity(threeDModelEntity: ThreeDModelEntity, isMarket3DModel: boolean = false) {
     let newEntity = this.viewer.entities.add({
       name: threeDModelEntity.name,
+      omgType: isMarket3DModel ? OMGType.Market3DModel : OMGType.Vendor3DModel,
       position: new Cesium.ConstantPositionProperty(new Cesium.Cartesian3(threeDModelEntity.position?.x, threeDModelEntity.position?.y, threeDModelEntity.position?.z)),
       orientation: new Cesium.Quaternion(threeDModelEntity.orientation?.x, threeDModelEntity.orientation?.y, threeDModelEntity.orientation?.z, threeDModelEntity.orientation?.w),
       model: {

@@ -13,6 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AccountInfo } from '@azure/msal-browser';
 import { AppStateService } from 'src/app/services/app-state.service';
 import { OverlayPanel } from 'primeng/overlaypanel';
+import { ThreeDModelCollectionService } from 'src/app/services/three-dimensional-model-collection.service';
 enum SideBarState {
   Vendors = "Vendors",
   MarketDates = "MarketDates"
@@ -71,7 +72,8 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
         tooltipLabel: 'Add 3d model'
       },
       command: (event) => {
-        this.op3DModelPlacement.show(event, this.speedDialButton);
+        console.log("event:", event);
+        this.op3DModelPlacement.show(event.originalEvent, this.speedDialButton);
       }
     },
     // {
@@ -128,7 +130,8 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cesiumService.handleKeyboardTransformation(event);
   }
   constructor(private cesiumService: CesiumService, private formBuilder: FormBuilder, private router: Router, private appStateService: AppStateService,
-    private messageService: MessageService, private marketService: MarketService, private route: ActivatedRoute) {
+    private messageService: MessageService, private marketService: MarketService, private route: ActivatedRoute,
+    private threeDModelCollectionService:ThreeDModelCollectionService) {
     effect(() => {
       this.currentUser = this.appStateService.state.$currentUser();
     });
@@ -142,6 +145,10 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
       if (this.marketId == undefined) {
         this.router.navigate(['/']);
       }
+    });
+    //load 3dmodels
+    this.threeDModelCollectionService.getPublic3DModels().subscribe((threeDModelInfoList:ThreeDModelInfo[]) => {
+      this.threeDModelInfoList = threeDModelInfoList;
     });
   }
 
@@ -201,32 +208,28 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
             this.cesiumService.threeDimensionalModelService.enableAdding3DModel(this.current3dModelSelected.modelUri, this.current3dModelSelected.name,
               this.current3dModelSelected.defaultScale);
           }
-          this.speedDial.onButtonClick = (event) => {
-            // this.op3DModelPlacement.show(null, this.speedDialButton);
-          };
-          console.log("enable3dModelPlacement");
         }
       })
     );
     //monitor when a new vendor location is added to map
-    this.subscriptions.add(
-      this.cesiumService.boundaryService.vendorLocation$.subscribe((vendorLocation) => {
-        if (vendorLocation) {
-          this.vendorLocations.push(vendorLocation);
-          console.log("vendorLocation:", vendorLocation);
-        }
-      })
-    );
+    // this.subscriptions.add(
+    //   this.cesiumService.boundaryService.vendorLocation$.subscribe((vendorLocation) => {
+    //     if (vendorLocation) {
+    //       this.vendorLocations.push(vendorLocation);
+    //       console.log("vendorLocation:", vendorLocation);
+    //     }
+    //   })
+    // );
     //monitor when new 3dmodel is added to map
-    this.subscriptions.add(
-      this.cesiumService.threeDimensionalModelService.new3dModel$.subscribe((new3dModel) => {
-        if (new3dModel) {
-          this.new3dModel = new3dModel;
-          this.threeDModelEntities.push(new3dModel);
-          console.log("new3dModel:", this.new3dModel);
-        }
-      })
-    );
+    // this.subscriptions.add(
+    //   this.cesiumService.threeDimensionalModelService.new3dModel$.subscribe((new3dModel) => {
+    //     if (new3dModel) {
+    //       this.new3dModel = new3dModel;
+    //       this.threeDModelEntities.push(new3dModel);
+    //       console.log("new3dModel:", this.new3dModel);
+    //     }
+    //   })
+    // );
     //monitor when an entity is selected
     this.subscriptions.add(
       this.cesiumService.selectedEntity$.subscribe((selectedEntity) => {

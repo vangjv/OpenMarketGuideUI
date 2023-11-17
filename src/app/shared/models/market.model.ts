@@ -45,4 +45,7 @@ export class Market extends BaseEntity {
     this.vendors?.push(vendor)
   }
 
+  static buildMarketFromCesiumEntities(entities:any) {
+
+  }
 }

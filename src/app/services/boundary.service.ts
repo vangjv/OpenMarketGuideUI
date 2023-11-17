@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { MapMode } from '../shared/models/map-mode.enum';
 import { Boundary } from '../shared/models/boundary.model';
 import { CoordinateData } from '../shared/models/coordinate-data.model';
+import { OMGType } from '../shared/models/omg-type.enum';
 declare let Cesium: any;
 @Injectable({
   providedIn: 'root'
@@ -244,13 +245,14 @@ export class BoundaryService {
     });
   }
 
-  createBoundaryFromBoundaryObject(boundaryObject:Boundary, name?:string, id?:string) {
+  createBoundaryFromBoundaryObject(boundaryObject:Boundary, name?:string, id?:string, isMarketBoundary:boolean = false) {
     let positions:any[] = [];
     boundaryObject.boundaryPositions.forEach((position:CoordinateData) => {
       positions.push(new Cesium.Cartesian3(position.x, position.y, position.z));
     });
     let boundary = this.viewer.entities.add({
       id: id ? id : self.crypto.randomUUID(),
+      omgType: isMarketBoundary ? OMGType.MarketBoundary : OMGType.VendorLocation,
       name: name,
       polygon: {
         hierarchy: new Cesium.PolygonHierarchy(positions),
