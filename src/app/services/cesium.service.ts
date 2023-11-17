@@ -19,8 +19,8 @@ export class CesiumService {
   public viewer: any;
   public vendorBoundaryDrawingState = new BehaviorSubject<boolean>(false);
   public vendorBoundaryDrawingState$ = this.vendorBoundaryDrawingState.asObservable();
-  public marketBoundaryDrawingState = new BehaviorSubject<boolean>(false);
-  public marketBoundaryDrawingState$ = this.marketBoundaryDrawingState.asObservable();
+  public marketLocationDrawingState = new BehaviorSubject<boolean>(false);
+  public marketLocationDrawingState$ = this.marketLocationDrawingState.asObservable();
   public adding3DModelState = new BehaviorSubject<boolean>(false);
   public adding3DModelState$ = this.adding3DModelState.asObservable();
   public boundaryService!:BoundaryService;
@@ -126,8 +126,8 @@ export class CesiumService {
 
   createEntitiesFromMarket(market:Market) {
     //create market boundary
-    if (market.marketBoundary) {
-      this.boundaryService.createBoundaryFromBoundaryObject(market.marketBoundary, market.name, market.id, true);
+    if (market.marketLocation && market.marketLocation.boundary) {
+      this.boundaryService.createBoundaryFromBoundaryObject(market.marketLocation.boundary, market.marketLocation.name, market.marketLocation.id, true);
     }
     //create vendor locations
     if (market.vendorLocations && market.vendorLocations.length > 0) {

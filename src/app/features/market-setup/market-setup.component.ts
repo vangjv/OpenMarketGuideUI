@@ -16,6 +16,7 @@ import { ThreeDModelEntity } from 'src/app/shared/models/three-d-model-entity.mo
 import { MarketService } from 'src/app/services/market.service';
 import { Router } from '@angular/router';
 import { ThreeDModelCollectionService } from 'src/app/services/three-dimensional-model-collection.service';
+import { MarketLocation } from 'src/app/shared/models/market-location.model';
 @Component({
   selector: 'app-market-setup',
   templateUrl: './market-setup.component.html',
@@ -42,7 +43,7 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
   stepState:number = 1;
   mapMode:MapMode = MapMode.EntitySelection;
   current3dModelSelected:ThreeDModelInfo | undefined = undefined;
-  marketBoundary!:any;
+  marketLocation!:any;
   vendorLocations:any[] = [];
   threeDModelInfoList:ThreeDModelInfo[] = [];
   threeDModelEntities:any[] = [];
@@ -120,11 +121,11 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
     );
     //monitor market boundary completed
     this.subscriptions.add(
-      this.cesiumService.boundaryService.marketBoundary$.subscribe((marketBoundary) => {
-        if(marketBoundary){
-          this.marketBoundary = marketBoundary;
+      this.cesiumService.boundaryService.marketLocation$.subscribe((marketLocation) => {
+        if(marketLocation){
+          this.marketLocation = marketLocation;
           this.opAddBoundary.show(null, this.speedDialButton);
-          console.log("marketBoundary:", this.marketBoundary);
+          console.log("marketLocation:", this.marketLocation);
         }
       })
     );
@@ -184,14 +185,14 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
       };
       this.op3DModelPlacement.show(event, this.speedDialButton);
     } else {
-      console.log("marketBoundary:",  this.marketBoundary);
+      console.log("marketLocation:",  this.marketLocation);
       console.log("vendorLocations:",  this.vendorLocations);
       console.log("threeDModelEntities:",  this.threeDModelEntities);
     }
   }
 
   completeMarketSetup(event:any){
-    console.log("this.marketBoundary):",  this.marketBoundary);
+    console.log("this.marketLocation):",  this.marketLocation);
     console.log("this.vendorLocations:",  this.vendorLocations);
     console.log("this.threeDModelEntities:",  this.threeDModelEntities);
     let vendorLocations:VendorLocation[] = [];
@@ -202,14 +203,12 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
     this.threeDModelEntities.forEach((threeDModelEntity:any) => {
       threeDModelEntities.push(ThreeDModelEntity.fromCesiumEntity(threeDModelEntity));
     });
-    let marketLocation = CoordinateData.fromCesiumEntity(this.marketBoundary);
+    let marketLocation = MarketLocation.fromCesiumEntity(this.marketLocation);
     console.log("marketLocation:", marketLocation);
-    let marketBoundary = Boundary.fromCesiumEntity(this.marketBoundary);
-    console.log("marketBoundary:", marketBoundary);
     console.log("vendorLocations:", vendorLocations);
     console.log("threeDModelEntities:", threeDModelEntities);
-    let market:Market = Market.buildMarket(this.marketNameForm.value.name, CoordinateData.fromCesiumEntity(this.marketBoundary),
-      Boundary.fromCesiumEntity(this.marketBoundary), vendorLocations, threeDModelEntities);
+    let market:Market = Market.buildMarket(this.marketNameForm.value.name, CoordinateData.fromCesiumEntity(this.marketLocation),
+      marketLocation, vendorLocations, threeDModelEntities);
       console.log("completedMarket:", market);
     this.marketService.createMarket(market).subscribe((market:Market) => {
       console.log("new market:", market);
@@ -244,10 +243,10 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cesiumService.mapMode.next(MapMode.VendorLocationDrawing);
   }
 
-  openAddMarketBoundaryDialog(marketBoundary:any){
-    console.log(marketBoundary);
-    this.marketBoundary = marketBoundary._polygon._hierarchy._value.positions;
-    console.log(this.marketBoundary);
+  openAddMarketBoundaryDialog(marketLocation:any){
+    console.log(marketLocation);
+    this.marketLocation = marketLocation._polygon._hierarchy._value.positions;
+    console.log(this.marketLocation);
     this.opAddBoundary.show(null, this.speedDialButton);
   }
 
@@ -266,8 +265,8 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   resetMarketBoundary(){
-    this.marketBoundary = undefined;
-    this.cesiumService.removeEntityById(this.cesiumService.viewer, "marketBoundary");
+    this.marketLocation = undefined;
+    this.cesiumService.removeEntityById(this.cesiumService.viewer, "marketLocation");
   }
 
   update3dModelSelection(threeDModelInfo:ThreeDModelInfo){

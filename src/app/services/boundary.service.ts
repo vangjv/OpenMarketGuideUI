@@ -15,8 +15,8 @@ export class BoundaryService {
   private temporaryBoundaryPoints:any[] = [];
   private temporaryBoundary:any;
   private temporaryPoints:any[] = [];
-  public marketBoundary = new BehaviorSubject<any>(undefined);
-  public marketBoundary$ = this.marketBoundary.asObservable();
+  public marketLocation = new BehaviorSubject<any>(undefined);
+  public marketLocation$ = this.marketLocation.asObservable();
   public vendorLocation = new BehaviorSubject<any>(undefined);
   public vendorLocation$ = this.vendorLocation.asObservable();
   constructor(@Inject('viewer') private viewer:any, private dialogsService:DialogsService, private cesiumService:CesiumService) { }
@@ -124,7 +124,7 @@ export class BoundaryService {
       if (this.cesiumService.mapMode.getValue() == MapMode.MarketBoundaryDrawing) {
         event.cancel = true; // Cancel right click dialog
         this.completeMarketBoundary();
-        this.cesiumService.marketBoundaryDrawingState.next(false);
+        this.cesiumService.marketLocationDrawingState.next(false);
       }
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
   }
@@ -144,13 +144,13 @@ export class BoundaryService {
   completeMarketBoundary() {
     let color = new Cesium.Color(1, 1, 1, 0.3);
     this.removeTemporaryPoints();
-    const drawnBoundary = this.drawBoundary(this.temporaryBoundaryPoints, "MarketBoundary", color, true, "marketBoundary");
+    const drawnBoundary = this.drawBoundary(this.temporaryBoundaryPoints, "MarketBoundary", color, true, "marketLocation");
     this.viewer.entities.remove(this.temporaryBoundary);
     this.temporaryPoints = [];
     this.temporaryBoundary = undefined;
     this.temporaryBoundaryPoints = [];
     this.cesiumService.mapMode.next(MapMode.EntitySelection);
-    this.marketBoundary.next(drawnBoundary);
+    this.marketLocation.next(drawnBoundary);
     return drawnBoundary;
   }
 
@@ -245,14 +245,14 @@ export class BoundaryService {
     });
   }
 
-  createBoundaryFromBoundaryObject(boundaryObject:Boundary, name?:string, id?:string, isMarketBoundary:boolean = false) {
+  createBoundaryFromBoundaryObject(boundaryObject:Boundary, name?:string, id?:string, isMarketLocation:boolean = false) {
     let positions:any[] = [];
     boundaryObject.boundaryPositions.forEach((position:CoordinateData) => {
       positions.push(new Cesium.Cartesian3(position.x, position.y, position.z));
     });
     let boundary = this.viewer.entities.add({
       id: id ? id : self.crypto.randomUUID(),
-      omgType: isMarketBoundary ? OMGType.MarketBoundary : OMGType.VendorLocation,
+      omgType: isMarketLocation ? OMGType.MarketLocation : OMGType.VendorLocation,
       name: name,
       polygon: {
         hierarchy: new Cesium.PolygonHierarchy(positions),

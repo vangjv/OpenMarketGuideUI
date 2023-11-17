@@ -109,7 +109,7 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
         tooltipLabel: 'Save changes'
       },
       command: () => {
-        this.messageService.add({ key: 'primary', severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
+        this.saveChanges();
       }
     },
     {
@@ -211,25 +211,6 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
         }
       })
     );
-    //monitor when a new vendor location is added to map
-    // this.subscriptions.add(
-    //   this.cesiumService.boundaryService.vendorLocation$.subscribe((vendorLocation) => {
-    //     if (vendorLocation) {
-    //       this.vendorLocations.push(vendorLocation);
-    //       console.log("vendorLocation:", vendorLocation);
-    //     }
-    //   })
-    // );
-    //monitor when new 3dmodel is added to map
-    // this.subscriptions.add(
-    //   this.cesiumService.threeDimensionalModelService.new3dModel$.subscribe((new3dModel) => {
-    //     if (new3dModel) {
-    //       this.new3dModel = new3dModel;
-    //       this.threeDModelEntities.push(new3dModel);
-    //       console.log("new3dModel:", this.new3dModel);
-    //     }
-    //   })
-    // );
     //monitor when an entity is selected
     this.subscriptions.add(
       this.cesiumService.selectedEntity$.subscribe((selectedEntity) => {
@@ -263,6 +244,11 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
 
   enable3DModelPlacement() {
     this.cesiumService.mapMode.next(MapMode.ThreeDModelPlacement);
+  }
+
+  saveChanges(){
+    let updatedMarket = Market.buildUpdatedMarketFromCesiumEntities(this.market!, this.cesiumService.viewer.entities.values);
+    console.log(updatedMarket);
   }
 
 

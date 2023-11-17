@@ -1,5 +1,6 @@
 import { CesiumColor } from "./cesium-color.model";
 import { CoordinateData } from "./coordinate-data.model";
+import { OMGType } from "./omg-type.enum";
 
 export class ThreeDModelEntity {
   id?:string;
@@ -8,6 +9,7 @@ export class ThreeDModelEntity {
   position?:CoordinateData;
   orientation?:Orientation;
   show?:boolean = true;
+  type?:ThreeDModelEntityType;
 
   static fromCesiumEntity(entity: any): ThreeDModelEntity {
     let threeDModelEntity = new ThreeDModelEntity();
@@ -17,6 +19,7 @@ export class ThreeDModelEntity {
     threeDModelEntity.position = CoordinateData.fromCesiumPosition(entity.position.getValue());
     threeDModelEntity.orientation = Orientation.fromCesiusmEntity(entity);
     threeDModelEntity.show = entity.show;
+    threeDModelEntity.type = entity.omgType == OMGType.Market3DModel ? ThreeDModelEntityType.Market : ThreeDModelEntityType.Vendor;
     return threeDModelEntity;
   }
 }
@@ -45,6 +48,11 @@ export class ThreeDModel {
     threeDModel.heightReference = entity.model.heightReference ? entity.model.heightReference.getValue() : undefined;
     return threeDModel;
   }
+}
+
+export enum ThreeDModelEntityType {
+  Market = "Market",
+  Vendor = "Vendor"
 }
 
 export class Orientation {
