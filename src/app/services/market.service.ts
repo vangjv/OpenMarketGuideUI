@@ -37,4 +37,12 @@ export class MarketService {
     return this.http.post<Market>(this.apiUrl + 'markets', market);
   }
 
+  getMarketsByUserId(): Observable<Market[]> {
+    return this.http.get<Market[]>(this.apiUrl + 'markets/me').pipe(
+      map((markets: Market[]) => {
+        return markets;
+      })
+    );
+  }
+
 }

@@ -6,6 +6,8 @@ import { filter, takeUntil } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { AuthService } from './services/auth.service';
 import { IdTokenClaimsWithPolicyId } from './shared/models/id-token-claim-with-policy.model';
+import { MarketService } from './services/market.service';
+import { AppStateService } from './services/app-state.service';
 
 @Component({
   selector: 'app-root',
@@ -16,8 +18,8 @@ export class AppComponent implements OnInit {
   private readonly _destroying$ = new Subject<void>();
   doneWithAuth: boolean = false;
   constructor(@Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
-    private msalService: MsalService, private authService: AuthService,
-    private msalBroadcastService: MsalBroadcastService) {
+    private msalService: MsalService, private authService: AuthService, private appStateService:AppStateService,
+    private msalBroadcastService: MsalBroadcastService, private marketService:MarketService) {
   }
 
   ngOnInit(): void {
@@ -43,6 +45,7 @@ export class AppComponent implements OnInit {
       .subscribe(() => {
         // this.setLoginDisplay();
         this.authService.checkAndSetActiveAccount();
+        this.setMarketsForUser();
       });
 
     this.msalBroadcastService.msalSubject$
@@ -124,6 +127,15 @@ export class AppComponent implements OnInit {
           this.authService.login(resetPasswordFlowRequest);
         };
       });
+  }
+
+  setMarketsForUser() {
+    let currentUser = this.appStateService.state.$currentUser();
+    if (currentUser) {
+      this.marketService.getMarketsByUserId().subscribe(markets => {
+        this.appStateService.setMyMarkets(markets);
+      });
+    }
   }
 
 }

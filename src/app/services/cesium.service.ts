@@ -294,7 +294,6 @@ export class CesiumService {
       if (Cesium.defined(pickedObject)) {
         const id = Cesium.defaultValue(pickedObject.id, pickedObject.primitive.id);
         if (id instanceof Cesium.Entity) {
-          console.log("object clicked:", id);
           this.selectedEntity.next(id);
           return id;
         } else {
@@ -471,6 +470,8 @@ export class CesiumService {
     if (entity.model) {
       entity.model.silhouetteColor = Cesium.Color.WHITE; // Silhouette color
       entity.model.silhouetteSize = 2.0; // Silhouette size
+      this.removeHighlightFromAllButSelectedEntity(entity.id);
+    } else {
       this.removeHighlightFromAllButSelectedEntity(entity.id);
     }
   }

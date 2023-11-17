@@ -31,6 +31,7 @@ import { environment } from 'src/environments/environment';
 import { ToastModule } from 'primeng/toast';
 import { MenuModule } from 'primeng/menu';
 import { AvatarModule } from 'primeng/avatar';
+import { MyMarketsComponent } from './features/my-markets/my-markets.component';
 
 export function loggerCallback(logLevel: LogLevel, message: string) {
   console.log(message);
@@ -62,11 +63,15 @@ export function MSALInstanceFactory(): IPublicClientApplication {
 export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<ProtectedResourceScopes>>();
   //protect only Post requests.  unauthenticated users should be able to get markets
-  let protectedResourceScopes:ProtectedResourceScopes = {
+  let protectedResourceScopesPost:ProtectedResourceScopes = {
     httpMethod: "POST",
     scopes: ["https://openmarketguide.onmicrosoft.com/api-access/api-access"]
   };
-  protectedResourceMap.set(environment.apiConfig.uri, [protectedResourceScopes]);
+  let protectedResourceScopesGet:ProtectedResourceScopes = {
+    httpMethod: "GET",
+    scopes: ["https://openmarketguide.onmicrosoft.com/api-access/api-access"]
+  };
+  protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/markets/me", [protectedResourceScopesGet]);
 
   return {
     interactionType: InteractionType.Redirect,
@@ -96,7 +101,8 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     ModelPickerComponent,
     MarketViewerComponent,
     VendorCardsComponent,
-    MapExplorerComponent
+    MapExplorerComponent,
+    MyMarketsComponent
   ],
   imports: [
     BrowserModule,

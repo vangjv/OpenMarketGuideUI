@@ -12,6 +12,7 @@ import { Market } from 'src/app/shared/models/market.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AccountInfo } from '@azure/msal-browser';
 import { AppStateService } from 'src/app/services/app-state.service';
+import { OverlayPanel } from 'primeng/overlaypanel';
 enum SideBarState {
   Vendors = "Vendors",
   MarketDates = "MarketDates"
@@ -23,6 +24,8 @@ enum SideBarState {
   styleUrls: ['./market-viewer.component.scss']
 })
 export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
+  @ViewChild('opAddVendorLocations') opAddVendorLocations!: OverlayPanel;
+  @ViewChild('op3DModelPlacement') op3DModelPlacement!: OverlayPanel;
   currentUser: AccountInfo | undefined;
   userIsOwner: boolean = false;
   items: MenuItem[] = [];
@@ -137,17 +140,20 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
             this.cesiumService.mapMode.next(MapMode.EntitySelection);
           }
           console.log("this.currentUser:", this.currentUser);
-          if (this.currentUser && this.currentUser.idTokenClaims?.oid) {
-            console.log("this.market?.marketUsers:", this.market?.marketUsers);
-            if (this.market?.marketUsers) {
-              const owner = this.market?.marketUsers.find(user => user.id === this.currentUser?.idTokenClaims?.oid && user.role === "Owner");
-              if (owner) {
-                this.userIsOwner = true;
-              }
-            }
-          }
+          this.setUserAsOwnerIfIsMarketOwner();
         })
       );
+    }
+  }
+
+  setUserAsOwnerIfIsMarketOwner(){
+    if (this.currentUser && this.currentUser.idTokenClaims?.oid) {
+      if (this.market?.marketUsers) {
+        const owner = this.market?.marketUsers.find(user => user.id === this.currentUser?.idTokenClaims?.oid && user.role === "Owner");
+        if (owner) {
+          this.userIsOwner = true;
+        }
+      }
     }
   }
 
@@ -228,5 +234,22 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
       })
     );
   }
+
+  enableVendorLocationDrawingMode(){
+    this.cesiumService.mapMode.next(MapMode.VendorLocationDrawing);
+  }
+
+  openAddVendorLocationDialog(){
+    this.opAddVendorLocations.show(null, this.speedDialButton);
+  }
+
+  update3dModelSelection(threeDModelInfo:ThreeDModelInfo){
+    this.current3dModelSelected = threeDModelInfo;
+  }
+
+  enable3DModelPlacement(){
+    this.cesiumService.mapMode.next(MapMode.ThreeDModelPlacement);
+  }
+
 
 }

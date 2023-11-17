@@ -8,6 +8,7 @@ import { MarketViewerComponent } from './features/market-viewer/market-viewer.co
 import { MapExplorerComponent } from './features/map-explorer/map-explorer.component';
 import { BrowserUtils } from '@azure/msal-browser';
 import { MsalGuard } from '@azure/msal-angular';
+import { MyMarketsComponent } from './features/my-markets/my-markets.component';
 
 const routes: Routes = [
   {
@@ -21,6 +22,11 @@ const routes: Routes = [
   },
   { path: 'market-viewer/:marketid', component: MarketViewerComponent },
   { path: 'map', component: MapExplorerComponent },
+  {
+    path: 'my-markets',
+    component: MyMarketsComponent,
+    canActivate: [MsalGuard]
+   },
   { path: 'goods-listing', component: GoodsListingComponent },
   { path: 'goods-details', component: GoodsDetailsComponent }
 

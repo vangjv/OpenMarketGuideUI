@@ -62,11 +62,20 @@
             <!-- <i class="pi pi-map ml-2"></i> -->
           </a>
         </li>
-        <li class="lg:flex lg:align-items-end">
+        <li class="lg:flex lg:align-items-end" *ngIf="this.currentUser">
           <a pRipple
             class="border-round-top flex align-items-center px-6 py-3 lg:px-3 lg:py-3 text-900 font-medium cursor-pointer transition-colors transition-duration-150"
             [ngClass]="{'surface-ground text-900': activeTab === 3, 'hover:surface-hover': activeTab !== 3}"
             (click)="navigateToTab(3)">
+            <span>My Markets</span>
+            <!-- <i class="pi pi-question ml-2"></i> -->
+          </a>
+        </li>
+        <li class="lg:flex lg:align-items-end">
+          <a pRipple
+            class="border-round-top flex align-items-center px-6 py-3 lg:px-3 lg:py-3 text-900 font-medium cursor-pointer transition-colors transition-duration-150"
+            [ngClass]="{'surface-ground text-900': activeTab === 4, 'hover:surface-hover': activeTab !== 4}"
+            (click)="navigateToTab(4)">
             <span>About</span>
             <!-- <i class="pi pi-question ml-2"></i> -->
           </a>

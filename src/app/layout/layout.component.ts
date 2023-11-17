@@ -48,8 +48,14 @@ export class LayoutComponent implements OnInit {
         this.activeTab = 0;
       } else if (url === '/map') {
         this.activeTab = 1;
-      } else {
+      } else if (url.startsWith ('/market-viewer')) {
+        this.activeTab = 1;
+      } else if (url === '/market-setup') {
         this.activeTab = 2;
+      } else if (url === '/my-markets') {
+        this.activeTab = 3;
+      } else {
+        this.activeTab = 4
       }
       this.checkMapViewBasedOnTabIndex();
     });
@@ -58,17 +64,17 @@ export class LayoutComponent implements OnInit {
     });
   }
 
-  getInitialsFromToken(currentUser:AccountInfo | undefined){
+  getInitialsFromToken(currentUser: AccountInfo | undefined) {
     if (currentUser) {
       if (currentUser.idTokenClaims) {
         let firstName = currentUser.idTokenClaims['given_name'] as string[];
-        let lastName =  currentUser.idTokenClaims['family_name'] as string[];
+        let lastName = currentUser.idTokenClaims['family_name'] as string[];
         return (firstName[0] + lastName[0]).toUpperCase();
       }
     }
     return "";
   }
-  setLoggedInUserMenu(){
+  setLoggedInUserMenu() {
     this.userMenu = [
       {
         label: 'Sign out',
@@ -80,7 +86,7 @@ export class LayoutComponent implements OnInit {
     ];
   }
 
-  setNoLoggedInUserMenu(){
+  setNoLoggedInUserMenu() {
     this.userMenu = [
       {
         label: 'Sign in',
@@ -102,6 +108,12 @@ export class LayoutComponent implements OnInit {
     if (this.activeTab === 2) {
       this.screenService.toggleMapView(true);
     }
+    if (this.activeTab === 3) {
+      this.screenService.toggleMapView(false);
+    }
+    if (this.activeTab === 4) {
+      this.screenService.toggleMapView(false);
+    }
   }
 
   navigateToTab(tabIndex: number) {
@@ -117,6 +129,10 @@ export class LayoutComponent implements OnInit {
     if (tabIndex === 2) {
       this.router.navigate(['/market-setup']);
       this.screenService.toggleMapView(true);
+    }
+    if (tabIndex === 3) {
+      this.router.navigate(['/my-markets']);
+      this.screenService.toggleMapView(false);
     }
   }
 }

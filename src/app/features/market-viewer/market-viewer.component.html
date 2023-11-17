@@ -5,3 +5,28 @@
     <app-vendor-cards [vendors]="market?.vendors ?? []"></app-vendor-cards>
   </ng-container>
 </p-sidebar>
+
+<p-overlayPanel #opAddVendorLocations>
+  <div class="p-2 max-w-30rem">
+    <div class="text-900 font-medium mb-2 text-xl">Next let's add some vendor locations. These are the areas on the map that you can assign to a vendor.</div>
+    <p class="mt-0 mb-4 p-0 line-height-3">Click on the pencil icon to begin adding points on the map to create a vendor location. When you are finished, right click on the map to complete the boundary. Finally, name your vendor location. When you are finished adding vendor locations, click the "Next" button.</p>
+    <div class="flex">
+      <p-button icon="pi pi-pencil" class="mr-2" (click)="enableVendorLocationDrawingMode()"></p-button>
+      <!-- <p-button icon="pi pi-undo" class="mr-2" (click)="resetMarketBoundary()" *ngIf="marketBoundary != undefined"></p-button>
+      <input pInputText class="flex-auto mr-2" formControlName="name" (keyup.enter)="progressToAddVendorLocations()"> -->
+    </div>
+  </div>
+</p-overlayPanel>
+
+<p-overlayPanel #op3DModelPlacement>
+  <div class="p-2 max-w-30rem">
+    <div class="text-900 font-medium mb-2 text-xl">Adding 3d models</div>
+    <p class="mt-0 mb-4 p-0 line-height-3">If you would like to add some 3d models to your market to highlight landmarks to vistors, now is the time to do it.  Select a 3d model and click on the plus button to add it to the map. When you are finished click the next button.</p>
+    <hr class="my-3 mx-0 border-top-1 border-none surface-border">
+    <app-model-picker [threeDModelInfoList]="threeDModelInfoList" (modelInfoChanged)="update3dModelSelection($event)"></app-model-picker>
+    <hr class="my-3 mx-0 border-top-1 border-none surface-border">
+    <div class="flex justify-content-end">
+      <p-button icon="pi pi-plus" class="mr-2" (click)="enable3DModelPlacement()"></p-button>
+    </div>
+  </div>
+</p-overlayPanel>
