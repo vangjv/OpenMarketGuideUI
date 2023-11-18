@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { MarketInstanceService } from 'src/app/services/market-instance.service';
 import { MarketInstance } from 'src/app/shared/models/market-instance.model';
 import { Market } from 'src/app/shared/models/market.model';
@@ -19,7 +20,8 @@ export class MarketInstancesComponent implements OnInit{
   }, { validator: this.dateLessThan('startDate', 'endDate')});
   minDate:Date = new Date();
 
-  constructor(private formBuilder: FormBuilder, private marketInstanceService:MarketInstanceService, private router:Router) { }
+  constructor(private formBuilder: FormBuilder, private marketInstanceService:MarketInstanceService, private router:Router,
+    private messageService:MessageService) { }
 
   ngOnInit(): void {
     if (this.marketId) {
@@ -34,6 +36,14 @@ export class MarketInstancesComponent implements OnInit{
       this.marketInstanceService.createMarketInstance(this.marketId, this.marketDatesForm.get("startDate")?.value, this.marketDatesForm.get("endDate")?.value).subscribe((marketInstance:MarketInstance) => {
         console.log("new marketInstance:", marketInstance);
         this.marketInstances.push(marketInstance);
+        this.messageService.add({
+          key: 'primary',
+          severity: 'custom-2',
+          summary: 'Success',
+          closable: false,
+          detail: 'The market intance was added successfully.',
+          contentStyleClass: 'p-0'
+        });
       });
     }
   }

@@ -24,9 +24,10 @@ enum SideBarState {
   templateUrl: './market-instance-viewer.component.html',
   styleUrls: ['./market-instance-viewer.component.scss']
 })
-export class MarketInstanceViewerComponent {
+export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnDestroy{
   @ViewChild('opAddVendorLocations') opAddVendorLocations!: OverlayPanel;
   @ViewChild('op3DModelPlacement') op3DModelPlacement!: OverlayPanel;
+  @ViewChild('marketinstanceviewer') marketinstanceviewer!: ElementRef;
   currentUser: AccountInfo | undefined;
   userIsOwner: boolean = false;
   items: MenuItem[] = [];
@@ -84,7 +85,7 @@ export class MarketInstanceViewerComponent {
   }
 
   ngAfterViewInit(): void {
-    this.cesiumService.initializeMap("market-instance-viewer");
+    this.cesiumService.initializeMap("marketinstanceviewer");
     this.cesiumService.hideDefaultCesiumSearch();
     this.cesiumService.changeCesiumHomeButtonToGoToAppHome();
     this.addSubscriptions();

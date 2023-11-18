@@ -1,4 +1,4 @@
-<div id="market-viewer"></div>
+<div id="marketviewer"></div>
 <p-speedDial [model]="menuItems" direction="right" showIcon="pi pi-map" hideIcon="pi pi-times" #speedDial
   *ngIf="userIsOwner"></p-speedDial>
 <p-sidebar [(visible)]="showSidebar" position="right" styleClass="w-6">
@@ -33,3 +33,7 @@
     </div>
   </div>
 </p-overlayPanel>
+
+<app-map-details [targetElement]="marketviewer">
+  {{market?.name}}
+</app-map-details>

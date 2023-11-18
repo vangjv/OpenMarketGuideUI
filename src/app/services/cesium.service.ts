@@ -263,7 +263,9 @@ export class CesiumService {
   }
 
   hideCesiumIonLogo(){
-    document.getElementsByClassName("cesium-credit-logoContainer")[0].remove();
+    if (document.getElementsByClassName("cesium-credit-logoContainer")[0]) {
+      document.getElementsByClassName("cesium-credit-logoContainer")[0].remove();
+    }
   }
 
   hideDefaultCesiumSearch(){

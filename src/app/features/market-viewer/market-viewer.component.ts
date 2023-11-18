@@ -28,6 +28,7 @@ enum SideBarState {
 export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('opAddVendorLocations') opAddVendorLocations!: OverlayPanel;
   @ViewChild('op3DModelPlacement') op3DModelPlacement!: OverlayPanel;
+  @ViewChild('marketviewer') marketviewer!: ElementRef;
   currentUser: AccountInfo | undefined;
   userIsOwner: boolean = false;
   items: MenuItem[] = [];
@@ -166,7 +167,7 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.cesiumService.initializeMap("market-viewer");
+    this.cesiumService.initializeMap("marketviewer");
     this.cesiumService.hideDefaultCesiumSearch();
     this.cesiumService.changeCesiumHomeButtonToGoToAppHome();
     this.addSubscriptions();

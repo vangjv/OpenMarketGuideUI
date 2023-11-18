@@ -23,7 +23,10 @@ import { MyMarketsComponent } from './features/my-markets/my-markets.component';
 import { MarketInstancesComponent } from './features/market-instances/market-instances.component';
 import { MarketInstanceViewerComponent } from './features/market-instance-viewer/market-instance-viewer.component';
 import { VendorCardsComponent } from './shared/components/vendor-cards/vendor-cards.component';
-import { PrimeModule } from './prime.module';
+import { PrimeModule } from './prime/prime.module';
+import { MapDetailsComponent } from './shared/components/map-details/map-details.component';
+import { OMGRouteReuseStrategy } from './omg-route-reuse-strategy';
+import { RouteReuseStrategy } from '@angular/router';
 
 export function loggerCallback(logLevel: LogLevel, message: string) {
   console.log(message);
@@ -67,10 +70,8 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
     httpMethod: "GET",
     scopes: ["https://openmarketguide.onmicrosoft.com/api-access/api-access"]
   };
-  protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/markets", [protectedResourceScopesPost]);
-  protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/marketinstances", [protectedResourceScopesPost]);
-  protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/marketinstances", [protectedResourceScopesPut]);
-  protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/markets", [protectedResourceScopesPut]);
+  protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/markets", [protectedResourceScopesPost, protectedResourceScopesPut]);
+  protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/marketinstances", [protectedResourceScopesPut, protectedResourceScopesPost]);
   protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/markets/me", [protectedResourceScopesGet]);
 
   return {
@@ -104,7 +105,8 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     MapExplorerComponent,
     MyMarketsComponent,
     MarketInstancesComponent,
-    MarketInstanceViewerComponent
+    MarketInstanceViewerComponent,
+    MapDetailsComponent
   ],
   imports: [
     BrowserModule,
@@ -141,6 +143,7 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
       MsalGuard,
       MsalBroadcastService
     ],
+    { provide: RouteReuseStrategy, useClass: OMGRouteReuseStrategy }
   ],
   bootstrap: [AppComponent, MsalRedirectComponent]
 })

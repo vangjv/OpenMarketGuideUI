@@ -46,6 +46,7 @@ export class LayoutComponent implements OnInit {
       const url = (event as NavigationEnd).urlAfterRedirects;
       if (url === '/') {
         this.activeTab = 0;
+        this.screenService.toggleMapView(false);
       } else if (url === '/map') {
         this.activeTab = 1;
         this.screenService.toggleMapView(true);
