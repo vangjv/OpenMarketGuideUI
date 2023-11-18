@@ -14,6 +14,7 @@ import { AccountInfo } from '@azure/msal-browser';
 import { AppStateService } from 'src/app/services/app-state.service';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { ThreeDModelCollectionService } from 'src/app/services/three-dimensional-model-collection.service';
+import { MarketInstance } from 'src/app/shared/models/market-instance.model';
 enum SideBarState {
   Vendors = "Vendors",
   MarketDates = "MarketDates"
@@ -48,8 +49,9 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
   threeDModelInfoList: ThreeDModelInfo[] = [];
   threeDModelEntities: any[] = [];
   // markets:Market[] = [];
-  marketId: string | null = null;
+  marketId?: string;
   market: Market | undefined = undefined;
+
   menuItems: MenuItem[] = [
     {
       icon: 'pi pi-pencil',
@@ -104,7 +106,7 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
         tooltipLabel: 'Market dates'
       },
       command: () => {
-        this.messageService.add({ key: 'primary', severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
+        this.showSidebar = true;
       }
     },
     {
@@ -259,6 +261,14 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
     console.log(updatedMarket);
     this.marketService.updateMarket(updatedMarket).subscribe((market:Market) => {
       console.log("updated market:", updatedMarket);
+      this.messageService.add({
+        key: 'primary',
+        severity: 'custom-2',
+        summary: 'Success',
+        closable: false,
+        detail: 'The market was successfully updated',
+        contentStyleClass: 'p-0'
+      });
     });
   }
 

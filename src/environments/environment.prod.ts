@@ -9,7 +9,7 @@ export const environment = {
   },
   apiConfig: {
     scopes: ["https://openmarketguide.onmicrosoft.com/api-access/api-access"],
-    uri: ""
+    uri: "https://openmarketguideapi.azurewebsites.net"
   },
   b2cPolicies: {
     names: {

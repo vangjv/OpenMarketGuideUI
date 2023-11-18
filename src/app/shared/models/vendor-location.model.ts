@@ -1,5 +1,6 @@
 import { Boundary } from "./boundary.model";
 import { OMGType } from "./omg-type.enum";
+import { Vendor } from "./vendor.model";
 
 export class VendorLocation {
   id?: string;
@@ -8,6 +9,7 @@ export class VendorLocation {
   isAvailable?: boolean;
   boundary?: Boundary;
   omgType?: OMGType;
+  assignedVendor?:Vendor;
   static fromCesiumEntity(entity: any): VendorLocation {
     let vendorLocation = new VendorLocation();
     vendorLocation.id = entity.id;

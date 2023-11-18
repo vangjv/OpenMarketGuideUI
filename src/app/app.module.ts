@@ -32,6 +32,8 @@ import { ToastModule } from 'primeng/toast';
 import { MenuModule } from 'primeng/menu';
 import { AvatarModule } from 'primeng/avatar';
 import { MyMarketsComponent } from './features/my-markets/my-markets.component';
+import { CalendarModule } from 'primeng/calendar';
+import { MarketInstancesComponent } from './features/market-instances/market-instances.component';
 
 export function loggerCallback(logLevel: LogLevel, message: string) {
   console.log(message);
@@ -76,6 +78,7 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
     scopes: ["https://openmarketguide.onmicrosoft.com/api-access/api-access"]
   };
   protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/markets", [protectedResourceScopesPost]);
+  protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/marketinstances", [protectedResourceScopesPost]);
   protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/markets", [protectedResourceScopesPut]);
   protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/markets/me", [protectedResourceScopesGet]);
 
@@ -108,7 +111,8 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     MarketViewerComponent,
     VendorCardsComponent,
     MapExplorerComponent,
-    MyMarketsComponent
+    MyMarketsComponent,
+    MarketInstancesComponent
   ],
   imports: [
     BrowserModule,
@@ -128,7 +132,8 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     MsalModule,
     ToastModule,
     MenuModule,
-    AvatarModule
+    AvatarModule,
+    CalendarModule
   ],
   providers: [
     DialogService,
