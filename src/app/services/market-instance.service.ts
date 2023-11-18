@@ -22,6 +22,15 @@ export class MarketInstanceService {
     );
   }
 
+  getMarketInstanceById(marketInstanceId:string): Observable<MarketInstance> {
+    return this.http.get<MarketInstance>(this.apiUrl + 'marketinstances/' + marketInstanceId).pipe(
+      map((marketInstance: MarketInstance) => {
+        // Perform any necessary transformations on the data here
+        return marketInstance;
+      })
+    );
+  }
+
   createMarketInstance(marketId:string, startDate:Date, endDate:Date): Observable<MarketInstance> {
     let marketInstanceRequest:MarketInstanceRequest = {
       marketId: marketId,
@@ -35,4 +44,9 @@ export class MarketInstanceService {
       })
     );
   }
+
+  updateMarketInstance(marketInstance: MarketInstance): Observable<MarketInstance> {
+    return this.http.put<MarketInstance>(this.apiUrl + 'marketinstances/' + marketInstance.id, marketInstance);
+  }
+
 }

@@ -8,6 +8,7 @@ import { Vendor } from "./vendor.model";
 
 export class MarketInstance extends BaseEntity {
   name: string = "";
+  marketId?:string;
   description?: string;
   state?: string;
   location?: CoordinateData;

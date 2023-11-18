@@ -1,0 +1,35 @@
+<div id="market-instance-viewer"></div>
+<p-speedDial [model]="menuItems" direction="right" showIcon="pi pi-map" hideIcon="pi pi-times" #speedDial
+  *ngIf="userIsOwner"></p-speedDial>
+<p-sidebar [(visible)]="showSidebar" position="right" styleClass="w-6">
+  <!-- <ng-container *ngIf="sidebarState === SideBarState.Vendors">
+    <app-vendor-cards [vendors]="market?.vendors ?? []"></app-vendor-cards>
+  </ng-container> -->
+  <app-market-instances [marketId]="marketInstance?.marketId" *ngIf="marketInstance?.marketId"></app-market-instances>
+</p-sidebar>
+
+<p-overlayPanel #opAddVendorLocations>
+  <div class="p-2 max-w-30rem">
+    <p class="mt-0 mb-4 p-0 line-height-3">Click on the pencil icon to begin adding points on the map to create a vendor
+      location. When you are finished, right click on the map to complete the boundary.</p>
+    <div class="flex">
+      <p-button icon="pi pi-pencil" class="mr-2" (click)="enableVendorLocationDrawingMode()"></p-button>
+      <!-- <p-button icon="pi pi-undo" class="mr-2" (click)="resetMarketBoundary()" *ngIf="marketBoundary != undefined"></p-button>
+      <input pInputText class="flex-auto mr-2" formControlName="name" (keyup.enter)="progressToAddVendorLocations()"> -->
+    </div>
+  </div>
+</p-overlayPanel>
+
+<p-overlayPanel #op3DModelPlacement>
+  <div class="p-2 max-w-30rem">
+    <div class="text-900 font-medium mb-2 text-xl">Adding 3d models</div>
+    <p class="mt-0 mb-4 p-0 line-height-3">Select a 3d model and click on the plus button to add it to the map.</p>
+    <hr class="my-3 mx-0 border-top-1 border-none surface-border">
+    <app-model-picker [threeDModelInfoList]="threeDModelInfoList"
+      (modelInfoChanged)="update3dModelSelection($event)"></app-model-picker>
+    <hr class="my-3 mx-0 border-top-1 border-none surface-border">
+    <div class="flex justify-content-end">
+      <p-button icon="pi pi-plus" class="mr-2" (click)="enable3DModelPlacement()"></p-button>
+    </div>
+  </div>
+</p-overlayPanel>

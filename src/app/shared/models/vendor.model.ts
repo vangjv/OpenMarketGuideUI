@@ -5,10 +5,10 @@ export class Vendor {
   name: string;
   primaryContactName: string;
   primaryContactTitle: string;
-  category: string;
+  category: string[];
   contactInfo: ContactInfo;
 
-  constructor(vendorId: string, name: string, primaryContactName: string, primaryContactTitle: string, category: string, contactInfo: ContactInfo) {
+  constructor(vendorId: string, name: string, primaryContactName: string, primaryContactTitle: string, category: string[], contactInfo: ContactInfo) {
     this.vendorId = vendorId;
     this.name = name;
     this.primaryContactName = primaryContactName;

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MarketInstanceService } from 'src/app/services/market-instance.service';
 import { MarketInstance } from 'src/app/shared/models/market-instance.model';
 import { Market } from 'src/app/shared/models/market.model';
@@ -18,7 +19,7 @@ export class MarketInstancesComponent implements OnInit{
   }, { validator: this.dateLessThan('startDate', 'endDate')});
   minDate:Date = new Date();
 
-  constructor(private formBuilder: FormBuilder, private marketInstanceService:MarketInstanceService) { }
+  constructor(private formBuilder: FormBuilder, private marketInstanceService:MarketInstanceService, private router:Router) { }
 
   ngOnInit(): void {
     if (this.marketId) {
@@ -38,7 +39,7 @@ export class MarketInstancesComponent implements OnInit{
   }
 
   navigateToMarketInstance(marketInstance:MarketInstance){
-
+    this.router.navigate(["/market-instance", marketInstance.id]);
   }
 
   dateLessThan(startDateField: string, endDateField: string) {

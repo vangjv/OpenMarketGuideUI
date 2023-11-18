@@ -1,6 +1,6 @@
 import { BaseEntity } from "./base-entity.model";
-import { Boundary } from "./boundary.model";
 import { CoordinateData } from "./coordinate-data.model";
+import { MarketInstance } from "./market-instance.model";
 import { MarketLocation } from "./market-location.model";
 import { MarketUser } from "./market-user.model";
 import { OMGType } from "./omg-type.enum";
@@ -47,7 +47,7 @@ export class Market extends BaseEntity {
     this.vendors?.push(vendor)
   }
 
-  static buildUpdatedMarketFromCesiumEntities(market:Market, entities:any[]) {
+  static buildUpdatedMarketFromCesiumEntities(market:Market | MarketInstance, entities:any[]) {
     let updatedMarket:Market = new Market();
     updatedMarket.id = market.id
     updatedMarket.name = market.name;

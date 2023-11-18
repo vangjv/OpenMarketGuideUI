@@ -48,16 +48,22 @@ export class LayoutComponent implements OnInit {
         this.activeTab = 0;
       } else if (url === '/map') {
         this.activeTab = 1;
+        this.screenService.toggleMapView(true);
       } else if (url.startsWith ('/market-viewer')) {
-        this.activeTab = 1;
+        this.screenService.toggleMapView(true);
+      } else if (url.startsWith ('/market-instance')) {
+        this.screenService.toggleMapView(true);
       } else if (url === '/market-setup') {
         this.activeTab = 2;
+        this.screenService.toggleMapView(false);
       } else if (url === '/my-markets') {
         this.activeTab = 3;
+        this.screenService.toggleMapView(false);
       } else {
         this.activeTab = 4
+        this.screenService.toggleMapView(false);
       }
-      this.checkMapViewBasedOnTabIndex();
+      //this.checkMapViewBasedOnTabIndex();
     });
     this.isMapView = computed(() => {
       return this.screenService.isMapView();

@@ -8,6 +8,7 @@ import { CoordinateData } from '../shared/models/coordinate-data.model';
 import { Market } from '../shared/models/market.model';
 import { Router } from '@angular/router';
 import { MapExplorerService } from './map-explorer.service';
+import { MarketInstance } from '../shared/models/market-instance.model';
 
 declare let Cesium: any;
 // import * as Cesium from '../assets/js/Cesium.js';
@@ -124,7 +125,7 @@ export class CesiumService {
     // });
   }
 
-  createEntitiesFromMarket(market:Market) {
+  createEntitiesFromMarket(market:Market | MarketInstance) {
     //create market boundary
     if (market.marketLocation && market.marketLocation.boundary) {
       this.boundaryService.createBoundaryFromBoundaryObject(market.marketLocation.boundary, market.marketLocation.name, market.marketLocation.id, true);

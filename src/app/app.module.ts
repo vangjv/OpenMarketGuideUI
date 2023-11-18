@@ -22,7 +22,6 @@ import { SidebarModule } from 'primeng/sidebar';
 import { ModelPickerComponent } from './features/market-setup/model-picker/model-picker.component';
 import { MarketViewerComponent } from './features/market-viewer/market-viewer.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { VendorCardsComponent } from './features/market-viewer/vendor-cards/vendor-cards.component';
 import { MapExplorerComponent } from './features/map-explorer/map-explorer.component';
 import { CesiumService } from './services/cesium.service';
 import { IPublicClientApplication, PublicClientApplication, InteractionType, BrowserCacheLocation, LogLevel } from '@azure/msal-browser';
@@ -34,6 +33,8 @@ import { AvatarModule } from 'primeng/avatar';
 import { MyMarketsComponent } from './features/my-markets/my-markets.component';
 import { CalendarModule } from 'primeng/calendar';
 import { MarketInstancesComponent } from './features/market-instances/market-instances.component';
+import { MarketInstanceViewerComponent } from './features/market-instance-viewer/market-instance-viewer.component';
+import { VendorCardsComponent } from './shared/components/vendor-cards/vendor-cards.component';
 
 export function loggerCallback(logLevel: LogLevel, message: string) {
   console.log(message);
@@ -79,6 +80,7 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   };
   protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/markets", [protectedResourceScopesPost]);
   protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/marketinstances", [protectedResourceScopesPost]);
+  protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/marketinstances", [protectedResourceScopesPut]);
   protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/markets", [protectedResourceScopesPut]);
   protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/markets/me", [protectedResourceScopesGet]);
 
@@ -112,7 +114,8 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     VendorCardsComponent,
     MapExplorerComponent,
     MyMarketsComponent,
-    MarketInstancesComponent
+    MarketInstancesComponent,
+    MarketInstanceViewerComponent
   ],
   imports: [
     BrowserModule,
