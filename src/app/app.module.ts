@@ -4,21 +4,13 @@ import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CesiumComponent } from './features/cesium/cesium.component';
-import {StyleClassModule} from 'primeng/styleclass';
+import { StyleClassModule } from 'primeng/styleclass';
 import { HomeComponent } from './features/home/home.component';
 import { LayoutComponent } from './layout/layout.component';
-import { ButtonModule } from 'primeng/button';
 import { GoodsListingComponent } from './features/goods-listing/goods-listing.component';
 import { GoodsDetailsComponent } from './features/goods-details/goods-details.component';
-import { DialogModule } from 'primeng/dialog';
-import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ColorPickerModule } from 'primeng/colorpicker';
-import { SpeedDialModule } from 'primeng/speeddial';
-import { MessageService } from 'primeng/api';
 import { MarketSetupComponent } from './features/market-setup/market-setup.component';
-import { OverlayPanelModule } from 'primeng/overlaypanel';
-import { SidebarModule } from 'primeng/sidebar';
 import { ModelPickerComponent } from './features/market-setup/model-picker/model-picker.component';
 import { MarketViewerComponent } from './features/market-viewer/market-viewer.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
@@ -27,14 +19,11 @@ import { CesiumService } from './services/cesium.service';
 import { IPublicClientApplication, PublicClientApplication, InteractionType, BrowserCacheLocation, LogLevel } from '@azure/msal-browser';
 import { MsalGuard, MsalInterceptor, MsalBroadcastService, MsalInterceptorConfiguration, MsalModule, MsalService, MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalGuardConfiguration, MsalRedirectComponent, ProtectedResourceScopes } from '@azure/msal-angular';
 import { environment } from 'src/environments/environment';
-import { ToastModule } from 'primeng/toast';
-import { MenuModule } from 'primeng/menu';
-import { AvatarModule } from 'primeng/avatar';
 import { MyMarketsComponent } from './features/my-markets/my-markets.component';
-import { CalendarModule } from 'primeng/calendar';
 import { MarketInstancesComponent } from './features/market-instances/market-instances.component';
 import { MarketInstanceViewerComponent } from './features/market-instance-viewer/market-instance-viewer.component';
 import { VendorCardsComponent } from './shared/components/vendor-cards/vendor-cards.component';
+import { PrimeModule } from './prime.module';
 
 export function loggerCallback(logLevel: LogLevel, message: string) {
   console.log(message);
@@ -66,15 +55,15 @@ export function MSALInstanceFactory(): IPublicClientApplication {
 export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<ProtectedResourceScopes>>();
   //protect only Post requests.  unauthenticated users should be able to get markets
-  let protectedResourceScopesPost:ProtectedResourceScopes = {
+  let protectedResourceScopesPost: ProtectedResourceScopes = {
     httpMethod: "POST",
     scopes: ["https://openmarketguide.onmicrosoft.com/api-access/api-access"]
   };
-  let protectedResourceScopesPut:ProtectedResourceScopes = {
+  let protectedResourceScopesPut: ProtectedResourceScopes = {
     httpMethod: "PUT",
     scopes: ["https://openmarketguide.onmicrosoft.com/api-access/api-access"]
   };
-  let protectedResourceScopesGet:ProtectedResourceScopes = {
+  let protectedResourceScopesGet: ProtectedResourceScopes = {
     httpMethod: "GET",
     scopes: ["https://openmarketguide.onmicrosoft.com/api-access/api-access"]
   };
@@ -122,25 +111,13 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     AppRoutingModule,
     StyleClassModule,
     HttpClientModule,
-    ButtonModule,
-    DialogModule,
-    DynamicDialogModule,
     BrowserAnimationsModule,
     NoopAnimationsModule,
     ReactiveFormsModule,
-    ColorPickerModule,
-    SpeedDialModule,
-    OverlayPanelModule,
-    SidebarModule,
     MsalModule,
-    ToastModule,
-    MenuModule,
-    AvatarModule,
-    CalendarModule
+    PrimeModule
   ],
   providers: [
-    DialogService,
-    MessageService,
     CesiumService,
     [
       {
