@@ -14,8 +14,9 @@ import { OverlayPanel } from 'primeng/overlaypanel';
 import { ThreeDModelCollectionService } from 'src/app/services/three-dimensional-model-collection.service';
 import { MarketInstance } from 'src/app/shared/models/market-instance.model';
 import { MarketInstanceService } from 'src/app/services/market-instance.service';
+import { VendorLocation } from 'src/app/shared/models/vendor-location.model';
 enum SideBarState {
-  Vendors = "Vendors",
+  VendorLocations = "VendorLocations",
   MarketDates = "MarketDates"
 }
 
@@ -33,7 +34,7 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
   items: MenuItem[] = [];
   @ViewChild('speedDial') speedDial!: SpeedDial;
   SideBarState = SideBarState
-  sidebarState: SideBarState = SideBarState.Vendors;
+  sidebarState: SideBarState = SideBarState.VendorLocations;
   subscriptions = new Subscription();
   searchButton: any;
   speedDialButton: any;
@@ -176,25 +177,25 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
 
   generateMenuItems(): MenuItem[] {
     return [
-      {
-        icon: 'pi pi-pencil',
-        tooltip: 'Add vendor location',
-        tooltipOptions: {
-          tooltipLabel: 'Add vendor location',
-          tooltipEvent: 'hover',
-          tooltipPosition: 'bottom'
-        },
-        command: () => {
-          this.messageService.add({
-            key: 'primary',
-            severity: 'custom-2',
-            summary: 'Message Title',
-            closable: false,
-            detail: 'Sagittis eu volutpat odio facilisis mauris sit amet. Sed velit dignissim sodales ut eu sem integer.',
-            contentStyleClass: 'p-0'
-          });
-        }
-      },
+      // {
+      //   icon: 'pi pi-pencil',
+      //   tooltip: 'Add vendor location',
+      //   tooltipOptions: {
+      //     tooltipLabel: 'Add vendor location',
+      //     tooltipEvent: 'hover',
+      //     tooltipPosition: 'bottom'
+      //   },
+      //   command: () => {
+      //     this.messageService.add({
+      //       key: 'primary',
+      //       severity: 'custom-2',
+      //       summary: 'Message Title',
+      //       closable: false,
+      //       detail: 'Sagittis eu volutpat odio facilisis mauris sit amet. Sed velit dignissim sodales ut eu sem integer.',
+      //       contentStyleClass: 'p-0'
+      //     });
+      //   }
+      // },
       {
         icon: 'pi pi-box',
         tooltip: 'Add 3d model',
@@ -208,18 +209,19 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
           this.op3DModelPlacement.show(event.originalEvent, this.speedDialButton);
         }
       },
-      // {
-      //   icon: 'pi pi-users',
-      //   tooltip: 'Vendors',
-      //   tooltipOptions: {
-      //     tooltipEvent: 'hover',
-      //     tooltipPosition: 'bottom',
-      //     tooltipLabel: 'Vendors'
-      //   },
-      //   command: () => {
-      //     this.showSidebar = true;
-      //   }
-      // },
+      {
+        icon: 'pi pi-tags',
+        tooltip: 'Vendors Locations',
+        tooltipOptions: {
+          tooltipEvent: 'hover',
+          tooltipPosition: 'bottom',
+          tooltipLabel: 'Vendors'
+        },
+        command: () => {
+          this.sidebarState = SideBarState.VendorLocations;
+          this.showSidebar = true;
+        }
+      },
       {
         icon: 'pi pi-calendar',
         tooltip: 'Market dates',
@@ -229,6 +231,7 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
           tooltipLabel: 'Market dates'
         },
         command: () => {
+          this.sidebarState = SideBarState.MarketDates;
           this.showSidebar = true;
         }
       },
@@ -274,5 +277,9 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
         contentStyleClass: 'p-0'
       });
     });
+  }
+
+  zoomToVendorLocation(vendorLocation: VendorLocation) {
+    this.cesiumService.searchAndZoomToLocation(vendorLocation);
   }
 }

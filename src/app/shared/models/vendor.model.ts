@@ -1,4 +1,5 @@
 import { ContactInfo } from "./contact-info.model";
+import { Product } from "./product.model";
 
 export class Vendor {
   vendorId: string;
@@ -7,6 +8,7 @@ export class Vendor {
   primaryContactTitle: string;
   category: string[];
   contactInfo: ContactInfo;
+  products?: Product[];
 
   constructor(vendorId: string, name: string, primaryContactName: string, primaryContactTitle: string, category: string[], contactInfo: ContactInfo) {
     this.vendorId = vendorId;

@@ -1,5 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
 import { Vendor } from 'src/app/shared/models/vendor.model';
+import { VendorLocation } from '../../models/vendor-location.model';
+import { CesiumService } from 'src/app/services/cesium.service';
 
 @Component({
   selector: 'app-vendor-cards',
@@ -7,8 +9,10 @@ import { Vendor } from 'src/app/shared/models/vendor.model';
   styleUrls: ['./vendor-cards.component.scss']
 })
 export class VendorCardsComponent {
-  @Input() vendors: Vendor[] = [];
+  @Input() vendorLocations: VendorLocation[] = [];
+  @Output() onVendorLocationSelection: EventEmitter<VendorLocation> = new EventEmitter<VendorLocation>();
 
+  constructor() { }
   viewVendor(vendor:Vendor) {
 
   }
@@ -18,6 +22,10 @@ export class VendorCardsComponent {
   }
 
   addVendor() {
+  }
+
+  onVendorLocationClicked(vendorLocation:VendorLocation) {
+    this.onVendorLocationSelection.emit(vendorLocation);
   }
 }
 

@@ -9,6 +9,7 @@ import { Market } from '../shared/models/market.model';
 import { Router } from '@angular/router';
 import { MapExplorerService } from './map-explorer.service';
 import { MarketInstance } from '../shared/models/market-instance.model';
+import { VendorLocation } from '../shared/models/vendor-location.model';
 
 declare let Cesium: any;
 // import * as Cesium from '../assets/js/Cesium.js';
@@ -71,7 +72,6 @@ export class CesiumService {
   searchAndZoom(location: string) {
     let geoCodeService = new Cesium.IonGeocoderService();
     geoCodeService.geocode(location).then((results:any) => {
-      console.log("results", results);
       if (results.length > 0) {
         if (results[0].destination.east && results[0].destination.north && results[0].destination.south && results[0].destination.west) {
           const rectangle = new Cesium.Rectangle(
@@ -80,7 +80,6 @@ export class CesiumService {
             results[0].destination.east,
             results[0].destination.north
           );
-          console.log("rectangle:", rectangle);
           let rectangleCenter:any = Cesium.Rectangle.center(rectangle);
           //Cesium.Rectangle.center(rectangle, rectangleCenter);
           console.log("rectangleCenter:", rectangleCenter);
@@ -555,4 +554,33 @@ export class CesiumService {
     return result;
   }
 
+  searchAndZoomToLocation(vendorLocation:VendorLocation) {
+    //find entities in viewer.entities with vendorLocation.id
+    let entities = this.viewer.entities.values;
+    let entity = entities.find((entity:any) => {
+      return entity.id == vendorLocation.id;
+    });
+    var boundingSphere = Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions);
+
+    // Get the center of the bounding sphere
+    var center = boundingSphere.center;
+    var centerCartographic = Cesium.Cartographic.fromCartesian(center);
+
+    // Convert the center position to longitude and latitude in degrees
+    var longitude = Cesium.Math.toDegrees(centerCartographic.longitude);
+    var latitude = Cesium.Math.toDegrees(centerCartographic.latitude);
+
+    // Set the height to zoom in, e.g., 100 meters above the ground
+    var height = 300;
+
+    // Fly the camera to the center of the polygon
+    this.viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
+        orientation: {
+            heading: Cesium.Math.toRadians(0),   // North
+            pitch: Cesium.Math.toRadians(-90),   // Looking straight down
+            roll: 0.0
+        }
+    });
+  }
 }

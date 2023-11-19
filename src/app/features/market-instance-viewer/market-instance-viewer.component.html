@@ -2,10 +2,12 @@
 <p-speedDial [model]="menuItems" direction="right" showIcon="pi pi-map" hideIcon="pi pi-times" #speedDial
   *ngIf="userIsOwner"></p-speedDial>
 <p-sidebar [(visible)]="showSidebar" position="right" styleClass="w-6">
-  <!-- <ng-container *ngIf="sidebarState === SideBarState.Vendors">
-    <app-vendor-cards [vendors]="market?.vendors ?? []"></app-vendor-cards>
-  </ng-container> -->
-  <app-market-instances [marketId]="marketInstance?.marketId" *ngIf="marketInstance?.marketId"></app-market-instances>
+  <ng-container *ngIf="sidebarState === SideBarState.VendorLocations">
+    <app-vendor-cards (onVendorLocationSelection)="zoomToVendorLocation($event)" [vendorLocations]="marketInstance?.vendorLocations ?? []"></app-vendor-cards>
+  </ng-container>
+  <ng-container *ngIf="sidebarState === SideBarState.MarketDates">
+    <app-market-instances [marketId]="marketInstance?.marketId" *ngIf="marketInstance?.marketId"></app-market-instances>
+  </ng-container>
 </p-sidebar>
 
 <p-overlayPanel #opAddVendorLocations>
