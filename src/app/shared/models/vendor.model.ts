@@ -10,8 +10,7 @@ export class Vendor {
   contactInfo: ContactInfo;
   products?: Product[];
 
-  constructor(id: string, name: string, primaryContactName: string, primaryContactTitle: string, categories: string[], contactInfo: ContactInfo) {
-    this.id = id;
+  constructor(name: string, primaryContactName: string, primaryContactTitle: string, categories: string[], contactInfo: ContactInfo) {
     this.name = name;
     this.primaryContactName = primaryContactName;
     this.primaryContactTitle = primaryContactTitle;

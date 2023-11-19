@@ -1,0 +1,97 @@
+<div class="surface-card p-5 shadow-2 border-round flex-auto">
+  <div class="text-900 font-semibold text-lg mt-3">Become a Vendor</div>
+  <p>As a vendor, you will be able to participate in markets on the OpenMarketGuide platform. You can list your
+    products, customize your vendor location on the map and connect with market customers.</p>
+  <p-divider></p-divider>
+  <div class="flex gap-5 flex-column-reverse md:flex-row" [formGroup]="vendorForm">
+    <div class="flex-auto p-fluid">
+      <div class="mb-4">
+        <label for="name" class="block font-medium text-900 mb-2">Vendor/Company Name</label>
+        <input id="name" type="text" pInputText formControlName="name">
+      </div>
+      <div class="mb-4">
+        <label for="name" class="block font-medium text-900 mb-2">Primary Contact Name</label>
+        <input id="name" type="text" pInputText formControlName="primaryContactName">
+      </div>
+      <div class="mb-4">
+        <label for="name" class="block font-medium text-900 mb-2">Primary Contact Title</label>
+        <input id="name" type="text" pInputText formControlName="primaryContactTitle">
+      </div>
+      <div class="mb-4">
+        <label for="name" class="block font-medium text-900 mb-2">Phone Number</label>
+        <input id="name" type="text" pInputText formControlName="phoneNumber">
+      </div>
+      <div class="mb-4">
+        <label for="name" class="block font-medium text-900 mb-2">Email Address</label>
+        <input id="name" type="text" pInputText formControlName="emailAddress">
+      </div>
+      <div class="mb-4">
+        <label for="website" class="block font-medium text-900 mb-2">Website</label>
+        <div class="p-inputgroup">
+          <span class="p-inputgroup-addon">https://</span>
+          <input id="website" type="text" pInputText formControlName="website">
+        </div>
+      </div>
+      <div class="mb-4">
+        <label for="name" class="block font-medium text-900 mb-2">Vendor Category - What type of industry are your
+          products? Type in the box and press enter to enter multiple categories (ie. Tools, Produce, Healthy, Bakery)
+        </label>
+        <div class="card p-fluid">
+          <p-chips formControlName="categories"></p-chips>
+        </div>
+      </div>
+      <div>
+        <button pButton pRipple label="Sign up" class="w-auto" (click)="saveVendor()" [disabled]="vendorForm.invalid"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="surface-section">
+  <div class="grid grid-nogutter">
+    <div class="col-12 md:col-6 bg-no-repeat bg-cover p-8 hero">
+      <div class="text-white text-2xl font-medium mb-6">Contact Us</div>
+      <div class="text-gray-300 line-height-3 mb-6">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua. </div>
+      <a class="inline-flex align-items-center text-blue-300 font-bold no-underline cursor-pointer">
+        <span class="mr-3">View Address on Google Maps</span>
+        <i class="pi pi-arrow-right"></i>
+      </a>
+      <ul class="list-none p-0 m-0 mt-6 text-white">
+        <li class="flex align-items-center mb-3">
+          <i class="pi pi-phone mr-2"></i>
+          <span>+123456789</span>
+        </li>
+        <li class="flex align-items-center mb-3">
+          <i class="pi pi-twitter mr-2"></i>
+          <span>@prime_ng</span>
+        </li>
+        <li class="flex align-items-center">
+          <i class="pi pi-inbox mr-2"></i>
+          <span>contact@primetek.com.tr</span>
+        </li>
+      </ul>
+    </div>
+    <div class="col-12 md:col-6">
+      <div class="p-fluid formgrid grid px-4 py-8 md:px-6 lg:px-8">
+        <div class="field col-12 lg:col-6 mb-4">
+          <input id="firstname" type="text" class="py-3 px-2 text-lg" pInputText placeholder="First Name">
+        </div>
+        <div class="field col-12 lg:col-6 mb-4">
+          <input id="lastname" type="text" class="py-3 px-2 text-lg" pInputText placeholder="Last Name">
+        </div>
+        <div class="field col-12 mb-4">
+          <input id="email" type="text" pInputText class="py-3 px-2 text-lg" placeholder="Email">
+        </div>
+        <div class="field col-12 mb-4">
+          <input id="phone" type="text" pInputText class="py-3 px-2 text-lg" placeholder="Phone">
+        </div>
+        <div class="field col-12 mb-4">
+          <textarea id="message" pInputTextarea rows="3" class="py-3 px-2 text-lg" placeholder="Message"></textarea>
+        </div>
+        <div class="col-12 text-right">
+          <button type="button" pButton pRipple label="Submit" icon="pi pi-envelope" class="px-5 py-3 w-auto"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->

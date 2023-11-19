@@ -10,6 +10,8 @@ import { BrowserUtils } from '@azure/msal-browser';
 import { MsalGuard } from '@azure/msal-angular';
 import { MyMarketsComponent } from './features/my-markets/my-markets.component';
 import { MarketInstanceViewerComponent } from './features/market-instance-viewer/market-instance-viewer.component';
+import { VendorSignupComponent } from './features/vendor-signup/vendor-signup.component';
+import { VendorManagementComponent } from './features/vendor-management/vendor-management.component';
 
 const routes: Routes = [
   {
@@ -19,6 +21,16 @@ const routes: Routes = [
   {
     path: 'market-setup',
     component: MarketSetupComponent,
+    canActivate: [MsalGuard]
+  },
+  {
+    path: 'vendor-signup',
+    component: VendorSignupComponent,
+    canActivate: [MsalGuard]
+  },
+  {
+    path: 'vendor-management',
+    component: VendorManagementComponent,
     canActivate: [MsalGuard]
   },
   {

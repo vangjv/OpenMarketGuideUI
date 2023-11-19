@@ -81,16 +81,23 @@ export class LayoutComponent implements OnInit {
     }
     return "";
   }
+
   setLoggedInUserMenu() {
-    this.userMenu = [
-      {
-        label: 'Sign out',
-        icon: 'pi pi-fw pi-sign-out',
-        command: () => {
-          this.authService.logout();
-        }
+    this.userMenu = [];
+    this.userMenu.push({
+      label: 'Become a Vendor',
+      icon: 'pi pi-fw pi-shopping-cart',
+      command: () => {
+        this.router.navigate(['/vendor-signup']);
       }
-    ];
+    });
+    this.userMenu.push({
+      label: 'Sign out',
+      icon: 'pi pi-fw pi-sign-out',
+      command: () => {
+        this.authService.logout();
+      }
+    });
   }
 
   setNoLoggedInUserMenu() {

@@ -27,6 +27,8 @@ import { PrimeModule } from './prime/prime.module';
 import { MapDetailsComponent } from './shared/components/map-details/map-details.component';
 import { OMGRouteReuseStrategy } from './omg-route-reuse-strategy';
 import { RouteReuseStrategy } from '@angular/router';
+import { VendorSignupComponent } from './features/vendor-signup/vendor-signup.component';
+import { VendorManagementComponent } from './features/vendor-management/vendor-management.component';
 
 export function loggerCallback(logLevel: LogLevel, message: string) {
   console.log(message);
@@ -71,8 +73,10 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
     scopes: ["https://openmarketguide.onmicrosoft.com/api-access/api-access"]
   };
   protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/markets", [protectedResourceScopesPost, protectedResourceScopesPut]);
+  protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/vendors", [protectedResourceScopesPost, protectedResourceScopesPut]);
   protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/marketinstances", [protectedResourceScopesPut, protectedResourceScopesPost]);
   protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/markets/me", [protectedResourceScopesGet]);
+  protectedResourceMap.set("https://openmarketguideapi.azurewebsites.net/api/vendors/me", [protectedResourceScopesGet]);
 
   return {
     interactionType: InteractionType.Redirect,
@@ -106,7 +110,9 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     MyMarketsComponent,
     MarketInstancesComponent,
     MarketInstanceViewerComponent,
-    MapDetailsComponent
+    MapDetailsComponent,
+    VendorSignupComponent,
+    VendorManagementComponent
   ],
   imports: [
     BrowserModule,

@@ -13,6 +13,7 @@ import { DialogModule } from 'primeng/dialog';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ButtonModule } from 'primeng/button';
 import { ChipsModule } from 'primeng/chips';
+import { DividerModule } from 'primeng/divider';
 
 @NgModule({
   declarations: [],
@@ -29,7 +30,8 @@ import { ChipsModule } from 'primeng/chips';
     MenuModule,
     AvatarModule,
     CalendarModule,
-    ChipsModule
+    ChipsModule,
+    DividerModule
   ], providers: [
     DialogService,
     MessageService,
@@ -46,7 +48,8 @@ import { ChipsModule } from 'primeng/chips';
     MenuModule,
     AvatarModule,
     CalendarModule,
-    ChipsModule
+    ChipsModule,
+    DividerModule
   ]
 })
 export class PrimeModule { }
