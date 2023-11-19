@@ -554,6 +554,21 @@ export class CesiumService {
     return result;
   }
 
+  public static cesiumColorToRGB(cesiumColor:any) {
+    var r = Math.round(cesiumColor.red * 255);
+    var g = Math.round(cesiumColor.green * 255);
+    var b = Math.round(cesiumColor.blue * 255);
+    var a = cesiumColor.alpha.toFixed(2);;
+    return `rgba(${r}, ${g}, ${b}, ${a})`;
+  }
+
+  public static cesiumColorToHex(cesiumColor:any) {
+    var r = Math.round(cesiumColor.red * 255).toString(16).padStart(2, '0');
+    var g = Math.round(cesiumColor.green * 255).toString(16).padStart(2, '0');
+    var b = Math.round(cesiumColor.blue * 255).toString(16).padStart(2, '0');
+    return `#${r}${g}${b}`;
+  }
+
   searchAndZoomToLocation(vendorLocation:VendorLocation) {
     //find entities in viewer.entities with vendorLocation.id
     let entities = this.viewer.entities.values;

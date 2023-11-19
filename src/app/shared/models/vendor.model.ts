@@ -2,20 +2,20 @@ import { ContactInfo } from "./contact-info.model";
 import { Product } from "./product.model";
 
 export class Vendor {
-  vendorId: string;
+  id?: string;
   name: string;
   primaryContactName: string;
   primaryContactTitle: string;
-  category: string[];
+  categories: string[];
   contactInfo: ContactInfo;
   products?: Product[];
 
-  constructor(vendorId: string, name: string, primaryContactName: string, primaryContactTitle: string, category: string[], contactInfo: ContactInfo) {
-    this.vendorId = vendorId;
+  constructor(id: string, name: string, primaryContactName: string, primaryContactTitle: string, categories: string[], contactInfo: ContactInfo) {
+    this.id = id;
     this.name = name;
     this.primaryContactName = primaryContactName;
     this.primaryContactTitle = primaryContactTitle;
-    this.category = category;
+    this.categories = categories;
     this.contactInfo = contactInfo;
   }
 }

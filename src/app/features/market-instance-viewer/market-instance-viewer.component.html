@@ -3,7 +3,8 @@
   *ngIf="userIsOwner"></p-speedDial>
 <p-sidebar [(visible)]="showSidebar" position="right" styleClass="w-6">
   <ng-container *ngIf="sidebarState === SideBarState.VendorLocations">
-    <app-vendor-cards (onVendorLocationSelection)="zoomToVendorLocation($event)" [vendorLocations]="marketInstance?.vendorLocations ?? []"></app-vendor-cards>
+    <app-vendor-cards (onVendorLocationSelection)="zoomToVendorLocation($event)" [vendorLocations]="marketInstance?.vendorLocations ?? []"
+      [marketInstanceId]="marketInstanceId" (onVendorAssigned)="onVendorAssigned($event)"></app-vendor-cards>
   </ng-container>
   <ng-container *ngIf="sidebarState === SideBarState.MarketDates">
     <app-market-instances [marketId]="marketInstance?.marketId" *ngIf="marketInstance?.marketId"></app-market-instances>

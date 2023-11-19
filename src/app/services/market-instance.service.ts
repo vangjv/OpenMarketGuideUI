@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { Market } from '../shared/models/market.model';
 import { MarketInstance } from '../shared/models/market-instance.model';
 import { MarketInstanceRequest } from '../shared/models/market-instance-request.model';
+import { AssignVendorRequest } from '../shared/models/assign-vendor-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +48,10 @@ export class MarketInstanceService {
 
   updateMarketInstance(marketInstance: MarketInstance): Observable<MarketInstance> {
     return this.http.put<MarketInstance>(this.apiUrl + 'marketinstances/' + marketInstance.id, marketInstance);
+  }
+
+  assignVendorToVendorLocation(marketInstanceId:string, assignVendorRequest: AssignVendorRequest): Observable<MarketInstance> {
+    return this.http.post<MarketInstance>(this.apiUrl + 'marketinstances/' + marketInstanceId + "/vendor", assignVendorRequest);
   }
 
 }

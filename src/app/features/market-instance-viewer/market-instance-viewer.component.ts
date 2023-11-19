@@ -282,4 +282,16 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
   zoomToVendorLocation(vendorLocation: VendorLocation) {
     this.cesiumService.searchAndZoomToLocation(vendorLocation);
   }
+
+  onVendorAssigned(marketInstance: MarketInstance) {
+    this.marketInstance = marketInstance;
+    this.messageService.add({
+      key: 'primary',
+      severity: 'custom-2',
+      summary: 'Success',
+      closable: false,
+      detail: 'The vendor was assigned successfully.',
+      contentStyleClass: 'p-0'
+    });
+  }
 }
