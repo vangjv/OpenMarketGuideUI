@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Route, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { VendorService } from 'src/app/services/vendor.service';
+import { LoadingService } from 'src/app/shared/loadingspinner/loading.service';
 import { ContactInfo } from 'src/app/shared/models/contact-info.model';
 import { Vendor } from 'src/app/shared/models/vendor.model';
 
@@ -16,7 +17,7 @@ export class VendorSignupComponent implements OnInit {
   vendorForm: FormGroup;
 
   constructor(private formBuilder: FormBuilder, private vendorService: VendorService, private messageService: MessageService,
-    private router:Router) {
+    private router:Router, private loadingService: LoadingService) {
     this.vendorForm = this.formBuilder.group({
       name: ['', Validators.required],
       primaryContactName: ['', Validators.required],
@@ -40,7 +41,9 @@ export class VendorSignupComponent implements OnInit {
     let vendor = new Vendor(this.vendorForm.value.name, this.vendorForm.value.primaryContactName, this.vendorForm.value.primaryContactTitle, this.vendorForm.value.categories, contactInfo);
     console.log("this.vendorForm.value", this.vendorForm.value);
     console.log("vendor:", vendor);
+    this.loadingService.incrementLoading();
     this.vendorService.submitVendor(vendor).subscribe((data) => {
+      this.loadingService.decrementLoading();
       this.messageService.add({
         key: 'primary',
         severity: 'custom-2',

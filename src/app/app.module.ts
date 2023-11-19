@@ -29,6 +29,7 @@ import { OMGRouteReuseStrategy } from './omg-route-reuse-strategy';
 import { RouteReuseStrategy } from '@angular/router';
 import { VendorSignupComponent } from './features/vendor-signup/vendor-signup.component';
 import { VendorManagementComponent } from './features/vendor-management/vendor-management.component';
+import { LoadingSpinnerModule } from './shared/loadingspinner/loadingspinner.module';
 
 export function loggerCallback(logLevel: LogLevel, message: string) {
   console.log(message);
@@ -123,7 +124,8 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     NoopAnimationsModule,
     ReactiveFormsModule,
     MsalModule,
-    PrimeModule
+    PrimeModule,
+    LoadingSpinnerModule
   ],
   providers: [
     CesiumService,

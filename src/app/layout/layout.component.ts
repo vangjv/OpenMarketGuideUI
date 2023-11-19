@@ -56,7 +56,7 @@ export class LayoutComponent implements OnInit {
         this.screenService.toggleMapView(true);
       } else if (url === '/market-setup') {
         this.activeTab = 2;
-        this.screenService.toggleMapView(false);
+        this.screenService.toggleMapView(true);
       } else if (url === '/my-markets') {
         this.activeTab = 3;
         this.screenService.toggleMapView(false);

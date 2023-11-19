@@ -1,0 +1,20 @@
+<p-dialog [(visible)]="loadingModal" [modal]="true" >
+  <div class="grid ai-center vertical-container justify-content-between">
+    <div class="col">
+        <div class="box"></div>
+    </div>
+    <div class="col">
+        <div class="box text-align-center">
+          <p-progressSpinner styleClass="custom-spinner" strokeWidth="8"></p-progressSpinner>
+          <!-- <br>
+          <div>
+            {{(loadingMessage == undefined ? "Loading..." : loadingMessage)}}
+          </div> -->
+        </div>
+    </div>
+    <div class="col">
+        <div class="box"></div>
+    </div>
+  </div>
+</p-dialog>
+

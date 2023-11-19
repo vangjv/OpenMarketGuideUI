@@ -1,0 +1,65 @@
+
+
+.p-dialog-header {
+  display: none !important;
+}
+
+:host {
+  ::ng-deep .p-dialog-header {
+    display: none !important;
+    overflow-y: hidden !important; /* Hide vertical scrollbar */
+    overflow-x: hidden !important; /* Hide horizontal scrollbar */
+  }
+
+  ::ng-deep .p-dialog-content {
+    padding: 0px !important;
+    overflow-y: hidden !important; /* Hide vertical scrollbar */
+    overflow-x: hidden !important; /* Hide horizontal scrollbar */
+  }
+
+  ::ng-deep .p-dialog {
+    overflow-y: hidden; /* Hide vertical scrollbar */
+    overflow-x: hidden; /* Hide horizontal scrollbar */
+  }
+
+}
+
+.ui-dialog-titlebar {
+  display: none !important;
+ }
+
+ :host ::ng-deep .custom-spinner .p-progress-spinner-circle {
+  animation: custom-progress-spinner-dash 1.5s ease-in-out infinite, custom-progress-spinner-color 6s ease-in-out infinite;
+}
+
+@keyframes custom-progress-spinner-color {
+  100%,
+  0% {
+      stroke: #0058a4;
+  }
+  40% {
+      stroke: #113c66;
+  }
+  66% {
+      stroke: #0058a4;
+  }
+  80%,
+  90% {
+      stroke: #113c66;
+  }
+}
+
+@keyframes custom-progress-spinner-dash {
+  0% {
+      stroke-dasharray: 1, 200;
+      stroke-dashoffset: 0;
+  }
+  50% {
+      stroke-dasharray: 89, 200;
+      stroke-dashoffset: -35px;
+  }
+  100% {
+      stroke-dasharray: 89, 200;
+      stroke-dashoffset: -124px;
+  }
+}

@@ -8,6 +8,7 @@ import { AuthService } from './services/auth.service';
 import { IdTokenClaimsWithPolicyId } from './shared/models/id-token-claim-with-policy.model';
 import { MarketService } from './services/market.service';
 import { AppStateService } from './services/app-state.service';
+import { LoadingService } from './shared/loadingspinner/loading.service';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +20,7 @@ export class AppComponent implements OnInit {
   doneWithAuth: boolean = false;
   constructor(@Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
     private msalService: MsalService, private authService: AuthService, private appStateService:AppStateService,
-    private msalBroadcastService: MsalBroadcastService, private marketService:MarketService) {
+    private msalBroadcastService: MsalBroadcastService, private marketService:MarketService, private loadingService:LoadingService) {
   }
 
   ngOnInit(): void {
@@ -132,7 +133,9 @@ export class AppComponent implements OnInit {
   setMarketsForUser() {
     let currentUser = this.appStateService.state.$currentUser();
     if (currentUser) {
+      this.loadingService.incrementLoading();
       this.marketService.getMarketsByUserId().subscribe(markets => {
+        this.loadingService.decrementLoading();
         this.appStateService.setMyMarkets(markets);
       });
     }

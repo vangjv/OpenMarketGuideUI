@@ -17,6 +17,7 @@ import { MarketService } from 'src/app/services/market.service';
 import { Router } from '@angular/router';
 import { ThreeDModelCollectionService } from 'src/app/services/three-dimensional-model-collection.service';
 import { MarketLocation } from 'src/app/shared/models/market-location.model';
+import { LoadingService } from 'src/app/shared/loadingspinner/loading.service';
 @Component({
   selector: 'app-market-setup',
   templateUrl: './market-setup.component.html',
@@ -53,7 +54,7 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
   }
   constructor(private cesiumService:CesiumService, private formBuilder: FormBuilder, private dialogsService:DialogsService,
     private messageService:MessageService, private el: ElementRef, private marketService:MarketService, private router:Router,
-    private threeDModelCollectionService:ThreeDModelCollectionService) {
+    private threeDModelCollectionService:ThreeDModelCollectionService, private loadingService:LoadingService) {
     this.mapSearchForm = this.createMapSearchForm();
     this.marketNameForm = this.createMarketNameForm();
     this.vendorLocationForm = this.createVendorLocationForm();
@@ -209,9 +210,19 @@ export class MarketSetupComponent implements AfterViewInit, OnInit, OnDestroy {
     console.log("threeDModelEntities:", threeDModelEntities);
     let market:Market = Market.buildMarket(this.marketNameForm.value.name, CoordinateData.fromCesiumEntity(this.marketLocation),
       marketLocation, vendorLocations, threeDModelEntities);
-      console.log("completedMarket:", market);
+    console.log("completedMarket:", market);
+    this.loadingService.incrementLoading();
     this.marketService.createMarket(market).subscribe((market:Market) => {
+      this.loadingService.decrementLoading();
       console.log("new market:", market);
+      this.messageService.add({
+        key: 'primary',
+        severity: 'custom-2',
+        summary: 'Success',
+        closable: false,
+        detail: 'The market was successfully created.',
+        contentStyleClass: 'p-0'
+      });
       this.router.navigate(['/market-viewer/' + market.id ]);
     });
   }
