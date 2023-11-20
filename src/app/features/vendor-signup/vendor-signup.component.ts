@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Route, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { AppStateService } from 'src/app/services/app-state.service';
 import { VendorService } from 'src/app/services/vendor.service';
 import { LoadingService } from 'src/app/shared/loadingspinner/loading.service';
 import { ContactInfo } from 'src/app/shared/models/contact-info.model';
@@ -17,7 +18,7 @@ export class VendorSignupComponent implements OnInit {
   vendorForm: FormGroup;
 
   constructor(private formBuilder: FormBuilder, private vendorService: VendorService, private messageService: MessageService,
-    private router:Router, private loadingService: LoadingService) {
+    private router:Router, private loadingService: LoadingService, private appStateService:AppStateService) {
     this.vendorForm = this.formBuilder.group({
       name: ['', Validators.required],
       primaryContactName: ['', Validators.required],
@@ -42,7 +43,7 @@ export class VendorSignupComponent implements OnInit {
     console.log("this.vendorForm.value", this.vendorForm.value);
     console.log("vendor:", vendor);
     this.loadingService.incrementLoading();
-    this.vendorService.submitVendor(vendor).subscribe((data) => {
+    this.vendorService.submitVendor(vendor).subscribe((vendor) => {
       this.loadingService.decrementLoading();
       this.messageService.add({
         key: 'primary',
@@ -52,6 +53,7 @@ export class VendorSignupComponent implements OnInit {
         detail: 'You have successfully signed up as a vendor',
         contentStyleClass: 'p-0'
       });
+      this.appStateService.setMyVendors([vendor]);
       this.router.navigate(['/vendor-management']);
     });
   }

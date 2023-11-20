@@ -9,6 +9,7 @@ import { IdTokenClaimsWithPolicyId } from './shared/models/id-token-claim-with-p
 import { MarketService } from './services/market.service';
 import { AppStateService } from './services/app-state.service';
 import { LoadingService } from './shared/loadingspinner/loading.service';
+import { VendorService } from './services/vendor.service';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +21,8 @@ export class AppComponent implements OnInit {
   doneWithAuth: boolean = false;
   constructor(@Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
     private msalService: MsalService, private authService: AuthService, private appStateService:AppStateService,
-    private msalBroadcastService: MsalBroadcastService, private marketService:MarketService, private loadingService:LoadingService) {
+    private msalBroadcastService: MsalBroadcastService, private marketService:MarketService, private loadingService:LoadingService,
+    private vendorService:VendorService) {
   }
 
   ngOnInit(): void {
@@ -47,6 +49,7 @@ export class AppComponent implements OnInit {
         // this.setLoginDisplay();
         this.authService.checkAndSetActiveAccount();
         this.setMarketsForUser();
+        this.setVendorsForUser();
       });
 
     this.msalBroadcastService.msalSubject$
@@ -137,6 +140,18 @@ export class AppComponent implements OnInit {
       this.marketService.getMarketsByUserId().subscribe(markets => {
         this.loadingService.decrementLoading();
         this.appStateService.setMyMarkets(markets);
+      });
+    }
+  }
+
+  setVendorsForUser() {
+    let currentUser = this.appStateService.state.$currentUser();
+    if (currentUser) {
+      this.loadingService.incrementLoading();
+      this.vendorService.getVendorsByCurrentUser().subscribe(vendors => {
+        this.loadingService.decrementLoading();
+        this.appStateService.setMyVendors(vendors);
+        console.log("my vendors:", vendors);
       });
     }
   }

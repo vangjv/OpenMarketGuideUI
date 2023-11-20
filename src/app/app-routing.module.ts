@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './features/home/home.component';
-import { GoodsListingComponent } from './features/goods-listing/goods-listing.component';
 import { GoodsDetailsComponent } from './features/goods-details/goods-details.component';
 import { MarketSetupComponent } from './features/market-setup/market-setup.component';
 import { MarketViewerComponent } from './features/market-viewer/market-viewer.component';
@@ -12,6 +11,7 @@ import { MyMarketsComponent } from './features/my-markets/my-markets.component';
 import { MarketInstanceViewerComponent } from './features/market-instance-viewer/market-instance-viewer.component';
 import { VendorSignupComponent } from './features/vendor-signup/vendor-signup.component';
 import { VendorManagementComponent } from './features/vendor-management/vendor-management.component';
+import { ProductsListingComponent } from './features/products-listing/products-listing.component';
 
 const routes: Routes = [
   {
@@ -51,8 +51,8 @@ const routes: Routes = [
     canActivate: [MsalGuard]
    },
   {
-    path: 'goods-listing',
-    component: GoodsListingComponent
+    path: 'products-listing',
+    component: ProductsListingComponent
   },
   {
     path: 'goods-details',

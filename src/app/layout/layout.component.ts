@@ -6,6 +6,17 @@ import { MenuItem } from 'primeng/api';
 import { AppStateService } from '../services/app-state.service';
 import { AccountInfo } from '@azure/msal-browser';
 import { AuthService } from '../services/auth.service';
+import { Market } from '../shared/models/market.model';
+import { Vendor } from '../shared/models/vendor.model';
+
+export enum ActiveTab {
+  Home = "Home",
+  FindAMarket = "FindAMarket",
+  SetupMyMarket = "SetupMyMarket",
+  MyMarkets = "MyMarkets",
+  VendorManagement = "VendorManagement"
+}
+
 
 @Component({
   selector: 'app-layout',
@@ -13,10 +24,13 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./layout.component.scss']
 })
 export class LayoutComponent implements OnInit {
-  activeTab = 0;
+  ActiveTab = ActiveTab;
+  activeTab:ActiveTab | null = ActiveTab.Home;
   isMapView: Signal<boolean> = signal(false);
   currentUser: AccountInfo | undefined;
   currentUserInitials: string = "";
+  currentUserMarkets: Market[] = [];
+  currentUserVendors: Vendor[] = [];
   userMenu: MenuItem[] = [
     {
       label: 'Sign in',
@@ -31,6 +45,8 @@ export class LayoutComponent implements OnInit {
       this.currentUser = this.appStateService.state.$currentUser();
       this.currentUserInitials = this.getInitialsFromToken(this.currentUser);
       console.log("this.currentUser", this.currentUser);
+      this.currentUserMarkets = this.appStateService.state.$myMarkets();
+      this.currentUserVendors = this.appStateService.state.$myVendors();
       if (this.currentUser === undefined) {
         this.setNoLoggedInUserMenu();
       } else {
@@ -45,23 +61,25 @@ export class LayoutComponent implements OnInit {
     ).subscribe((event) => {
       const url = (event as NavigationEnd).urlAfterRedirects;
       if (url === '/') {
-        this.activeTab = 0;
+        this.activeTab = ActiveTab.Home;
         this.screenService.toggleMapView(false);
       } else if (url === '/map') {
-        this.activeTab = 1;
+        this.activeTab = ActiveTab.FindAMarket;
         this.screenService.toggleMapView(true);
       } else if (url.startsWith ('/market-viewer')) {
         this.screenService.toggleMapView(true);
       } else if (url.startsWith ('/market-instance')) {
         this.screenService.toggleMapView(true);
       } else if (url === '/market-setup') {
-        this.activeTab = 2;
         this.screenService.toggleMapView(true);
       } else if (url === '/my-markets') {
-        this.activeTab = 3;
+        this.activeTab = ActiveTab.MyMarkets
+        this.screenService.toggleMapView(false);
+      } else if (url === '/vendor-management') {
+        this.activeTab = ActiveTab.VendorManagement
         this.screenService.toggleMapView(false);
       } else {
-        this.activeTab = 4
+        this.activeTab = null;
         this.screenService.toggleMapView(false);
       }
       //this.checkMapViewBasedOnTabIndex();
@@ -84,13 +102,15 @@ export class LayoutComponent implements OnInit {
 
   setLoggedInUserMenu() {
     this.userMenu = [];
-    this.userMenu.push({
-      label: 'Become a Vendor',
-      icon: 'pi pi-fw pi-shopping-cart',
-      command: () => {
-        this.router.navigate(['/vendor-signup']);
-      }
-    });
+    if (this.currentUserVendors.length <= 0) {
+      this.userMenu.push({
+        label: 'Become a Vendor',
+        icon: 'pi pi-fw pi-shopping-cart',
+        command: () => {
+          this.router.navigate(['/vendor-signup']);
+        }
+      });
+    }
     this.userMenu.push({
       label: 'Sign out',
       icon: 'pi pi-fw pi-sign-out',
@@ -112,40 +132,27 @@ export class LayoutComponent implements OnInit {
     ];
   }
 
-  checkMapViewBasedOnTabIndex() {
-    if (this.activeTab === 0) {
-      this.screenService.toggleMapView(false);
-    }
-    if (this.activeTab === 1) {
-      this.screenService.toggleMapView(true);
-    }
-    if (this.activeTab === 2) {
-      this.screenService.toggleMapView(true);
-    }
-    if (this.activeTab === 3) {
-      this.screenService.toggleMapView(false);
-    }
-    if (this.activeTab === 4) {
-      this.screenService.toggleMapView(false);
-    }
-  }
 
-  navigateToTab(tabIndex: number) {
-    this.activeTab = tabIndex;
-    if (tabIndex === 0) {
+  navigateToTab(activeTab: ActiveTab) {
+    this.activeTab = activeTab;
+    if (activeTab === ActiveTab.Home) {
       this.router.navigate(['/']);
       this.screenService.toggleMapView(false);
     }
-    if (tabIndex === 1) {
+    if (activeTab === ActiveTab.FindAMarket) {
       this.router.navigate(['/map']);
       this.screenService.toggleMapView(true);
     }
-    if (tabIndex === 2) {
+    if (activeTab === ActiveTab.SetupMyMarket) {
       this.router.navigate(['/market-setup']);
       this.screenService.toggleMapView(true);
     }
-    if (tabIndex === 3) {
+    if (activeTab === ActiveTab.MyMarkets) {
       this.router.navigate(['/my-markets']);
+      this.screenService.toggleMapView(false);
+    }
+    if (activeTab === ActiveTab.VendorManagement) {
+      this.router.navigate(['/vendor-management']);
       this.screenService.toggleMapView(false);
     }
   }

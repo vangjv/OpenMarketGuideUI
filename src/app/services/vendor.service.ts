@@ -15,4 +15,12 @@ export class VendorService {
     return this.http.post<Vendor>(this.apiUrl + 'vendors', vendor);
   }
 
+  getVendorsByCurrentUser(): Observable<Vendor[]> {
+    return this.http.get<Vendor[]>(this.apiUrl + 'vendors/me').pipe(
+      map((vendors: Vendor[]) => {
+        return vendors;
+      })
+    );
+  }
+
 }

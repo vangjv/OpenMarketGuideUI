@@ -38,8 +38,8 @@
         <li class="lg:flex lg:align-items-end">
           <a pRipple
             class="border-round-top flex align-items-center px-6 py-3 lg:px-3 lg:py-3 font-medium cursor-pointer transition-colors transition-duration-150"
-            [ngClass]="{'surface-ground text-900': activeTab === 0, 'hover:surface-hover': activeTab !== 0}"
-            (click)="navigateToTab(0)">
+            [ngClass]="{'surface-ground text-900': activeTab === ActiveTab.Home, 'hover:surface-hover': activeTab !== ActiveTab.Home}"
+            (click)="navigateToTab(ActiveTab.Home)">
             <span>Home</span>
             <!-- <i class="pi pi-home ml-2"></i> -->
           </a>
@@ -47,8 +47,8 @@
         <li class="lg:flex lg:align-items-end">
           <a pRipple
             class="border-round-top flex align-items-center px-6 py-3 lg:px-3 lg:py-3 text-900 font-medium cursor-pointer transition-colors transition-duration-150"
-            [ngClass]="{'surface-ground text-900': activeTab === 1, 'hover:surface-hover': activeTab !== 1}"
-            (click)="navigateToTab(1)">
+            [ngClass]="{'surface-ground text-900': activeTab === ActiveTab.FindAMarket, 'hover:surface-hover': activeTab !== ActiveTab.FindAMarket}"
+            (click)="navigateToTab(ActiveTab.FindAMarket)">
             <span>Find a Market</span>
             <!-- <i class="pi pi-search ml-2"></i> -->
           </a>
@@ -56,30 +56,36 @@
         <li class="lg:flex lg:align-items-end">
           <a pRipple
             class="border-round-top flex align-items-center px-6 py-3 lg:px-3 lg:py-3 text-900 font-medium cursor-pointer transition-colors transition-duration-150"
-            [ngClass]="{'surface-ground text-900': activeTab === 2, 'hover:surface-hover': activeTab !== 2}"
-            (click)="navigateToTab(2)">
+            [ngClass]="{'surface-ground text-900': activeTab === ActiveTab.SetupMyMarket, 'hover:surface-hover': activeTab !== ActiveTab.SetupMyMarket}"
+            (click)="navigateToTab(ActiveTab.SetupMyMarket)">
             <span class="mr-2">Setup My Market</span>
             <!-- <i class="pi pi-map ml-2"></i> -->
           </a>
         </li>
-        <li class="lg:flex lg:align-items-end" *ngIf="this.currentUser">
+        <li class="lg:flex lg:align-items-end" *ngIf="currentUser && currentUserMarkets.length > 0">
           <a pRipple
             class="border-round-top flex align-items-center px-6 py-3 lg:px-3 lg:py-3 text-900 font-medium cursor-pointer transition-colors transition-duration-150"
-            [ngClass]="{'surface-ground text-900': activeTab === 3, 'hover:surface-hover': activeTab !== 3}"
-            (click)="navigateToTab(3)">
+            [ngClass]="{'surface-ground text-900': activeTab === ActiveTab.MyMarkets, 'hover:surface-hover': activeTab !== ActiveTab.MyMarkets}"
+            (click)="navigateToTab(ActiveTab.MyMarkets)">
             <span>My Markets</span>
-            <!-- <i class="pi pi-question ml-2"></i> -->
           </a>
         </li>
-        <li class="lg:flex lg:align-items-end">
+        <li class="lg:flex lg:align-items-end" *ngIf="currentUser && currentUserVendors.length > 0">
+          <a pRipple
+            class="border-round-top flex align-items-center px-6 py-3 lg:px-3 lg:py-3 text-900 font-medium cursor-pointer transition-colors transition-duration-150"
+            [ngClass]="{'surface-ground text-900': activeTab === ActiveTab.VendorManagement, 'hover:surface-hover': activeTab !== ActiveTab.VendorManagement}"
+            (click)="navigateToTab(ActiveTab.VendorManagement)">
+            <span>Vendor Management</span>
+          </a>
+        </li>
+        <!-- <li class="lg:flex lg:align-items-end">
           <a pRipple
             class="border-round-top flex align-items-center px-6 py-3 lg:px-3 lg:py-3 text-900 font-medium cursor-pointer transition-colors transition-duration-150"
             [ngClass]="{'surface-ground text-900': activeTab === 4, 'hover:surface-hover': activeTab !== 4}"
             (click)="navigateToTab(4)">
             <span>About</span>
-            <!-- <i class="pi pi-question ml-2"></i> -->
           </a>
-        </li>
+        </li> -->
       </ul>
       <ul
         class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row border-top-1 surface-border lg:border-top-none">

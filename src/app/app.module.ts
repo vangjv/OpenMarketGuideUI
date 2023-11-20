@@ -7,7 +7,7 @@ import { CesiumComponent } from './features/cesium/cesium.component';
 import { StyleClassModule } from 'primeng/styleclass';
 import { HomeComponent } from './features/home/home.component';
 import { LayoutComponent } from './layout/layout.component';
-import { GoodsListingComponent } from './features/goods-listing/goods-listing.component';
+import { ProductsListingComponent } from './features/products-listing/products-listing.component';
 import { GoodsDetailsComponent } from './features/goods-details/goods-details.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MarketSetupComponent } from './features/market-setup/market-setup.component';
@@ -30,6 +30,12 @@ import { RouteReuseStrategy } from '@angular/router';
 import { VendorSignupComponent } from './features/vendor-signup/vendor-signup.component';
 import { VendorManagementComponent } from './features/vendor-management/vendor-management.component';
 import { LoadingSpinnerModule } from './shared/loadingspinner/loadingspinner.module';
+import { VendorProfileComponent } from './features/vendor-management/vendor-profile/vendor-profile.component';
+import { VendorProductsComponent } from './features/vendor-management/vendor-products/vendor-products.component';
+import { VendorMarketsComponent } from './features/vendor-management/vendor-markets/vendor-markets.component';
+import { VendorInvitationsComponent } from './features/vendor-management/vendor-invitations/vendor-invitations.component';
+import { VendorNotificationsComponent } from './features/vendor-management/vendor-notifications/vendor-notifications.component';
+import { VendorReviewsComponent } from './features/vendor-management/vendor-reviews/vendor-reviews.component';
 
 export function loggerCallback(logLevel: LogLevel, message: string) {
   console.log(message);
@@ -101,7 +107,7 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     CesiumComponent,
     HomeComponent,
     LayoutComponent,
-    GoodsListingComponent,
+    ProductsListingComponent,
     GoodsDetailsComponent,
     MarketSetupComponent,
     ModelPickerComponent,
@@ -113,7 +119,13 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     MarketInstanceViewerComponent,
     MapDetailsComponent,
     VendorSignupComponent,
-    VendorManagementComponent
+    VendorManagementComponent,
+    VendorProfileComponent,
+    VendorProductsComponent,
+    VendorMarketsComponent,
+    VendorInvitationsComponent,
+    VendorNotificationsComponent,
+    VendorReviewsComponent
   ],
   imports: [
     BrowserModule,

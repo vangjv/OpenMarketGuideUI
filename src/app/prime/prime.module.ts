@@ -14,6 +14,7 @@ import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ButtonModule } from 'primeng/button';
 import { ChipsModule } from 'primeng/chips';
 import { DividerModule } from 'primeng/divider';
+import { CheckboxModule } from 'primeng/checkbox';
 
 @NgModule({
   declarations: [],
@@ -31,7 +32,8 @@ import { DividerModule } from 'primeng/divider';
     AvatarModule,
     CalendarModule,
     ChipsModule,
-    DividerModule
+    DividerModule,
+    CheckboxModule
   ], providers: [
     DialogService,
     MessageService,
@@ -49,7 +51,8 @@ import { DividerModule } from 'primeng/divider';
     AvatarModule,
     CalendarModule,
     ChipsModule,
-    DividerModule
+    DividerModule,
+    CheckboxModule
   ]
 })
 export class PrimeModule { }
