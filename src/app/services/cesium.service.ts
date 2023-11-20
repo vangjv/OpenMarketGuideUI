@@ -39,6 +39,7 @@ export class CesiumService {
   public initialMousePosition: any = null;
   public initialOrientation: any = null;
   public longPressHoldTimer: any;
+  public isDragging:boolean = false;
   constructor(private dialogsService: DialogsService, private router: Router) {
 
   }
@@ -355,11 +356,18 @@ export class CesiumService {
   addLongPressHandler(clickHandler: any) {
     clickHandler.setInputAction((event: any) => {
       this.longPressHoldTimer = new Date().getTime();
+      this.isDragging = false;
     }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+
+    // Detect mouse move
+    clickHandler.setInputAction((event:any) => {
+      this.isDragging = true;
+    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
     clickHandler.setInputAction((event: any) => {
       let endHoldTime = new Date().getTime();
-      if (endHoldTime - this.longPressHoldTimer > 1000) { // 1000 milliseconds for 1 second
+      if (endHoldTime - this.longPressHoldTimer > 1000 && !this.isDragging) { // 1000 milliseconds for 1 second
+        //long press detected
         let pickedObject = this.viewer.scene.pick(event.position);
         if (Cesium.defined(pickedObject)) {
           const id = Cesium.defaultValue(pickedObject.id, pickedObject.primitive.id);
@@ -377,6 +385,7 @@ export class CesiumService {
   }
 
   addEntityDoubleClickedHandler(clickHandler: any) {
+    clickHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
     clickHandler.setInputAction((event: any) => {
       let pickedObject = this.viewer.scene.pick(event.position);
       if (Cesium.defined(pickedObject)) {
@@ -754,8 +763,9 @@ export class CesiumService {
         let billboard = this.viewer.entities.add({
           position: center,
           billboard: {
-            image: "./assets/images/produce.png",
-            scale: 0.1,
+            // image: "./assets/images/produce.png",
+            image: "./assets/images/flowershop-sm.jpg",
+            scale: 0.05,
             // scaleByDistance: new Cesium.NearFarScalar(1.5e2, 2.0, 1.5e7, 0.5),
             sizeInMeters: true,
           },

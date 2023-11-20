@@ -102,11 +102,11 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
     // },
     {
       icon: 'pi pi-calendar',
-      tooltip: 'Market dates',
+      tooltip: 'Market instances',
       tooltipOptions: {
         tooltipEvent: 'hover',
         tooltipPosition: 'bottom',
-        tooltipLabel: 'Market dates'
+        tooltipLabel: 'Market instances'
       },
       command: () => {
         this.showSidebar = true;
