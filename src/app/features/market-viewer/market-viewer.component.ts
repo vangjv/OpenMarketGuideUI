@@ -53,6 +53,8 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
   marketId?: string;
   market: Market | undefined = undefined;
   showLabels:boolean = true;
+  show3DModels: boolean = true;
+  showVendorLocations: boolean = true;
   menuItems: MenuItem[] = [
     {
       icon: 'pi pi-pencil',
@@ -137,6 +139,42 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
         } else {
           this.cesiumService.toggleLabels(true);
           this.showLabels = true;
+        }
+      }
+    },
+    {
+      icon: 'pi pi-eye-slash',
+      tooltip: 'Show/Hide 3D Models',
+      tooltipOptions: {
+        tooltipEvent: 'hover',
+        tooltipPosition: 'bottom',
+        tooltipLabel: 'Show/Hide 3D Models'
+      },
+      command: () => {
+        if (this.show3DModels == true) {
+          this.cesiumService.toggle3DModels(false);
+          this.show3DModels = false;
+        } else {
+          this.cesiumService.toggle3DModels(true);
+          this.show3DModels = true;
+        }
+      }
+    },
+    {
+      icon: 'pi pi-shopping-cart',
+      tooltip: 'Show/Hide Vendor Locations',
+      tooltipOptions: {
+        tooltipEvent: 'hover',
+        tooltipPosition: 'bottom',
+        tooltipLabel: 'Show/Hide Vendor Locations'
+      },
+      command: () => {
+        if (this.showVendorLocations == true) {
+          this.cesiumService.toggleVendorLocations(false);
+          this.showVendorLocations = false;
+        } else {
+          this.cesiumService.toggleVendorLocations(true);
+          this.showVendorLocations = true;
         }
       }
     },

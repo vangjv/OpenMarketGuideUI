@@ -30,6 +30,8 @@ export class CesiumService {
   public mapExplorerService!: MapExplorerService;
   public selectedEntity = new BehaviorSubject<any>(undefined);
   public selectedEntity$ = this.selectedEntity.asObservable();
+  public doubleClickedEntity = new BehaviorSubject<any>(undefined);
+  public doubleClickedEntity$ = this.doubleClickedEntity.asObservable();
   public mapMode: BehaviorSubject<MapMode> = new BehaviorSubject<MapMode>(MapMode.EntitySelection);
   public mapMode$ = this.mapMode.asObservable();
   public clickHandler: any;
@@ -67,6 +69,35 @@ export class CesiumService {
       console.log(`Failed to load tileset: ${error}`);
     }
 
+    this.hideCesiumIonLogo();
+  };
+
+  //depthTestAgainstTerrain: false
+  async initializeMap2(div: string) {
+    this.viewer = new Cesium.Viewer(div, {
+      selectionIndicator: false,
+      infoBox: false,
+      terrain: Cesium.Terrain.fromWorldTerrain(),
+      sceneModePicker: false,
+      timeline: false,
+      animation: false
+    });
+    this.hideFullScreenButton();
+    this.boundaryService = new BoundaryService(this.viewer, this.dialogsService, this);
+    this.threeDimensionalModelService = new ThreeDimensionalModelService(this.viewer, this.dialogsService, this);
+    this.mapExplorerService = new MapExplorerService(this.viewer, this.dialogsService, this, this.router);
+    if (!this.viewer.scene.pickPositionSupported) {
+      window.alert("This browser does not support pickPosition.");
+    }
+
+    try {
+      const tileset = await Cesium.createGooglePhotorealistic3DTileset();
+      this.viewer.scene.primitives.add(tileset);
+      this.viewer.scene.globe.show = false; //this conflicts with google photorealistic 3d tileset
+    } catch (error) {
+      console.log(`Failed to load tileset: ${error}`);
+    }
+    this.viewer.scene.globe.depthTestAgainstTerrain = false;
     this.hideCesiumIonLogo();
   };
 
@@ -306,6 +337,32 @@ export class CesiumService {
         this.selectedEntity.next(undefined);
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+  }
+
+  enableEntityDoubleClickedMode() {
+    if (this.clickHandler) {
+      this.addEntityDoubleClickedHandler(this.clickHandler);
+    } else {
+      this.clickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+      this.addEntityDoubleClickedHandler(this.clickHandler);
+    }
+  }
+
+  addEntityDoubleClickedHandler(clickHandler: any) {
+    clickHandler.setInputAction((event: any) => {
+      let pickedObject = this.viewer.scene.pick(event.position);
+      if (Cesium.defined(pickedObject)) {
+        const id = Cesium.defaultValue(pickedObject.id, pickedObject.primitive.id);
+        if (id instanceof Cesium.Entity) {
+          this.doubleClickedEntity.next(id);
+          return id;
+        } else {
+          this.doubleClickedEntity.next(undefined);
+        }
+      } else {
+        this.doubleClickedEntity.next(undefined);
+      }
+    }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
   }
 
   enable3dModelRotation() {
@@ -672,6 +729,26 @@ export class CesiumService {
         var entity = entities[i];
         if (entity.label) {
             entity.label.show = show;
+        }
+    }
+  }
+
+  toggle3DModels(show: boolean) {
+    var entities = this.viewer.entities.values;
+    for (var i = 0; i < entities.length; i++) {
+        var entity = entities[i];
+        if (entity.model) {
+            entity.model.show = show;
+        }
+    }
+  }
+
+  toggleVendorLocations(show: boolean) {
+    var entities = this.viewer.entities.values;
+    for (var i = 0; i < entities.length; i++) {
+        var entity = entities[i];
+        if (entity.polygon) {
+            entity.polygon.show = show;
         }
     }
   }

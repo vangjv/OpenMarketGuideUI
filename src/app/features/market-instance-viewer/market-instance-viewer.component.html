@@ -40,3 +40,12 @@
 <app-map-details [targetElement]="marketinstanceviewer">
   {{marketInstance?.name}}  {{marketInstance?.startDate | date:'short'}} - {{marketInstance?.endDate | date:'short'}}
 </app-map-details>
+
+<p-sidebar [(visible)]="showVendorBar" position="bottom" [style]="{'height':'80%'}" transitionOptions="150ms cubic-bezier(0, 0, 0.2, 1)">
+  <ng-template pTemplate="header">
+    <div class="flex justify-content-center flex-wrap">
+      <div class="flex align-items-center justify-content-center font-bold">Jon's Market</div>
+    </div>
+  </ng-template>
+  <app-products-listing></app-products-listing>
+</p-sidebar>

@@ -13,7 +13,7 @@ export class MapExplorerComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.cesiumService.initializeMap("map-explorer");
+    this.cesiumService.initializeMap2("map-explorer");
     this.cesiumService.hideDefaultCesiumSearch();
     this.cesiumService.changeCesiumHomeButtonToGoToAppHome();
     this.cesiumService.mapExplorerService.createAllMarketBillboards();
