@@ -75,7 +75,7 @@ export class MapExplorerService {
         const id = Cesium.defaultValue(pickedObject.id, pickedObject.primitive.id);
         if (id instanceof Cesium.Entity) {
           console.log("object clicked:", id);
-          this.router.navigateByUrl('/market-viewer/Neverland:8930f2cf-9c14-4759-bed2-94781b3d8dac');
+          this.router.navigateByUrl('/market-instance/Neverland:91dd844e-aa86-4c99-a24f-3b9a5a9e637c:201120230810');
           //this.selectedEntity.next(id);
           return id;
         } else {

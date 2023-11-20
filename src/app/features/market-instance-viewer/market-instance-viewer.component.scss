@@ -15,28 +15,11 @@
 }
 
 :host ::ng-deep {
-  .speeddial-circle-omg {
-
-    .p-speeddial-direction-up-left {
-        right: 0;
-        bottom: 0;
-    }
-
-    .p-speeddial-direction-up-right {
-        left: 0;
-        bottom: 0;
-    }
-
-    .p-speeddial-direction-down {
-        right: 0;
-        top: 0;
-    }
-
-    .p-speeddial-direction-down-right {
-        left: 0;
-        top: 0;
-    }
-
+  .p-speeddial {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 5px;
   }
 
   .next-step-button {

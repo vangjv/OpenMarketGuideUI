@@ -38,7 +38,7 @@ export class CesiumService {
   public isRotating: boolean = false;
   public initialMousePosition: any = null;
   public initialOrientation: any = null;
-
+  public longPressHoldTimer: any;
   constructor(private dialogsService: DialogsService, private router: Router) {
 
   }
@@ -322,6 +322,19 @@ export class CesiumService {
     }
   }
 
+  enableEntityDoubleClickedMode() {
+    if (this.clickHandler) {
+      this.addEntityDoubleClickedHandler(this.clickHandler);
+      this.addLongPressHandler(this.clickHandler);
+      // this.addEntityTouchDoubleTappedHandler(this.clickHandler);
+    } else {
+      this.clickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+      this.addEntityDoubleClickedHandler(this.clickHandler);
+      this.addLongPressHandler(this.clickHandler);
+      // this.addEntityTouchDoubleTappedHandler(this.clickHandler);
+    }
+  }
+
   addEntityPickedClickHandler(clickHandler: any) {
     clickHandler.setInputAction((event: any) => {
       let pickedObject = this.viewer.scene.pick(event.position);
@@ -339,13 +352,28 @@ export class CesiumService {
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
   }
 
-  enableEntityDoubleClickedMode() {
-    if (this.clickHandler) {
-      this.addEntityDoubleClickedHandler(this.clickHandler);
-    } else {
-      this.clickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-      this.addEntityDoubleClickedHandler(this.clickHandler);
-    }
+  addLongPressHandler(clickHandler: any) {
+    clickHandler.setInputAction((event: any) => {
+      this.longPressHoldTimer = new Date().getTime();
+    }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+
+    clickHandler.setInputAction((event: any) => {
+      let endHoldTime = new Date().getTime();
+      if (endHoldTime - this.longPressHoldTimer > 1000) { // 1000 milliseconds for 1 second
+        let pickedObject = this.viewer.scene.pick(event.position);
+        if (Cesium.defined(pickedObject)) {
+          const id = Cesium.defaultValue(pickedObject.id, pickedObject.primitive.id);
+          if (id instanceof Cesium.Entity) {
+            this.doubleClickedEntity.next(id);
+            return id;
+          } else {
+            this.doubleClickedEntity.next(undefined);
+          }
+        } else {
+          this.doubleClickedEntity.next(undefined);
+        }
+      }
+    }, Cesium.ScreenSpaceEventType.LEFT_UP);
   }
 
   addEntityDoubleClickedHandler(clickHandler: any) {
@@ -363,6 +391,23 @@ export class CesiumService {
         this.doubleClickedEntity.next(undefined);
       }
     }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+  }
+
+  addEntityTouchDoubleTappedHandler(clickHandler: any) {
+    clickHandler.setInputAction((event: any) => {
+      let pickedObject = this.viewer.scene.pick(event.position);
+      if (Cesium.defined(pickedObject)) {
+        const id = Cesium.defaultValue(pickedObject.id, pickedObject.primitive.id);
+        if (id instanceof Cesium.Entity) {
+          this.doubleClickedEntity.next(id);
+          return id;
+        } else {
+          this.doubleClickedEntity.next(undefined);
+        }
+      } else {
+        this.doubleClickedEntity.next(undefined);
+      }
+    }, Cesium.ScreenSpaceEventType.PINCH_END);
   }
 
   enable3dModelRotation() {
@@ -700,12 +745,32 @@ export class CesiumService {
     });
   }
 
+  createBillboardsForVendorLocations() {
+    this.viewer.entities.values.forEach((entity: any) => {
+      if (entity.polygon && entity.omgType == "VendorLocation") {
+        // Entity is a polygon
+        let center = this.computeCenter(entity.polygon);
+        // Create a label
+        let billboard = this.viewer.entities.add({
+          position: center,
+          billboard: {
+            image: "./assets/images/produce.png",
+            scale: 0.1,
+            // scaleByDistance: new Cesium.NearFarScalar(1.5e2, 2.0, 1.5e7, 0.5),
+            sizeInMeters: true,
+          },
+        });
+        console.log("billboard", billboard);
+      }
+    });
+  }
+
   computeCenter(polygon: any) {
     let vertices = polygon.hierarchy.getValue(Cesium.JulianDate.now()).positions;
     let numberOfVertices = vertices.length;
     let sumLongitude = 0.0;
     let sumLatitude = 0.0;
-    let sumHeight = 1025.0;
+    let sumHeight = 940.0;
 
     for (let i = 0; i < numberOfVertices; i++) {
       let cartographic = Cesium.Cartographic.fromCartesian(vertices[i]);
@@ -713,9 +778,6 @@ export class CesiumService {
       sumLatitude += Cesium.Math.toDegrees(cartographic.latitude);
       sumHeight += cartographic.height;
     }
-    console.log("longitude:", sumLongitude / numberOfVertices);
-    console.log("latitude:", sumLatitude / numberOfVertices);
-    console.log("height:", sumHeight / numberOfVertices);
     return Cesium.Cartesian3.fromDegrees(
       sumLongitude / numberOfVertices,
       sumLatitude / numberOfVertices,
