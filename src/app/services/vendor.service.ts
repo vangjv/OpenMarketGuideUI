@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Vendor } from '../shared/models/vendor.model';
+import { Product } from '../shared/models/product.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,13 @@ export class VendorService {
         return vendors;
       })
     );
+  }
+
+  addProduct(file:File, vendorId: string, product: Product): Observable<any> {
+    const formData = new FormData();
+    formData.append('File', file, file.name);
+    formData.append('ProductJson', JSON.stringify(product));
+    return this.http.post<any>(this.apiUrl + 'vendors/' + vendorId + '/products', formData);
   }
 
 }

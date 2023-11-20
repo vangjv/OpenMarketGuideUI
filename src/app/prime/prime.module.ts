@@ -13,8 +13,11 @@ import { DialogModule } from 'primeng/dialog';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ButtonModule } from 'primeng/button';
 import { ChipsModule } from 'primeng/chips';
+import { ChipModule } from 'primeng/chip';
 import { DividerModule } from 'primeng/divider';
 import { CheckboxModule } from 'primeng/checkbox';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { FileUploadModule } from 'primeng/fileupload';
 
 @NgModule({
   declarations: [],
@@ -33,7 +36,10 @@ import { CheckboxModule } from 'primeng/checkbox';
     CalendarModule,
     ChipsModule,
     DividerModule,
-    CheckboxModule
+    CheckboxModule,
+    InputTextareaModule,
+    FileUploadModule,
+    ChipModule
   ], providers: [
     DialogService,
     MessageService,
@@ -52,7 +58,10 @@ import { CheckboxModule } from 'primeng/checkbox';
     CalendarModule,
     ChipsModule,
     DividerModule,
-    CheckboxModule
+    CheckboxModule,
+    InputTextareaModule,
+    FileUploadModule,
+    ChipModule
   ]
 })
 export class PrimeModule { }

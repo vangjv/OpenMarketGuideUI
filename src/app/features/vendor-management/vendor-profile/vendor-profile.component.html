@@ -1,44 +1,48 @@
-<div class="text-900 font-semibold text-lg mt-3">Profile</div>
-<p-divider></p-divider>
-<div class="flex gap-5 flex-column-reverse md:flex-row" [formGroup]="vendorProfileForm">
-  <div class="flex-auto p-fluid">
-    <div class="mb-4">
-      <label for="name" class="block font-medium text-900 mb-2">Vendor/Company Name</label>
-      <input id="name" type="text" pInputText formControlName="name">
-    </div>
-    <div class="mb-4">
-      <label for="name" class="block font-medium text-900 mb-2">Primary Contact Name</label>
-      <input id="name" type="text" pInputText formControlName="primaryContactName">
-    </div>
-    <div class="mb-4">
-      <label for="name" class="block font-medium text-900 mb-2">Primary Contact Title</label>
-      <input id="name" type="text" pInputText formControlName="primaryContactTitle">
-    </div>
-    <div class="mb-4">
-      <label for="name" class="block font-medium text-900 mb-2">Phone Number</label>
-      <input id="name" type="text" pInputText formControlName="phoneNumber">
-    </div>
-    <div class="mb-4">
-      <label for="name" class="block font-medium text-900 mb-2">Email Address</label>
-      <input id="name" type="text" pInputText formControlName="emailAddress">
-    </div>
-    <div class="mb-4">
-      <label for="website" class="block font-medium text-900 mb-2">Website</label>
-      <div class="p-inputgroup">
-        <span class="p-inputgroup-addon">https://</span>
-        <input id="website" type="text" pInputText formControlName="website">
+
+  <div class="surface-card p-5 shadow-2 border-round flex-auto xl:ml-5">
+    <div class="text-900 font-semibold text-lg mt-3">Profile</div>
+    <p-divider></p-divider>
+    <div class="flex gap-5 flex-column-reverse md:flex-row" [formGroup]="vendorProfileForm">
+      <div class="flex-auto p-fluid">
+        <div class="mb-4">
+          <label for="name" class="block font-medium text-900 mb-2">Vendor/Company Name</label>
+          <input id="name" type="text" pInputText formControlName="name">
+        </div>
+        <div class="mb-4">
+          <label for="name" class="block font-medium text-900 mb-2">Primary Contact Name</label>
+          <input id="name" type="text" pInputText formControlName="primaryContactName">
+        </div>
+        <div class="mb-4">
+          <label for="name" class="block font-medium text-900 mb-2">Primary Contact Title</label>
+          <input id="name" type="text" pInputText formControlName="primaryContactTitle">
+        </div>
+        <div class="mb-4">
+          <label for="name" class="block font-medium text-900 mb-2">Phone Number</label>
+          <input id="name" type="text" pInputText formControlName="phoneNumber">
+        </div>
+        <div class="mb-4">
+          <label for="name" class="block font-medium text-900 mb-2">Email Address</label>
+          <input id="name" type="text" pInputText formControlName="emailAddress">
+        </div>
+        <div class="mb-4">
+          <label for="website" class="block font-medium text-900 mb-2">Website</label>
+          <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">https://</span>
+            <input id="website" type="text" pInputText formControlName="website">
+          </div>
+        </div>
+        <div class="mb-4">
+          <label for="name" class="block font-medium text-900 mb-2">Vendor Category - What type of industry are your
+            products? Type in the box and press enter to enter multiple categories (ie. Tools, Produce, Healthy, Bakery)
+          </label>
+          <div class="card p-fluid">
+            <p-chips formControlName="categories"></p-chips>
+          </div>
+        </div>
+        <div>
+          <button pButton pRipple label="Update" class="w-auto" (click)="updateProfile()"
+            [disabled]="vendorProfileForm.invalid || vendorProfileForm.pristine"></button>
+        </div>
       </div>
-    </div>
-    <div class="mb-4">
-      <label for="name" class="block font-medium text-900 mb-2">Vendor Category - What type of industry are your
-        products? Type in the box and press enter to enter multiple categories (ie. Tools, Produce, Healthy, Bakery)
-      </label>
-      <div class="card p-fluid">
-        <p-chips formControlName="categories"></p-chips>
-      </div>
-    </div>
-    <div>
-      <button pButton pRipple label="Update" class="w-auto" (click)="updateProfile()" [disabled]="vendorProfileForm.invalid || vendorProfileForm.pristine"></button>
     </div>
   </div>
-</div>

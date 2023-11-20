@@ -69,8 +69,7 @@
         <li>
           <a pRipple
             class="lg:w-15rem flex align-items-center cursor-pointer p-3 border-round hover:surface-200 transition-duration-150 transition-colors"
-            [ngClass]="{'surface-200': activeTab === VendorTab.Reviews}"
-            (click)="activeTab = VendorTab.Reviews">
+            [ngClass]="{'surface-200': activeTab === VendorTab.Reviews}" (click)="activeTab = VendorTab.Reviews">
             <i class="pi pi-star md:mr-2"
               [ngClass]="{'text-700' : activeTab === VendorTab.Reviews, 'text-600': activeTab !== VendorTab.Reviews}"></i>
             <span class="font-medium hidden md:block"
@@ -78,26 +77,24 @@
           </a>
         </li>
       </ul>
-      <div class="surface-card p-5 shadow-2 border-round flex-auto xl:ml-5">
-        <ng-container *ngIf="activeTab === VendorTab.Profile">
-          <app-vendor-profile></app-vendor-profile>
-        </ng-container>
-        <ng-container *ngIf="activeTab === VendorTab.Products">
-          <app-vendor-products></app-vendor-products>
-        </ng-container>
-        <ng-container *ngIf="activeTab === VendorTab.Markets">
-          <app-vendor-markets></app-vendor-markets>
-        </ng-container>
-        <ng-container *ngIf="activeTab === VendorTab.Invitations">
-          <app-vendor-invitations></app-vendor-invitations>
-        </ng-container>
-        <ng-container *ngIf="activeTab === VendorTab.Notifications">
-          <app-vendor-notifications></app-vendor-notifications>
-        </ng-container>
-        <ng-container *ngIf="activeTab === VendorTab.Reviews">
-          <app-vendor-reviews></app-vendor-reviews>
-        </ng-container>
-      </div>
+      <ng-container *ngIf="activeTab === VendorTab.Profile">
+        <app-vendor-profile></app-vendor-profile>
+      </ng-container>
+      <ng-container *ngIf="activeTab === VendorTab.Products">
+        <app-vendor-products></app-vendor-products>
+      </ng-container>
+      <ng-container *ngIf="activeTab === VendorTab.Markets">
+        <app-vendor-markets></app-vendor-markets>
+      </ng-container>
+      <ng-container *ngIf="activeTab === VendorTab.Invitations">
+        <app-vendor-invitations></app-vendor-invitations>
+      </ng-container>
+      <ng-container *ngIf="activeTab === VendorTab.Notifications">
+        <app-vendor-notifications></app-vendor-notifications>
+      </ng-container>
+      <ng-container *ngIf="activeTab === VendorTab.Reviews">
+        <app-vendor-reviews></app-vendor-reviews>
+      </ng-container>
     </div>
   </div>
 </div>

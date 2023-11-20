@@ -29,5 +29,6 @@ export const environment = {
       }
     },
     authorityDomain: "openmarketguide.b2clogin.com"
-  }
+  },
+  productImageStorageBaseUrl: "https://omgproductimagestorage.blob.core.windows.net/productimages/"
 };

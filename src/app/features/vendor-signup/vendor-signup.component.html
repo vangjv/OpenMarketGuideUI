@@ -6,27 +6,27 @@
   <div class="flex gap-5 flex-column-reverse md:flex-row" [formGroup]="vendorForm">
     <div class="flex-auto p-fluid">
       <div class="mb-4">
-        <label for="name" class="block font-medium text-900 mb-2">Vendor/Company Name</label>
+        <label for="name" class="block font-medium text-900 mb-2">Vendor/Company Name<span class="text-red-400 font-italic text-sm ml-2">(Required)</span></label>
         <input id="name" type="text" pInputText formControlName="name">
       </div>
       <div class="mb-4">
-        <label for="name" class="block font-medium text-900 mb-2">Primary Contact Name</label>
+        <label for="name" class="block font-medium text-900 mb-2">Primary Contact Name<span class="text-red-400 font-italic text-sm ml-2">(Required)</span></label>
         <input id="name" type="text" pInputText formControlName="primaryContactName">
       </div>
       <div class="mb-4">
-        <label for="name" class="block font-medium text-900 mb-2">Primary Contact Title</label>
+        <label for="name" class="block font-medium text-900 mb-2">Primary Contact Title<span class="text-red-400 font-italic text-sm ml-2">(Required)</span></label>
         <input id="name" type="text" pInputText formControlName="primaryContactTitle">
       </div>
       <div class="mb-4">
-        <label for="name" class="block font-medium text-900 mb-2">Phone Number</label>
+        <label for="name" class="block font-medium text-900 mb-2">Phone Number<span class="text-red-400 font-italic text-sm ml-2">(Required)</span></label>
         <input id="name" type="text" pInputText formControlName="phoneNumber">
       </div>
       <div class="mb-4">
-        <label for="name" class="block font-medium text-900 mb-2">Email Address</label>
+        <label for="name" class="block font-medium text-900 mb-2">Email Address<span class="text-red-400 font-italic text-sm ml-2">(Required)</span></label>
         <input id="name" type="text" pInputText formControlName="emailAddress">
       </div>
       <div class="mb-4">
-        <label for="website" class="block font-medium text-900 mb-2">Website</label>
+        <label for="website" class="block font-medium text-900 mb-2">Website<span class="text-red-400 font-italic text-sm ml-2">(Required)</span></label>
         <div class="p-inputgroup">
           <span class="p-inputgroup-addon">https://</span>
           <input id="website" type="text" pInputText formControlName="website">
@@ -34,7 +34,7 @@
       </div>
       <div class="mb-4">
         <label for="name" class="block font-medium text-900 mb-2">Vendor Category - What type of industry are your
-          products? Type in the box and press enter to enter multiple categories (ie. Tools, Produce, Healthy, Bakery)
+          products? Type in the box and press enter to enter multiple categories (ie. Tools, Produce, Healthy, Bakery)<span class="text-red-400 font-italic text-sm ml-2">(Required)</span>
         </label>
         <div class="card p-fluid">
           <p-chips formControlName="categories"></p-chips>

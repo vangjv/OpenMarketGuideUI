@@ -1,1 +1,73 @@
-<p>Not yet implemented</p>
+<div class="surface-card p-5 shadow-2 border-round flex-auto xl:ml-5">
+  <div class="surface-section px-4 lg:px-6 border-round-top-3xl">
+    <div class="flex flex-column md:flex-row w-full justify-content-between md:align-items-center">
+      <span class="p-input-icon-right w-full mt-2 md:mt-0 md:w-15rem">
+        <i class="pi pi-search"></i>
+        <input type="text" pInputText placeholder="Search" class="w-full md:w-15rem border-round" />
+      </span>
+      <div>
+        <button pButton pRipple label="Add Product" class="w-auto mt-3" (click)="showAddProduct = true"></button>
+      </div>
+    </div>
+  </div>
+  <div class="surface-section px-4 py-8 md:px-6 lg:px-8">
+    <div class="grid -mt-3 -ml-3 -mr-3">
+      <div class="col-12 md:col-6 lg:col-4 xl:col-3 border-bottom-1 surface-border md:border-bottom-none mb-8 max-h-20rem max-w-20rem" *ngFor="let product of currentVendor?.products">
+        <div class="p-2 shadow-1">
+          <img src="../../../../assets/images/noimage.jpg" class="mb-3" style="object-fit:contain; height:250px;width:250px;" *ngIf="product.images.length <=0"/>
+          <img src="{{productImageStorageBaseUrl + product.images[0].url }}" class="mb-3" style="object-fit:contain; height:250px;width:250px;" *ngIf="product.images.length > 0 && product.images[0].url"/>
+          <span class="text-900">{{product.name}}</span>
+          <div class="text-900 text-xl font-medium mb-2" *ngIf="product.price">{{product.price | currency}}</div>
+          <div class="text-900 text-xl font-medium mb-2" *ngIf="product.categories">
+            <p-chip *ngFor="let category of product.categories" label="{{category}}" styleClass="mr-1"></p-chip>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Product Dialog -->
+<p-dialog header="Add Product" [(visible)]="showAddProduct" [modal]="true" [responsive]="true" [style]="{width: '50rem'}">
+  <form [formGroup]="addProductForm">
+    <div class="p-fluid">
+      <div class="p-field mb-3">
+        <label for="name">Name</label><span class="text-red-400 font-italic text-sm ml-2">(Required)</span>
+        <input type="text" id="name" formControlName="name" class="p-inputtext" />
+      </div>
+      <div class="p-field mb-3">
+        <label for="description">Description</label>
+        <textarea rows="3" pInputTextarea id="description" formControlName="description"></textarea>
+      </div>
+      <div class="p-field mb-3">
+        <label for="description">Image</label>
+        <!-- <p-fileUpload mode="basic" chooseLabel="Choose an image" accept="image/*" [maxFileSize]="10000000"></p-fileUpload> -->
+        <input type="file" accept="image/*" class="p-inputtext" (change)="onImageSelected($event)">
+      </div>
+      <div class="p-field mb-3">
+        <label for="category">Category</label>
+        <p-chips formControlName="categories"></p-chips>
+      </div>
+      <div class="p-field mb-3">
+        <label for="price">Price</label>
+        <input type="number" id="price" formControlName="price" class="p-inputtext" />
+      </div>
+      <div class="p-field mb-3">
+        <label for="taxPercentage">Tax Percentage</label>
+        <input type="number" id="taxPercentage" formControlName="taxPercentage" class="p-inputtext" />
+      </div>
+      <div class="p-field mb-3">
+        <label for="unit">Unit</label>
+        <input type="text" id="unit" formControlName="unit" class="p-inputtext" />
+      </div>
+      <!-- <div class="p-field mb-3">
+        <label for="availability">Availability</label>
+        <p-checkbox id="availability" formControlName="availability"></p-checkbox>
+      </div> -->
+    </div>
+    <div class="flex align-items-center justify-content-end">
+      <button type="button" pButton label="Cancel" (click)="showAddProduct = false" class="mr-2"></button>
+      <button type="button" pButton label="Add Product" [disabled]="addProductForm.invalid" (click)="addProduct()"></button>
+    </div>
+  </form>
+</p-dialog>
+
