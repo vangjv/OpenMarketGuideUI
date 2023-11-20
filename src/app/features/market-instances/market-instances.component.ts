@@ -4,8 +4,6 @@ import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { MarketInstanceService } from 'src/app/services/market-instance.service';
 import { MarketInstance } from 'src/app/shared/models/market-instance.model';
-import { Market } from 'src/app/shared/models/market.model';
-
 @Component({
   selector: 'app-market-instances',
   templateUrl: './market-instances.component.html',

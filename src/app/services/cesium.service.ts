@@ -25,34 +25,34 @@ export class CesiumService {
   public marketLocationDrawingState$ = this.marketLocationDrawingState.asObservable();
   public adding3DModelState = new BehaviorSubject<boolean>(false);
   public adding3DModelState$ = this.adding3DModelState.asObservable();
-  public boundaryService!:BoundaryService;
-  public threeDimensionalModelService!:ThreeDimensionalModelService;
-  public mapExplorerService!:MapExplorerService;
+  public boundaryService!: BoundaryService;
+  public threeDimensionalModelService!: ThreeDimensionalModelService;
+  public mapExplorerService!: MapExplorerService;
   public selectedEntity = new BehaviorSubject<any>(undefined);
   public selectedEntity$ = this.selectedEntity.asObservable();
-  public mapMode:BehaviorSubject<MapMode> = new BehaviorSubject<MapMode>(MapMode.EntitySelection);
+  public mapMode: BehaviorSubject<MapMode> = new BehaviorSubject<MapMode>(MapMode.EntitySelection);
   public mapMode$ = this.mapMode.asObservable();
-  public clickHandler:any;
-  public isRotating:boolean = false;
-  public initialMousePosition:any = null;
-  public initialOrientation:any = null;
+  public clickHandler: any;
+  public isRotating: boolean = false;
+  public initialMousePosition: any = null;
+  public initialOrientation: any = null;
 
-  constructor(private dialogsService:DialogsService, private router:Router) {
+  constructor(private dialogsService: DialogsService, private router: Router) {
 
   }
 
-  async initializeMap(div:string){
+  async initializeMap(div: string) {
     this.viewer = new Cesium.Viewer(div, {
       selectionIndicator: false,
       infoBox: false,
-      terrain: Cesium.Terrain.fromWorldTerrain(),
-      //globe: false,
-      timeline : false,
-      animation : false
+      // terrain: Cesium.Terrain.fromWorldTerrain(),
+      sceneModePicker: false,
+      globe: false,
+      timeline: false,
+      animation: false
     });
     this.hideFullScreenButton();
     this.boundaryService = new BoundaryService(this.viewer, this.dialogsService, this);
-    this.threeDimensionalModelService = new ThreeDimensionalModelService(this.viewer, this.dialogsService, this);
     this.threeDimensionalModelService = new ThreeDimensionalModelService(this.viewer, this.dialogsService, this);
     this.mapExplorerService = new MapExplorerService(this.viewer, this.dialogsService, this, this.router);
     if (!this.viewer.scene.pickPositionSupported) {
@@ -62,16 +62,17 @@ export class CesiumService {
     try {
       const tileset = await Cesium.createGooglePhotorealistic3DTileset();
       this.viewer.scene.primitives.add(tileset);
-      this.viewer.scene.globe.show = false; //this conflicts with google photorealistic 3d tileset
+      //this.viewer.scene.globe.show = false; //this conflicts with google photorealistic 3d tileset
     } catch (error) {
       console.log(`Failed to load tileset: ${error}`);
     }
+
     this.hideCesiumIonLogo();
   };
 
   searchAndZoom(location: string) {
     let geoCodeService = new Cesium.IonGeocoderService();
-    geoCodeService.geocode(location).then((results:any) => {
+    geoCodeService.geocode(location).then((results: any) => {
       if (results.length > 0) {
         if (results[0].destination.east && results[0].destination.north && results[0].destination.south && results[0].destination.west) {
           const rectangle = new Cesium.Rectangle(
@@ -80,7 +81,7 @@ export class CesiumService {
             results[0].destination.east,
             results[0].destination.north
           );
-          let rectangleCenter:any = Cesium.Rectangle.center(rectangle);
+          let rectangleCenter: any = Cesium.Rectangle.center(rectangle);
           //Cesium.Rectangle.center(rectangle, rectangleCenter);
           console.log("rectangleCenter:", rectangleCenter);
           if (rectangleCenter) {
@@ -124,7 +125,7 @@ export class CesiumService {
     // });
   }
 
-  createEntitiesFromMarket(market:Market | MarketInstance) {
+  createEntitiesFromMarket(market: Market | MarketInstance) {
     //create market boundary
     if (market.marketLocation && market.marketLocation.boundary) {
       this.boundaryService.createBoundaryFromBoundaryObject(market.marketLocation.boundary, market.marketLocation.name, market.marketLocation.id, true);
@@ -148,61 +149,61 @@ export class CesiumService {
     console.log("all entities", this.viewer.entities.values);
   }
 
-  flyTo(location:CoordinateData) {
+  flyTo(location: CoordinateData) {
     let destination = new Cesium.Cartesian3(location.x, location.y, location.z);
     console.log("destination:", destination);
     this.viewer.camera.flyTo({
       destination: destination,
-      complete: ()=>{
+      complete: () => {
         this.viewer.camera.zoomOut(1000);
       }
     });
   }
 
-  setHomeLocation(){
+  setHomeLocation() {
     var homeLocation = {
       destination: Cesium.Cartesian3.fromDegrees(-93.34097581368697, 44.765644457141896, 500), // Long, Lat, Height
       orientation: {
-          heading: Cesium.Math.toRadians(0),
-          roll: 0.0
+        heading: Cesium.Math.toRadians(0),
+        roll: 0.0
       }
     };
     // Override the home button behavior
-    this.viewer.homeButton.viewModel.command.beforeExecute.addEventListener((e:any)=> {
-        e.cancel = true; // Cancel the default home button behavior
-        this.viewer.scene.camera.setView(homeLocation); // Set the new home location
+    this.viewer.homeButton.viewModel.command.beforeExecute.addEventListener((e: any) => {
+      e.cancel = true; // Cancel the default home button behavior
+      this.viewer.scene.camera.setView(homeLocation); // Set the new home location
     });
   }
 
-  setCoordinates(longitude:number, latitude:number, height:number) {
+  setCoordinates(longitude: number, latitude: number, height: number) {
     this.viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
-        orientation: {
-            heading: Cesium.Math.toRadians(0),
-            pitch: Cesium.Math.toRadians(-90),
-            roll: 0.0
-        }
+      destination: Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
+      orientation: {
+        heading: Cesium.Math.toRadians(0),
+        pitch: Cesium.Math.toRadians(-90),
+        roll: 0.0
+      }
     });
   }
 
-  addCoordinatesOnDoubleClick(){
+  addCoordinatesOnDoubleClick() {
     var handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
-    handler.setInputAction((click:any)=> {
-        var pickedObject = this.viewer.scene.pick(click.position);
-        if (Cesium.defined(pickedObject)) {
-            var cartesian = this.viewer.scene.pickPosition(click.position);
-            if (cartesian) {
-                var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-                var longitude = Cesium.Math.toDegrees(cartographic.longitude);
-                var latitude = Cesium.Math.toDegrees(cartographic.latitude);
-                alert('Longitude: ' + longitude + '\nLatitude: ' + latitude);
-                console.log('Longitude: ' + longitude + '\nLatitude: ' + latitude);
-            }
+    handler.setInputAction((click: any) => {
+      var pickedObject = this.viewer.scene.pick(click.position);
+      if (Cesium.defined(pickedObject)) {
+        var cartesian = this.viewer.scene.pickPosition(click.position);
+        if (cartesian) {
+          var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+          var longitude = Cesium.Math.toDegrees(cartographic.longitude);
+          var latitude = Cesium.Math.toDegrees(cartographic.latitude);
+          alert('Longitude: ' + longitude + '\nLatitude: ' + latitude);
+          console.log('Longitude: ' + longitude + '\nLatitude: ' + latitude);
         }
+      }
     }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
   }
 
-  addCoordinateViewer(){
+  addCoordinateViewer() {
     const entity = this.viewer.entities.add({
       label: {
         show: false,
@@ -212,17 +213,17 @@ export class CesiumService {
         horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
         pixelOffset: new Cesium.Cartesian2(0.0, -20.0),
         pixelOffsetScaleByDistance: new Cesium.NearFarScalar(
-        1.5e2,
-        3.0,
-        1.5e7,
-        0.5
+          1.5e2,
+          3.0,
+          1.5e7,
+          0.5
         ),
-        disableDepthTestDistance: 1.2742018*10**7
+        disableDepthTestDistance: 1.2742018 * 10 ** 7
       },
     });
 
     let handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
-    handler.setInputAction((movement:any) => {
+    handler.setInputAction((movement: any) => {
       const cartesian = this.viewer.camera.pickEllipsoid(
         movement.endPosition,
         this.viewer.scene.globe.ellipsoid
@@ -253,35 +254,35 @@ export class CesiumService {
     this.viewer.timeline.container.style.visibility = 'hidden';
   }
 
-  hideAnimationWidget(){
+  hideAnimationWidget() {
     this.viewer.animation.container.style.visibility = 'hidden';
   }
 
-  hideCredits(){
+  hideCredits() {
     this.viewer._cesiumWidget._creditContainer.style.display = "none";
   }
 
-  hideCesiumIonLogo(){
+  hideCesiumIonLogo() {
     if (document.getElementsByClassName("cesium-credit-logoContainer")[0]) {
       document.getElementsByClassName("cesium-credit-logoContainer")[0].remove();
     }
   }
 
-  hideDefaultCesiumSearch(){
+  hideDefaultCesiumSearch() {
     document.getElementsByClassName("cesium-viewer-geocoderContainer")[0].remove();
   }
 
-  changeCesiumHomeButtonToGoToAppHome(){
-    document.getElementsByClassName("cesium-home-button")[0].addEventListener("click", ()=>{
+  changeCesiumHomeButtonToGoToAppHome() {
+    document.getElementsByClassName("cesium-home-button")[0].addEventListener("click", () => {
       this.router.navigate(['/']);
     });
   }
 
-  hideFullScreenButton(){
+  hideFullScreenButton() {
     this.viewer._fullscreenButton._container.style.visibility = 'hidden';
   }
 
-  enableEntitySelectionMode(){
+  enableEntitySelectionMode() {
     if (this.clickHandler) {
       this.addEntityPickedClickHandler(this.clickHandler);
     } else {
@@ -290,8 +291,8 @@ export class CesiumService {
     }
   }
 
-  addEntityPickedClickHandler(clickHandler:any){
-    clickHandler.setInputAction((event:any)=> {
+  addEntityPickedClickHandler(clickHandler: any) {
+    clickHandler.setInputAction((event: any) => {
       let pickedObject = this.viewer.scene.pick(event.position);
       if (Cesium.defined(pickedObject)) {
         const id = Cesium.defaultValue(pickedObject.id, pickedObject.primitive.id);
@@ -307,7 +308,7 @@ export class CesiumService {
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
   }
 
-  enable3dModelRotation(){
+  enable3dModelRotation() {
     if (this.clickHandler) {
       this.addRotationClickHandlers();
     } else {
@@ -316,7 +317,7 @@ export class CesiumService {
     }
   }
 
-  addRotationClickHandlers(){
+  addRotationClickHandlers() {
     this.setLeftDownRotateHandler(this.clickHandler);
     // Rotate the model as the mouse moves
     this.setMouseMoveRotateHandler(this.clickHandler);
@@ -324,40 +325,40 @@ export class CesiumService {
     this.setLeftUpRotateHandler(this.clickHandler);
   }
 
-  setMouseMoveRotateHandler(clickHandler:any){
-    clickHandler.setInputAction((movement:any) => {
+  setMouseMoveRotateHandler(clickHandler: any) {
+    clickHandler.setInputAction((movement: any) => {
       if (this.isRotating) {
         this.rotateModel(movement);
       }
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
   }
 
-  setLeftDownRotateHandler(clickHandler:any){
-    clickHandler.setInputAction((click:any) => {
+  setLeftDownRotateHandler(clickHandler: any) {
+    clickHandler.setInputAction((click: any) => {
       const pickedObject = this.viewer.scene.pick(click.position);
       console.log("pickedObject", pickedObject);
       console.log("this.selectedEntity.getValue()", this.selectedEntity.getValue());
       if (Cesium.defined(pickedObject) && this.selectedEntity.getValue() != undefined && pickedObject.id == this.selectedEntity.getValue()) {
-          this.isRotating = true;
-          this.initialMousePosition = click.position;
-          this.initialOrientation = Cesium.Matrix3.clone(
-              Cesium.Matrix3.fromQuaternion(this.selectedEntity.getValue().orientation.getValue(this.viewer.clock.currentTime))
-          );
+        this.isRotating = true;
+        this.initialMousePosition = click.position;
+        this.initialOrientation = Cesium.Matrix3.clone(
+          Cesium.Matrix3.fromQuaternion(this.selectedEntity.getValue().orientation.getValue(this.viewer.clock.currentTime))
+        );
       }
     }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
   }
 
-  setLeftUpRotateHandler(clickHandler:any) {
+  setLeftUpRotateHandler(clickHandler: any) {
     clickHandler.setInputAction(() => {
       if (this.isRotating) {
-          this.isRotating = false;
-          this.initialMousePosition = null;
-          this.initialOrientation = null;
+        this.isRotating = false;
+        this.initialMousePosition = null;
+        this.initialOrientation = null;
       }
-  }, Cesium.ScreenSpaceEventType.LEFT_UP);
+    }, Cesium.ScreenSpaceEventType.LEFT_UP);
   }
 
-  handleKeyboardTransformation(event:any){
+  handleKeyboardTransformation(event: any) {
     if (this.selectedEntity.getValue() && this.selectedEntity.getValue().position && this.selectedEntity.getValue().orientation) {
       var position = this.selectedEntity.getValue().position.getValue(this.viewer.clock.currentTime);
       var orientation = this.selectedEntity.getValue().orientation.getValue(this.viewer.clock.currentTime);
@@ -401,7 +402,7 @@ export class CesiumService {
     }
   }
 
-  rotateModel(movement:any) {
+  rotateModel(movement: any) {
     if (this.selectedEntity.getValue() && this.isRotating) {
       // console.log("movement:", movement);
       // console.log("this.initialMousePosition", this.initialMousePosition);
@@ -456,19 +457,19 @@ export class CesiumService {
   }
 
 
-  setDefaultHoverFunctionality(){
+  setDefaultHoverFunctionality() {
     let handler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
     handler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
   }
 
-  removeEntityById(viewer:any, entityId:string) {
+  removeEntityById(viewer: any, entityId: string) {
     const entity = viewer.entities.getById(entityId);
     if (entity) {
       viewer.entities.remove(entity);
     }
   }
 
-  highlightEntity(entity:any) {
+  highlightEntity(entity: any) {
     if (entity.model) {
       entity.model.silhouetteColor = Cesium.Color.WHITE; // Silhouette color
       entity.model.silhouetteSize = 2.0; // Silhouette size
@@ -479,8 +480,8 @@ export class CesiumService {
   }
 
   removeHighlightFromAllEntities() {
-    if (this.viewer.entities._entities._array.length > 0 ) {
-      this.viewer.entities._entities._array.forEach((entity:any) => {
+    if (this.viewer.entities._entities._array.length > 0) {
+      this.viewer.entities._entities._array.forEach((entity: any) => {
         if (entity.model) {
           entity.model.silhouetteColor = Cesium.Color.TRANSPARENT; // Silhouette color
           entity.model.silhouetteSize = 0.0; // Silhouette size
@@ -489,9 +490,9 @@ export class CesiumService {
     }
   }
 
-  removeHighlightFromAllButSelectedEntity(entityId:string) {
-    if (this.viewer.entities._entities._array.length > 0 ) {
-      this.viewer.entities._entities._array.forEach((entity:any) => {
+  removeHighlightFromAllButSelectedEntity(entityId: string) {
+    if (this.viewer.entities._entities._array.length > 0) {
+      this.viewer.entities._entities._array.forEach((entity: any) => {
         if (entity.id != entityId && entity.model != undefined) {
           entity.model.silhouetteColor = Cesium.Color.TRANSPARENT; // Silhouette color
           entity.model.silhouetteSize = 0.0; // Silhouette size
@@ -501,7 +502,7 @@ export class CesiumService {
   }
 
 
-  resetLeftandRightClickHandlers(){
+  resetLeftandRightClickHandlers() {
     if (this.clickHandler) {
       this.clickHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
       this.clickHandler.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
@@ -518,7 +519,7 @@ export class CesiumService {
    * @param {Cartesian2} windowPosition The window coordinates.
    * @returns {Entity} The picked entity or undefined.
    */
-  public static pickEntity(viewer:any, windowPosition:any) {
+  public static pickEntity(viewer: any, windowPosition: any) {
     const picked = viewer.scene.pick(windowPosition);
     if (Cesium.defined(picked)) {
       const id = Cesium.defaultValue(picked.id, picked.primitive.id);
@@ -536,12 +537,12 @@ export class CesiumService {
    * @param {Cartesian2} windowPosition The window coordinates.
    * @returns {Entity[]} The picked entities or undefined.
    */
-  public static drillPickEntities(viewer:any, windowPosition:any) {
+  public static drillPickEntities(viewer: any, windowPosition: any) {
     let picked, entity, i;
     const pickedPrimitives = viewer.scene.drillPick(windowPosition);
     const length = pickedPrimitives.length;
     const result = [];
-    const hash:any = {};
+    const hash: any = {};
 
     for (i = 0; i < length; i++) {
       picked = pickedPrimitives[i];
@@ -554,7 +555,7 @@ export class CesiumService {
     return result;
   }
 
-  public static cesiumColorToRGB(cesiumColor:any) {
+  public static cesiumColorToRGB(cesiumColor: any) {
     var r = Math.round(cesiumColor.red * 255);
     var g = Math.round(cesiumColor.green * 255);
     var b = Math.round(cesiumColor.blue * 255);
@@ -562,17 +563,17 @@ export class CesiumService {
     return `rgba(${r}, ${g}, ${b}, ${a})`;
   }
 
-  public static cesiumColorToHex(cesiumColor:any) {
+  public static cesiumColorToHex(cesiumColor: any) {
     var r = Math.round(cesiumColor.red * 255).toString(16).padStart(2, '0');
     var g = Math.round(cesiumColor.green * 255).toString(16).padStart(2, '0');
     var b = Math.round(cesiumColor.blue * 255).toString(16).padStart(2, '0');
     return `#${r}${g}${b}`;
   }
 
-  searchAndZoomToLocation(vendorLocation:VendorLocation) {
+  searchAndZoomToLocation(vendorLocation: VendorLocation) {
     //find entities in viewer.entities with vendorLocation.id
     let entities = this.viewer.entities.values;
-    let entity = entities.find((entity:any) => {
+    let entity = entities.find((entity: any) => {
       return entity.id == vendorLocation.id;
     });
     var boundingSphere = Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions);
@@ -590,12 +591,88 @@ export class CesiumService {
 
     // Fly the camera to the center of the polygon
     this.viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
-        orientation: {
-            heading: Cesium.Math.toRadians(0),   // North
-            pitch: Cesium.Math.toRadians(-90),   // Looking straight down
-            roll: 0.0
-        }
+      destination: Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
+      orientation: {
+        heading: Cesium.Math.toRadians(0),   // North
+        pitch: Cesium.Math.toRadians(-90),   // Looking straight down
+        roll: 0.0
+      }
     });
+  }
+
+  createVendorLabelsForEntities(vendorLocations: VendorLocation[]) {
+    this.viewer.entities.values.forEach((entity: any) => {
+      if (entity.polygon) {
+        // Entity is a polygon
+        let center = this.computeCenter(entity.polygon);
+        let locationName = entity.name;
+        console.log(locationName + " center:", center);
+        //match vendorlocation name
+        let vendorAtLocation = vendorLocations.find((vendorLocation) => {
+          return vendorLocation.name == locationName;
+        });
+        //check if vendor is assigned at location
+        let vendorName = undefined;
+        if (vendorAtLocation && vendorAtLocation.assignedVendor && vendorAtLocation.assignedVendor.name) {
+          vendorName = vendorAtLocation.assignedVendor.name;
+        }
+        // Create a label
+        let label = this.viewer.entities.add({
+          position: center,
+          label: {
+            text: vendorName ? vendorName : entity.name
+          }
+        });
+      }
+    });
+  }
+
+  createLabelsForVendorLocations() {
+    this.viewer.entities.values.forEach((entity: any) => {
+      if (entity.polygon && entity.omgType == "VendorLocation") {
+        // Entity is a polygon
+        let center = this.computeCenter(entity.polygon);
+        // Create a label
+        let label = this.viewer.entities.add({
+          position: center,
+          label: {
+            text: entity.name
+          }
+        });
+      }
+    });
+  }
+
+  computeCenter(polygon: any) {
+    let vertices = polygon.hierarchy.getValue(Cesium.JulianDate.now()).positions;
+    let numberOfVertices = vertices.length;
+    let sumLongitude = 0.0;
+    let sumLatitude = 0.0;
+    let sumHeight = 1025.0;
+
+    for (let i = 0; i < numberOfVertices; i++) {
+      let cartographic = Cesium.Cartographic.fromCartesian(vertices[i]);
+      sumLongitude += Cesium.Math.toDegrees(cartographic.longitude);
+      sumLatitude += Cesium.Math.toDegrees(cartographic.latitude);
+      sumHeight += cartographic.height;
+    }
+    console.log("longitude:", sumLongitude / numberOfVertices);
+    console.log("latitude:", sumLatitude / numberOfVertices);
+    console.log("height:", sumHeight / numberOfVertices);
+    return Cesium.Cartesian3.fromDegrees(
+      sumLongitude / numberOfVertices,
+      sumLatitude / numberOfVertices,
+      sumHeight / numberOfVertices
+    );
+  }
+
+  toggleLabels(show: boolean) {
+    var entities = this.viewer.entities.values;
+    for (var i = 0; i < entities.length; i++) {
+        var entity = entities[i];
+        if (entity.label) {
+            entity.label.show = show;
+        }
+    }
   }
 }

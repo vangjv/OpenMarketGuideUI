@@ -53,6 +53,7 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
   marketInstanceId?: string;
   marketInstance: MarketInstance | undefined = undefined;
   menuItems: MenuItem[];
+  showLabels: boolean = true;
   @HostListener('window:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
     this.cesiumService.handleKeyboardTransformation(event);
@@ -85,8 +86,8 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
     this.subscriptions.unsubscribe();
   }
 
-  ngAfterViewInit(): void {
-    this.cesiumService.initializeMap("marketinstanceviewer");
+  async ngAfterViewInit(): Promise<void> {
+    await this.cesiumService.initializeMap("marketinstanceviewer");
     this.cesiumService.hideDefaultCesiumSearch();
     this.cesiumService.changeCesiumHomeButtonToGoToAppHome();
     this.addSubscriptions();
@@ -99,6 +100,9 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
             this.cesiumService.flyTo(marketInstance.location);
             this.cesiumService.createEntitiesFromMarket(marketInstance);
             this.cesiumService.mapMode.next(MapMode.EntitySelection);
+            if (this.marketInstance?.vendorLocations) {
+              this.cesiumService.createVendorLabelsForEntities(this.marketInstance?.vendorLocations);
+            }
           }
           this.setUserAsOwnerIfIsMarketOwner();
           this.addSubscriptions();
@@ -248,6 +252,24 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
         }
       },
       {
+        icon: 'pi pi-eye',
+        tooltip: 'Show/Hide Labels',
+        tooltipOptions: {
+          tooltipEvent: 'hover',
+          tooltipPosition: 'bottom',
+          tooltipLabel: 'Show/Hide Labels'
+        },
+        command: () => {
+          if (this.showLabels == true) {
+            this.cesiumService.toggleLabels(false);
+            this.showLabels = false;
+          } else {
+            this.cesiumService.toggleLabels(true);
+            this.showLabels = true;
+          }
+        }
+      },
+      {
         icon: 'pi pi-database',
         tooltip: 'Log entities',
         tooltipOptions: {
@@ -257,6 +279,7 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
         },
         command: () => {
           console.log("Entities:", this.cesiumService.viewer.entities.values);
+          console.log("Market Instance:", this.marketInstance);
         }
       }
     ];

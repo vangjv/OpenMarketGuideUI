@@ -52,7 +52,7 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
   // markets:Market[] = [];
   marketId?: string;
   market: Market | undefined = undefined;
-
+  showLabels:boolean = true;
   menuItems: MenuItem[] = [
     {
       icon: 'pi pi-pencil',
@@ -123,6 +123,24 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
       }
     },
     {
+      icon: 'pi pi-eye',
+      tooltip: 'Show/Hide Labels',
+      tooltipOptions: {
+        tooltipEvent: 'hover',
+        tooltipPosition: 'bottom',
+        tooltipLabel: 'Show/Hide Labels'
+      },
+      command: () => {
+        if (this.showLabels == true) {
+          this.cesiumService.toggleLabels(false);
+          this.showLabels = false;
+        } else {
+          this.cesiumService.toggleLabels(true);
+          this.showLabels = true;
+        }
+      }
+    },
+    {
       icon: 'pi pi-database',
       tooltip: 'Log entities',
       tooltipOptions: {
@@ -180,6 +198,7 @@ export class MarketViewerComponent implements AfterViewInit, OnInit, OnDestroy {
             this.cesiumService.flyTo(market.location);
             this.cesiumService.createEntitiesFromMarket(market);
             this.cesiumService.mapMode.next(MapMode.EntitySelection);
+            this.cesiumService.createLabelsForVendorLocations();
           }
           this.setUserAsOwnerIfIsMarketOwner();
           this.addSubscriptions();
