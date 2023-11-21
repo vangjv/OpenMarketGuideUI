@@ -59,6 +59,7 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
   showVendorLocations: boolean = true;
   showVendorBar: boolean = false;
   showQRCode: boolean = false;
+  showBillboards : boolean = true;
   urlForQRCode: string = "";
   @HostListener('window:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
@@ -256,19 +257,19 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
           this.showSidebar = true;
         }
       },
-      {
-        icon: 'pi pi-calendar',
-        tooltip: 'Market dates',
-        tooltipOptions: {
-          tooltipEvent: 'hover',
-          tooltipPosition: 'bottom',
-          tooltipLabel: 'Market dates'
-        },
-        command: () => {
-          this.sidebarState = SideBarState.MarketDates;
-          this.showSidebar = true;
-        }
-      },
+      // {
+      //   icon: 'pi pi-calendar',
+      //   tooltip: 'Market dates',
+      //   tooltipOptions: {
+      //     tooltipEvent: 'hover',
+      //     tooltipPosition: 'bottom',
+      //     tooltipLabel: 'Market dates'
+      //   },
+      //   command: () => {
+      //     this.sidebarState = SideBarState.MarketDates;
+      //     this.showSidebar = true;
+      //   }
+      // },
       {
         icon: 'pi pi-save',
         tooltip: 'Save',
@@ -336,18 +337,36 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
         }
       },
       {
-        icon: 'pi pi-database',
-        tooltip: 'Log entities',
+        icon: 'pi  pi-image',
+        tooltip: 'Show/Hide Billboards',
         tooltipOptions: {
           tooltipEvent: 'hover',
           tooltipPosition: 'bottom',
-          tooltipLabel: 'Console log entities'
+          tooltipLabel: 'Show/Hide Billboards'
         },
         command: () => {
-          console.log("Entities:", this.cesiumService.viewer.entities.values);
-          console.log("Market Instance:", this.marketInstance);
+          if (this.showBillboards == true) {
+            this.cesiumService.toggleBillboards(false);
+            this.showBillboards = false;
+          } else {
+            this.cesiumService.toggleBillboards(true);
+            this.showBillboards = true;
+          }
         }
-      }
+      },
+      // {
+      //   icon: 'pi pi-database',
+      //   tooltip: 'Log entities',
+      //   tooltipOptions: {
+      //     tooltipEvent: 'hover',
+      //     tooltipPosition: 'bottom',
+      //     tooltipLabel: 'Console log entities'
+      //   },
+      //   command: () => {
+      //     console.log("Entities:", this.cesiumService.viewer.entities.values);
+      //     console.log("Market Instance:", this.marketInstance);
+      //   }
+      // }
     ];
   }
 

@@ -838,6 +838,17 @@ export class CesiumService {
     }
   }
 
+  toggleBillboards(show: boolean) {
+    var entities = this.viewer.entities.values;
+    for (var i = 0; i < entities.length; i++) {
+      var entity = entities[i];
+      if (entity.billboard) {
+        entity.billboard.show = show;
+      }
+    }
+  }
+
+
   addQRButton(cesiumId: string) {
     //add button
     const toolbar = document.querySelector("div.cesium-viewer-toolbar");
