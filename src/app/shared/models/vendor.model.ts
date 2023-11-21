@@ -9,6 +9,8 @@ export class Vendor {
   categories: string[];
   contactInfo: ContactInfo;
   products?: Product[];
+  billboardImageUrl?: string;
+  billboardScale?: number;
 
   constructor(name: string, primaryContactName: string, primaryContactTitle: string, categories: string[], contactInfo: ContactInfo) {
     this.name = name;

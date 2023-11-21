@@ -103,10 +103,10 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
           if (marketInstance.location) {
             this.cesiumService.flyTo(marketInstance.location);
             this.cesiumService.createEntitiesFromMarket(marketInstance);
-            this.cesiumService.createBillboardsForVendorLocations();
             this.cesiumService.mapMode.next(MapMode.EntitySelection);
             if (this.marketInstance?.vendorLocations) {
               this.cesiumService.createVendorLabelsForEntities(this.marketInstance?.vendorLocations);
+              this.cesiumService.createBillboardsForVendorLocations(this.marketInstance?.vendorLocations);
             }
           }
           this.setUserAsOwnerIfIsMarketOwner();

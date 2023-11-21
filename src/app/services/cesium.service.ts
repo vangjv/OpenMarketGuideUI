@@ -39,7 +39,7 @@ export class CesiumService {
   public initialMousePosition: any = null;
   public initialOrientation: any = null;
   public longPressHoldTimer: any;
-  public isDragging:boolean = false;
+  public isDragging: boolean = false;
   constructor(private dialogsService: DialogsService, private router: Router) {
 
   }
@@ -360,7 +360,7 @@ export class CesiumService {
     }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
 
     // Detect mouse move
-    clickHandler.setInputAction((event:any) => {
+    clickHandler.setInputAction((event: any) => {
       this.isDragging = true;
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
@@ -754,23 +754,34 @@ export class CesiumService {
     });
   }
 
-  createBillboardsForVendorLocations() {
+  createBillboardsForVendorLocations(vendorLocations: VendorLocation[]) {
     this.viewer.entities.values.forEach((entity: any) => {
       if (entity.polygon && entity.omgType == "VendorLocation") {
         // Entity is a polygon
         let center = this.computeCenter(entity.polygon);
-        // Create a label
-        let billboard = this.viewer.entities.add({
-          position: center,
-          billboard: {
-            // image: "./assets/images/produce.png",
-            image: "./assets/images/flowershop-sm.jpg",
-            scale: 0.05,
-            // scaleByDistance: new Cesium.NearFarScalar(1.5e2, 2.0, 1.5e7, 0.5),
-            sizeInMeters: true,
-          },
+        //match vendorlocation name
+        let locationName = entity.name;
+        let vendorAtLocation = vendorLocations.find((vendorLocation) => {
+          return vendorLocation.name == locationName;
         });
-        console.log("billboard", billboard);
+        //check if vendor is assigned at location
+        if (vendorAtLocation && vendorAtLocation.assignedVendor && vendorAtLocation.assignedVendor.name) {
+          //check if billboardImageUrl is defined
+          if (vendorAtLocation.assignedVendor.billboardImageUrl) {
+            // Create a billboard
+            let billboard = this.viewer.entities.add({
+              position: center,
+              billboard: {
+                // image: "./assets/images/produce.png",
+                image: "./assets/images/flowershop-sm.jpg",
+                scale: vendorAtLocation.assignedVendor.billboardScale,
+                // scaleByDistance: new Cesium.NearFarScalar(1.5e2, 2.0, 1.5e7, 0.5),
+                sizeInMeters: true,
+              },
+            });
+            console.log("billboard", billboard);
+          }
+        }
       }
     });
   }
@@ -798,30 +809,30 @@ export class CesiumService {
   toggleLabels(show: boolean) {
     var entities = this.viewer.entities.values;
     for (var i = 0; i < entities.length; i++) {
-        var entity = entities[i];
-        if (entity.label) {
-            entity.label.show = show;
-        }
+      var entity = entities[i];
+      if (entity.label) {
+        entity.label.show = show;
+      }
     }
   }
 
   toggle3DModels(show: boolean) {
     var entities = this.viewer.entities.values;
     for (var i = 0; i < entities.length; i++) {
-        var entity = entities[i];
-        if (entity.model) {
-            entity.model.show = show;
-        }
+      var entity = entities[i];
+      if (entity.model) {
+        entity.model.show = show;
+      }
     }
   }
 
   toggleVendorLocations(show: boolean) {
     var entities = this.viewer.entities.values;
     for (var i = 0; i < entities.length; i++) {
-        var entity = entities[i];
-        if (entity.polygon) {
-            entity.polygon.show = show;
-        }
+      var entity = entities[i];
+      if (entity.polygon) {
+        entity.polygon.show = show;
+      }
     }
   }
 }
