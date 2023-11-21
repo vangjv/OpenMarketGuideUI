@@ -115,6 +115,11 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
             this.cesiumService.addQRButton("marketinstanceviewer");
           }
           this.setUserAsOwnerIfIsMarketOwner();
+          if (this.userIsOwner) {
+            this.menuItems = this.generateMenuItems();
+          } else {
+            this.menuItems = this.generateMenuItemsForNonOwner();
+          }
           this.addSubscriptions();
           this.cesiumService.enableEntityDoubleClickedMode();
         })
@@ -367,6 +372,83 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
       //     console.log("Market Instance:", this.marketInstance);
       //   }
       // }
+    ];
+  }
+
+  generateMenuItemsForNonOwner(): MenuItem[] {
+    return [
+      {
+        icon: 'pi pi-eye',
+        tooltip: 'Show/Hide Labels',
+        tooltipOptions: {
+          tooltipEvent: 'hover',
+          tooltipPosition: 'bottom',
+          tooltipLabel: 'Show/Hide Labels'
+        },
+        command: () => {
+          if (this.showLabels == true) {
+            this.cesiumService.toggleLabels(false);
+            this.showLabels = false;
+          } else {
+            this.cesiumService.toggleLabels(true);
+            this.showLabels = true;
+          }
+        }
+      },
+      {
+        icon: 'pi pi-eye-slash',
+        tooltip: 'Show/Hide 3D Models',
+        tooltipOptions: {
+          tooltipEvent: 'hover',
+          tooltipPosition: 'bottom',
+          tooltipLabel: 'Show/Hide 3D Models'
+        },
+        command: () => {
+          if (this.show3DModels == true) {
+            this.cesiumService.toggle3DModels(false);
+            this.show3DModels = false;
+          } else {
+            this.cesiumService.toggle3DModels(true);
+            this.show3DModels = true;
+          }
+        }
+      },
+      {
+        icon: 'pi pi-shopping-cart',
+        tooltip: 'Show/Hide Vendor Locations',
+        tooltipOptions: {
+          tooltipEvent: 'hover',
+          tooltipPosition: 'bottom',
+          tooltipLabel: 'Show/Hide Vendor Locations'
+        },
+        command: () => {
+          if (this.showVendorLocations == true) {
+            this.cesiumService.toggleVendorLocations(false);
+            this.showVendorLocations = false;
+          } else {
+            this.cesiumService.toggleVendorLocations(true);
+            this.showVendorLocations = true;
+          }
+        }
+      },
+      {
+        icon: 'pi  pi-image',
+        tooltip: 'Show/Hide Billboards',
+        tooltipOptions: {
+          tooltipEvent: 'hover',
+          tooltipPosition: 'bottom',
+          tooltipLabel: 'Show/Hide Billboards'
+        },
+        command: () => {
+          if (this.showBillboards == true) {
+            this.cesiumService.toggleBillboards(false);
+            this.showBillboards = false;
+          } else {
+            this.cesiumService.toggleBillboards(true);
+            this.showBillboards = true;
+          }
+        }
+      }
     ];
   }
 
