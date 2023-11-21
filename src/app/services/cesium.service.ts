@@ -34,6 +34,8 @@ export class CesiumService {
   public doubleClickedEntity$ = this.doubleClickedEntity.asObservable();
   public mapMode: BehaviorSubject<MapMode> = new BehaviorSubject<MapMode>(MapMode.EntitySelection);
   public mapMode$ = this.mapMode.asObservable();
+  public qrCodeButtonPressed: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public qrCodeButtonPressed$ = this.qrCodeButtonPressed.asObservable();
   public clickHandler: any;
   public isRotating: boolean = false;
   public initialMousePosition: any = null;
@@ -773,8 +775,8 @@ export class CesiumService {
               position: center,
               billboard: {
                 // image: "./assets/images/produce.png",
-                image: "./assets/images/flowershop-sm.jpg",
-                scale: vendorAtLocation.assignedVendor.billboardScale,
+                image: vendorAtLocation.assignedVendor.billboardImageUrl,
+                scale: vendorAtLocation?.assignedVendor?.billboardScale ? vendorAtLocation?.assignedVendor?.billboardScale * 0.1 : 0.01,
                 // scaleByDistance: new Cesium.NearFarScalar(1.5e2, 2.0, 1.5e7, 0.5),
                 sizeInMeters: true,
               },
@@ -835,4 +837,21 @@ export class CesiumService {
       }
     }
   }
+
+  addQRButton(cesiumId: string) {
+    //add button
+    const toolbar = document.querySelector("div.cesium-viewer-toolbar");
+    const modeButton = document.querySelector("span.cesium-sceneModePicker-wrapper");
+    const myButton = document.createElement("button");
+    const cesiumContainer = document.getElementById('cesiumId');
+    myButton.classList.add("cesium-button", "cesium-toolbar-button");
+    myButton.innerHTML = "QR";
+    if (toolbar) {
+      toolbar.insertBefore(myButton, modeButton);
+    }
+    myButton.addEventListener("click", () => {
+      this.qrCodeButtonPressed.next(true);
+    });
+  }
+
 }

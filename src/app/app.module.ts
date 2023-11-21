@@ -36,6 +36,7 @@ import { VendorMarketsComponent } from './features/vendor-management/vendor-mark
 import { VendorInvitationsComponent } from './features/vendor-management/vendor-invitations/vendor-invitations.component';
 import { VendorNotificationsComponent } from './features/vendor-management/vendor-notifications/vendor-notifications.component';
 import { VendorReviewsComponent } from './features/vendor-management/vendor-reviews/vendor-reviews.component';
+import { QRCodeModule } from 'angularx-qrcode';
 
 export function loggerCallback(logLevel: LogLevel, message: string) {
   console.log(message);
@@ -137,7 +138,8 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     ReactiveFormsModule,
     MsalModule,
     PrimeModule,
-    LoadingSpinnerModule
+    LoadingSpinnerModule,
+    QRCodeModule
   ],
   providers: [
     CesiumService,

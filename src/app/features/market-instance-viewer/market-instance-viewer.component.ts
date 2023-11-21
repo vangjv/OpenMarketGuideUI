@@ -58,6 +58,8 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
   show3DModels: boolean = true;
   showVendorLocations: boolean = true;
   showVendorBar: boolean = false;
+  showQRCode: boolean = false;
+  urlForQRCode: string = "";
   @HostListener('window:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
     this.cesiumService.handleKeyboardTransformation(event);
@@ -69,6 +71,7 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
       this.currentUser = this.appStateService.state.$currentUser();
     });
     this.menuItems = this.generateMenuItems();
+    this.urlForQRCode = window.location.href;
   }
 
   ngOnInit(): void {
@@ -108,6 +111,7 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
               this.cesiumService.createVendorLabelsForEntities(this.marketInstance?.vendorLocations);
               this.cesiumService.createBillboardsForVendorLocations(this.marketInstance?.vendorLocations);
             }
+            this.cesiumService.addQRButton("marketinstanceviewer");
           }
           this.setUserAsOwnerIfIsMarketOwner();
           this.addSubscriptions();
@@ -176,6 +180,14 @@ export class MarketInstanceViewerComponent implements OnInit, AfterViewInit, OnD
           if (doubleClickedEntity != undefined) {
             this.showVendorBar = true;
           }
+        }
+      })
+    );
+    //monitor qrcode button clicked
+    this.subscriptions.add(
+      this.cesiumService.qrCodeButtonPressed$.subscribe((clicked) => {
+        if (clicked) {
+          this.showQRCode = true;
         }
       })
     );

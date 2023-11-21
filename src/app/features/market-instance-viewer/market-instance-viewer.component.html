@@ -49,3 +49,7 @@
   </ng-template>
   <app-products-listing></app-products-listing>
 </p-sidebar>
+
+<p-dialog header="QR Code" [(visible)]="showQRCode" [modal]="true" [draggable]="false" [resizable]="false">
+  <qrcode [qrdata]="urlForQRCode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+</p-dialog>
